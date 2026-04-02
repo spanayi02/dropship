@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { OrderStatus } from "@prisma/client";
+import { sendShippingNotificationEmail } from "@/lib/email/send";
 
 async function requireAdmin() {
   const session = await auth();
@@ -63,21 +64,72 @@ export async function markSupplierOrderOrdered(
 
 export async function markSupplierOrderShipped(
   supplierOrderId: string,
-  tracking: string
+  tracking: string,
+  trackingUrl?: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
     await requireAdmin();
+
+    // Fetch full context before updating so we have order/user details for email
+    const supplierOrder = await db.supplierOrder.findUnique({
+      where: { id: supplierOrderId },
+      include: {
+        orderItem: {
+          include: {
+            product: true,
+            order: {
+              include: { user: true },
+            },
+          },
+        },
+      },
+    });
 
     await db.supplierOrder.update({
       where: { id: supplierOrderId },
       data: {
         status: "SHIPPED",
         trackingNumber: tracking,
+        trackingUrl: trackingUrl ?? null,
         shippedAt: new Date(),
       },
     });
 
     revalidatePath("/admin/orders/queue");
+
+    // Send shipping notification email (fire-and-forget)
+    if (supplierOrder) {
+      const { orderItem } = supplierOrder;
+      const { order } = orderItem;
+
+      const toEmail = order.user?.email ?? order.guestEmail;
+
+      if (toEmail) {
+        const customerName =
+          order.user?.name ??
+          (order.shippingAddress as { firstName?: string } | null)?.firstName ??
+          toEmail;
+
+        void sendShippingNotificationEmail({
+          to: toEmail,
+          orderNumber: order.orderNumber,
+          customerName,
+          trackingNumber: tracking,
+          trackingUrl,
+          items: [
+            {
+              title: orderItem.product.title,
+              quantity: orderItem.quantity,
+            },
+          ],
+          orderId: order.id,
+        });
+      } else {
+        console.warn(
+          `[markSupplierOrderShipped] No email for order ${order.orderNumber}, skipping notification`
+        );
+      }
+    }
 
     return { success: true };
   } catch (error) {

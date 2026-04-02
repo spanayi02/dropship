@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Star, BadgeCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ReviewForm } from "./review-form";
 
 interface Review {
   id: string;
@@ -19,9 +20,17 @@ interface Review {
 
 interface ProductTabsProps {
   product: {
+    id: string;
+    slug: string;
     description: string;
     reviews: Review[];
   };
+  existingReview?: {
+    id: string;
+    rating: number;
+    title?: string | null;
+    comment?: string | null;
+  } | null;
 }
 
 function StarRow({ rating }: { rating: number }) {
@@ -144,7 +153,7 @@ const TABS = [
 
 type TabId = (typeof TABS)[number]["id"];
 
-export function ProductTabs({ product }: ProductTabsProps) {
+export function ProductTabs({ product, existingReview }: ProductTabsProps) {
   const [active, setActive] = useState<TabId>("description");
 
   return (
@@ -189,7 +198,7 @@ export function ProductTabs({ product }: ProductTabsProps) {
         )}
 
         {active === "reviews" && (
-          <div role="tabpanel">
+          <div role="tabpanel" className="space-y-8">
             {product.reviews.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">
                 <Star className="h-10 w-10 mx-auto mb-3 opacity-30" />
@@ -206,6 +215,11 @@ export function ProductTabs({ product }: ProductTabsProps) {
                 </div>
               </>
             )}
+            <ReviewForm
+              productId={product.id}
+              productSlug={product.slug}
+              existingReview={existingReview}
+            />
           </div>
         )}
       </div>

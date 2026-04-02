@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { toast } from "sonner";
+import { subscribeNewsletter } from "@/app/actions/newsletter";
 
 export function SubscribeForm() {
   const [email, setEmail] = useState("");
@@ -12,10 +14,17 @@ export function SubscribeForm() {
     e.preventDefault();
     if (!email.trim()) return;
     setLoading(true);
-    // Server action stub — replace with real action when ready
-    await new Promise((resolve) => setTimeout(resolve, 600));
+
+    const result = await subscribeNewsletter(email);
+
     setLoading(false);
-    setSubmitted(true);
+
+    if (result.success) {
+      setSubmitted(true);
+      toast.success(result.success);
+    } else {
+      toast.error(result.error ?? "Failed to subscribe. Please try again.");
+    }
   }
 
   if (submitted) {

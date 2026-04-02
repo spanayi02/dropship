@@ -27,7 +27,15 @@
       "Bash(python3 -c \"import sys; print\\(sys.stdin.read\\(\\)[:500]\\)\")",
       "Bash(node:*)",
       "Bash(grep -v \"^$\")",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(sw_vers)",
+      "Bash(brew --version)",
+      "Bash(brew list:*)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); deps={**d.get\\(''''dependencies'''',{}\\), **d.get\\(''''devDependencies'''',{}\\)}; print\\(''''\\\\n''''.join\\(f''''{k}: {v}'''' for k in [''''resend'''',''''@react-email/components'''',''''react'''',''''next''''] if k in deps and \\(v := deps[k]\\)\\)\\)\")",
+      "Bash(ls /Users/styllachios/Work/BIZ/dropship/src/app/\\\\\\(admin\\\\\\)/admin/)",
+      "Bash(ls:*)",
+      "Bash(find /Users/styllachios/Work/BIZ/dropship/src -name *.tsx -newer /Users/styllachios/Work/BIZ/dropship/prisma/schema.prisma -o -name *.ts -newer /Users/styllachios/Work/BIZ/dropship/prisma/schema.prisma)"
     ]
   }
 }

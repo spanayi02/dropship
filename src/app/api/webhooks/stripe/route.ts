@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { db } from "@/lib/db";
 import Stripe from "stripe";
+import { sendOrderConfirmationEmail } from "@/lib/email/send";
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -70,8 +71,12 @@ async function handleCheckoutSessionCompleted(
       : session.payment_intent?.id;
 
   // Find the order by stripe checkout session ID
-  const order = await db.order.findFirst({
+  let order = await db.order.findFirst({
     where: { stripeCheckoutSessionId: sessionId },
+    include: {
+      orderItems: { include: { product: true } },
+      user: true,
+    },
   });
 
   if (!order) {
@@ -79,6 +84,10 @@ async function handleCheckoutSessionCompleted(
     if (paymentIntentId) {
       const orderByPI = await db.order.findFirst({
         where: { stripePaymentIntentId: paymentIntentId },
+        include: {
+          orderItems: { include: { product: true } },
+          user: true,
+        },
       });
       if (orderByPI) {
         await db.order.update({
@@ -89,6 +98,7 @@ async function handleCheckoutSessionCompleted(
           },
         });
         await clearCartForSession(session);
+        void sendOrderConfirmationForOrder(orderByPI, session);
         return;
       }
     }
@@ -104,6 +114,71 @@ async function handleCheckoutSessionCompleted(
   });
 
   await clearCartForSession(session);
+  void sendOrderConfirmationForOrder(order, session);
+}
+
+type OrderWithItemsAndUser = Awaited<
+  ReturnType<typeof db.order.findFirst<{
+    include: { orderItems: { include: { product: true } }; user: true };
+  }>>
+>;
+
+async function sendOrderConfirmationForOrder(
+  order: NonNullable<OrderWithItemsAndUser>,
+  session: Stripe.Checkout.Session
+) {
+  try {
+    // Resolve recipient email: authenticated user → guest email → stripe session email
+    const toEmail =
+      order.user?.email ??
+      order.guestEmail ??
+      session.customer_email;
+
+    if (!toEmail) {
+      console.warn(
+        `[stripe-webhook] No email address found for order ${order.orderNumber}, skipping confirmation email`
+      );
+      return;
+    }
+
+    const customerName =
+      order.user?.name ??
+      (order.shippingAddress as { firstName?: string; lastName?: string } | null)
+        ?.firstName ??
+      toEmail;
+
+    const shippingAddr = order.shippingAddress as {
+      firstName: string;
+      lastName: string;
+      street: string;
+      city: string;
+      state: string;
+      country: string;
+      postalCode: string;
+    };
+
+    await sendOrderConfirmationEmail({
+      to: toEmail,
+      orderNumber: order.orderNumber,
+      customerName,
+      items: order.orderItems.map((item) => ({
+        title: item.product.title,
+        quantity: item.quantity,
+        price: item.priceAtPurchase,
+        image: item.product.images[0],
+      })),
+      subtotal: order.subtotal,
+      shippingCost: order.shippingCost,
+      total: order.total,
+      shippingAddress: shippingAddr,
+      orderId: order.id,
+    });
+  } catch (err) {
+    console.error(
+      `[stripe-webhook] Failed to send order confirmation for ${order.orderNumber}:`,
+      err
+    );
+  }
 }
 
 async function clearCartForSession(session: Stripe.Checkout.Session) {

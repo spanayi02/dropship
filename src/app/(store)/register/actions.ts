@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 import { registerSchema, type RegisterInput } from "@/lib/validations/auth";
+import { sendWelcomeEmail } from "@/lib/email/send";
 
 export async function registerUser(
   data: RegisterInput
@@ -31,6 +32,9 @@ export async function registerUser(
       role: "CUSTOMER",
     },
   });
+
+  // Fire-and-forget: non-blocking welcome email
+  void sendWelcomeEmail({ to: email, name: name ?? email });
 
   return null;
 }

@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { db } from "@/lib/db";
+import { auth } from "@/lib/auth";
 import { formatPrice } from "@/lib/utils";
 import { ProductCard, ProductCardSkeleton } from "@/components/store/product-card";
 import { ImageGallery } from "@/components/store/image-gallery";
@@ -163,7 +164,10 @@ export default async function ProductPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = await getProduct(slug);
+  const [product, session] = await Promise.all([
+    getProduct(slug),
+    auth(),
+  ]);
 
   if (!product || !product.isActive) notFound();
 
@@ -180,7 +184,15 @@ export default async function ProductPage({
   const primaryImage =
     product.images[0] ?? `https://picsum.photos/seed/${product.id}/800/800`;
 
-  const relatedProducts = await getRelatedProducts(product.categoryId, product.id);
+  const [relatedProducts, existingReview] = await Promise.all([
+    getRelatedProducts(product.categoryId, product.id),
+    session?.user?.id
+      ? db.review.findFirst({
+          where: { productId: product.id, userId: session.user.id },
+          select: { id: true, rating: true, title: true, comment: true },
+        })
+      : Promise.resolve(null),
+  ]);
 
   return (
     <>
@@ -312,7 +324,7 @@ export default async function ProductPage({
         </div>
 
         {/* Tabs: Description | Specs | Reviews */}
-        <ProductTabs product={product} />
+        <ProductTabs product={product} existingReview={existingReview} />
 
         {/* Related products */}
         {relatedProducts.length > 0 && (
