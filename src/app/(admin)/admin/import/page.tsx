@@ -1,5 +1,4 @@
 import { db } from "@/lib/db";
-import { Prisma } from "@prisma/client";
 import { ImportClient } from "./import-client";
 
 export const metadata = {
@@ -14,8 +13,8 @@ export default async function ImportPage() {
       orderBy: { name: "asc" },
     }),
     db.supplier.findFirst({
-      where: { apiType: "CJ", apiCredentials: { not: Prisma.DbNull } },
-      select: { id: true, name: true },
+      where: { apiType: "CJ" },
+      select: { id: true, name: true, apiCredentials: true },
     }),
   ]);
 
@@ -33,7 +32,7 @@ export default async function ImportPage() {
       </div>
 
       {/* No CJ supplier warning */}
-      {!cjSupplier && (
+      {(!cjSupplier || !cjSupplier.apiCredentials) && (
         <div className="rounded-lg border border-yellow-200 bg-yellow-50 dark:border-yellow-900/40 dark:bg-yellow-900/10 p-4">
           <p className="text-sm font-medium text-yellow-800 dark:text-yellow-300">
             CJ Dropshipping not configured
