@@ -39,7 +39,10 @@
       "Bash(sed -i '' 's|href=\"\"/auth/login\"\"|href=\"\"/login\"\"|g; s|href=\"\"/auth/register\"\"|href=\"\"/register\"\"|g' /Users/styllachios/Work/BIZ/dropship/src/components/store/header.tsx)",
       "Bash(sed -i '' 's|href=\"\"/auth/login\"\"|href=\"\"/login\"\"|g; s|href=\"\"/auth/register\"\"|href=\"\"/register\"\"|g' /Users/styllachios/Work/BIZ/dropship/src/components/store/footer.tsx)",
       "Bash(grep -rn '\"\"/wishlist\"\"' /Users/styllachios/Work/BIZ/dropship/src/ --include=\"*.tsx\" --include=\"*.ts\")",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(git checkout:*)",
+      "Bash(git push:*)",
+      "Bash(npx vercel:*)"
     ]
   }
 }

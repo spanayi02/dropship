@@ -116,7 +116,7 @@ export default async function AnalyticsPage({ searchParams }: PageProps) {
     if (dailyMap.has(key)) {
       const entry = dailyMap.get(key)!;
       const orderCost = order.orderItems.reduce(
-        (sum, item) => sum + (item.costAtPurchase ?? 0) * item.quantity,
+        (sum: number, item) => sum + (item.costAtPurchase ?? 0) * item.quantity,
         0
       );
       entry.revenue += order.total;
