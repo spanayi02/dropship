@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { SupplierApiType } from "@prisma/client";
+import { Prisma, SupplierApiType } from "@prisma/client";
 import { updateSupplierPrice } from "@/lib/pricing/engine";
 
 async function requireAdmin() {
@@ -17,6 +17,7 @@ export interface UpsertSupplierData {
   name: string;
   website?: string;
   apiType?: SupplierApiType;
+  apiCredentials?: Record<string, string>;
   rating?: number;
   avgShippingDays?: number;
 }
@@ -28,32 +29,22 @@ export async function upsertSupplier(
   try {
     await requireAdmin();
 
-    if (id) {
-      const supplier = await db.supplier.update({
-        where: { id },
-        data: {
-          name: data.name,
-          website: data.website ?? null,
-          apiType: data.apiType ?? "MANUAL",
-          rating: data.rating ?? null,
-          avgShippingDays: data.avgShippingDays ?? null,
-        },
-      });
+    const payload = {
+      name: data.name,
+      website: data.website ?? null,
+      apiType: data.apiType ?? "MANUAL",
+      apiCredentials: data.apiCredentials ?? Prisma.DbNull,
+      rating: data.rating ?? null,
+      avgShippingDays: data.avgShippingDays ?? null,
+    };
 
+    if (id) {
+      const supplier = await db.supplier.update({ where: { id }, data: payload });
       revalidatePath("/admin/suppliers");
       revalidatePath(`/admin/suppliers/${id}`);
       return { success: true, supplierId: supplier.id };
     } else {
-      const supplier = await db.supplier.create({
-        data: {
-          name: data.name,
-          website: data.website ?? null,
-          apiType: data.apiType ?? "MANUAL",
-          rating: data.rating ?? null,
-          avgShippingDays: data.avgShippingDays ?? null,
-        },
-      });
-
+      const supplier = await db.supplier.create({ data: payload });
       revalidatePath("/admin/suppliers");
       return { success: true, supplierId: supplier.id };
     }

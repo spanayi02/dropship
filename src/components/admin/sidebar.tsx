@@ -15,6 +15,7 @@ import {
   LogOut,
   Menu,
   X,
+  PackageSearch,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -40,6 +41,7 @@ const navSections: NavSection[] = [
   {
     section: "Store",
     items: [
+      { label: "Import Products", href: "/admin/import", icon: PackageSearch },
       { label: "Products", href: "/admin/products", icon: Package },
       { label: "Orders", href: "/admin/orders", icon: ShoppingCart },
       { label: "Suppliers", href: "/admin/suppliers", icon: Truck },

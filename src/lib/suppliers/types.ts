@@ -25,6 +25,13 @@ export interface SupplierOrderInput {
   };
 }
 
+export interface SupplierOrderStatus {
+  status: string;
+  trackingNumber?: string;
+  trackingUrl?: string;
+  shippedAt?: string;
+}
+
 export interface SupplierAdapter {
   readonly name: string;
   readonly type: "manual" | "aliexpress" | "cj" | "custom";
@@ -38,4 +45,5 @@ export interface SupplierAdapter {
   placeOrder(
     input: SupplierOrderInput
   ): Promise<{ orderId: string; trackingUrl?: string }>;
+  getOrderStatus?(orderId: string): Promise<SupplierOrderStatus>;
 }

@@ -11,8 +11,8 @@ const SHOP_LINKS = [
 const ACCOUNT_LINKS = [
   { label: "My Account", href: "/account" },
   { label: "Orders", href: "/account/orders" },
-  { label: "Wishlist", href: "/wishlist" },
-  { label: "Login", href: "/auth/login" },
+  { label: "Wishlist", href: "/account/wishlist" },
+  { label: "Login", href: "/login" },
 ];
 
 const SUPPORT_LINKS = [

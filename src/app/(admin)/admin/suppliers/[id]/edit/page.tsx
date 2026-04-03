@@ -22,6 +22,7 @@ export default async function EditSupplierPage({ params }: EditSupplierPageProps
       name: true,
       website: true,
       apiType: true,
+      apiCredentials: true,
       rating: true,
       avgShippingDays: true,
     },

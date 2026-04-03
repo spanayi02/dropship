@@ -13,6 +13,7 @@ interface SupplierFormProps {
     name: string;
     website: string | null;
     apiType: SupplierApiType;
+    apiCredentials?: unknown;
     rating: number | null;
     avgShippingDays: number | null;
   };
@@ -24,6 +25,17 @@ const API_TYPE_OPTIONS: { value: SupplierApiType; label: string }[] = [
   { value: "CJ", label: "CJ Dropshipping" },
   { value: "CUSTOM", label: "Custom API" },
 ];
+
+function getExistingCreds(raw: unknown): { email: string; apiKey: string } {
+  if (raw && typeof raw === "object" && !Array.isArray(raw)) {
+    const creds = raw as Record<string, unknown>;
+    return {
+      email: typeof creds.email === "string" ? creds.email : "",
+      apiKey: typeof creds.apiKey === "string" ? creds.apiKey : "",
+    };
+  }
+  return { email: "", apiKey: "" };
+}
 
 export function SupplierForm({ supplier }: SupplierFormProps) {
   const router = useRouter();
@@ -41,6 +53,10 @@ export function SupplierForm({ supplier }: SupplierFormProps) {
     supplier?.avgShippingDays != null ? String(supplier.avgShippingDays) : ""
   );
 
+  const existingCreds = getExistingCreds(supplier?.apiCredentials);
+  const [cjEmail, setCjEmail] = useState(existingCreds.email);
+  const [cjApiKey, setCjApiKey] = useState(existingCreds.apiKey);
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
@@ -53,12 +69,23 @@ export function SupplierForm({ supplier }: SupplierFormProps) {
       return;
     }
 
+    if (apiType === "CJ" && (!cjEmail.trim() || !cjApiKey.trim())) {
+      toast.error("CJ Dropshipping requires both an email and API key");
+      return;
+    }
+
+    const apiCredentials =
+      apiType === "CJ"
+        ? { email: cjEmail.trim(), apiKey: cjApiKey.trim() }
+        : undefined;
+
     startTransition(async () => {
       const result = await upsertSupplier(
         {
           name,
           website: website.trim() || undefined,
           apiType,
+          apiCredentials,
           rating: ratingNum,
           avgShippingDays: shippingDaysNum,
         },
@@ -90,7 +117,7 @@ export function SupplierForm({ supplier }: SupplierFormProps) {
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
-          placeholder="e.g. Top Supplier Co."
+          placeholder="e.g. CJ Dropshipping"
           className="flex h-9 w-full rounded-lg border border-input bg-background px-3 py-1 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50 transition-all"
         />
       </div>
@@ -108,7 +135,7 @@ export function SupplierForm({ supplier }: SupplierFormProps) {
           type="url"
           value={website}
           onChange={(e) => setWebsite(e.target.value)}
-          placeholder="https://supplier.example.com"
+          placeholder="https://cjdropshipping.com"
           className="flex h-9 w-full rounded-lg border border-input bg-background px-3 py-1 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50 transition-all"
         />
       </div>
@@ -134,6 +161,53 @@ export function SupplierForm({ supplier }: SupplierFormProps) {
           ))}
         </select>
       </div>
+
+      {/* CJ Credentials — shown only when CJ is selected */}
+      {apiType === "CJ" && (
+        <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-4">
+          <p className="text-sm font-medium">CJ Dropshipping API Credentials</p>
+          <p className="text-xs text-muted-foreground -mt-2">
+            Find these at{" "}
+            <span className="font-mono">app.cjdropshipping.com</span> → your
+            avatar → Developer
+          </p>
+
+          <div className="space-y-1.5">
+            <label
+              htmlFor="cj-email"
+              className="text-sm font-medium leading-none"
+            >
+              CJ Account Email <span className="text-destructive">*</span>
+            </label>
+            <input
+              id="cj-email"
+              type="email"
+              value={cjEmail}
+              onChange={(e) => setCjEmail(e.target.value)}
+              placeholder="you@example.com"
+              className="flex h-9 w-full rounded-lg border border-input bg-background px-3 py-1 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50 transition-all"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <label
+              htmlFor="cj-api-key"
+              className="text-sm font-medium leading-none"
+            >
+              API Key <span className="text-destructive">*</span>
+            </label>
+            <input
+              id="cj-api-key"
+              type="password"
+              value={cjApiKey}
+              onChange={(e) => setCjApiKey(e.target.value)}
+              placeholder="Paste your CJ API key here"
+              autoComplete="off"
+              className="flex h-9 w-full rounded-lg border border-input bg-background px-3 py-1 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50 transition-all font-mono"
+            />
+          </div>
+        </div>
+      )}
 
       {/* Rating */}
       <div className="space-y-1.5">

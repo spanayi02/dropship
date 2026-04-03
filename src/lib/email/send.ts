@@ -2,6 +2,7 @@ import { resend, FROM_EMAIL, STORE_NAME } from "./resend";
 import { OrderConfirmationEmail } from "./templates/order-confirmation";
 import { ShippingNotificationEmail } from "./templates/shipping-notification";
 import { WelcomeEmail } from "./templates/welcome";
+import { ReviewRequestEmail } from "./templates/review-request";
 import { createElement } from "react";
 
 export async function sendOrderConfirmationEmail(params: {
@@ -66,6 +67,28 @@ export async function sendShippingNotificationEmail(params: {
     });
   } catch (err) {
     console.error("[email] Failed to send shipping notification:", err);
+  }
+}
+
+export async function sendReviewRequestEmail(params: {
+  to: string;
+  customerName: string;
+  orderNumber: string;
+  items: { title: string; productId: string; image?: string }[];
+}) {
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: params.to,
+      subject: `How was your order ${params.orderNumber}? ⭐`,
+      react: createElement(ReviewRequestEmail, {
+        customerName: params.customerName,
+        orderNumber: params.orderNumber,
+        items: params.items,
+      }),
+    });
+  } catch (err) {
+    console.error("[email] Failed to send review request:", err);
   }
 }
 

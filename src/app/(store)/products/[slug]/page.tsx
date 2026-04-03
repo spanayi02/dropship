@@ -184,12 +184,18 @@ export default async function ProductPage({
   const primaryImage =
     product.images[0] ?? `https://picsum.photos/seed/${product.id}/800/800`;
 
-  const [relatedProducts, existingReview] = await Promise.all([
+  const [relatedProducts, existingReview, wishlistItem] = await Promise.all([
     getRelatedProducts(product.categoryId, product.id),
     session?.user?.id
       ? db.review.findFirst({
           where: { productId: product.id, userId: session.user.id },
           select: { id: true, rating: true, title: true, comment: true },
+        })
+      : Promise.resolve(null),
+    session?.user?.id
+      ? db.wishlistItem.findUnique({
+          where: { userId_productId: { userId: session.user.id, productId: product.id } },
+          select: { id: true },
         })
       : Promise.resolve(null),
   ]);
@@ -289,7 +295,7 @@ export default async function ProductPage({
             <DescriptionToggle text={product.description} />
 
             {/* Quantity + Add to Cart */}
-            <AddToCartSection product={product} primaryImage={primaryImage} />
+            <AddToCartSection product={product} primaryImage={primaryImage} initialWishlisted={!!wishlistItem} />
 
             {/* Delivery estimate */}
             <div className="flex items-start gap-3 rounded-xl border border-border bg-muted/50 px-4 py-3.5">
@@ -372,6 +378,7 @@ export default async function ProductPage({
 function AddToCartSection({
   product,
   primaryImage,
+  initialWishlisted,
 }: {
   product: {
     id: string;
@@ -380,6 +387,7 @@ function AddToCartSection({
     sellingPrice: number;
   };
   primaryImage: string;
+  initialWishlisted: boolean;
 }) {
   return (
     <div className="flex flex-col gap-4">
@@ -394,7 +402,7 @@ function AddToCartSection({
             image: primaryImage,
           }}
         />
-        <WishlistButton productId={product.id} />
+        <WishlistButton productId={product.id} initialWishlisted={initialWishlisted} />
       </div>
     </div>
   );

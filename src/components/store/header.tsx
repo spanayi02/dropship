@@ -220,7 +220,7 @@ export function StoreHeader() {
 
               {/* Wishlist */}
               <Link
-                href="/wishlist"
+                href="/account/wishlist"
                 className="relative flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                 aria-label={`Wishlist${wishlistCount > 0 ? `, ${wishlistCount} items` : ""}`}
               >
@@ -308,14 +308,14 @@ export function StoreHeader() {
                     ) : (
                       <div className="p-1.5">
                         <Link
-                          href="/auth/login"
+                          href="/login"
                           className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                         >
                           <User className="h-3.5 w-3.5" />
                           Sign In
                         </Link>
                         <Link
-                          href="/auth/register"
+                          href="/register"
                           className="flex items-center justify-center gap-2 px-3 py-2 mt-1 text-sm rounded-lg font-medium bg-[var(--emerald)] text-white hover:opacity-90 transition-opacity"
                         >
                           Create Account
@@ -446,13 +446,13 @@ export function StoreHeader() {
               ) : (
                 <div className="flex gap-2">
                   <Link
-                    href="/auth/login"
+                    href="/login"
                     className="flex-1 text-center rounded-lg border border-border px-4 py-2.5 text-sm font-medium hover:bg-muted transition-colors"
                   >
                     Sign In
                   </Link>
                   <Link
-                    href="/auth/register"
+                    href="/register"
                     className="flex-1 text-center rounded-lg bg-[var(--emerald)] text-white px-4 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity"
                   >
                     Sign Up

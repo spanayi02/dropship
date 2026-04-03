@@ -3,6 +3,7 @@ import { stripe } from "@/lib/stripe";
 import { db } from "@/lib/db";
 import Stripe from "stripe";
 import { sendOrderConfirmationEmail } from "@/lib/email/send";
+import { autoPlaceSupplierOrders } from "@/lib/suppliers/auto-order";
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -99,6 +100,7 @@ async function handleCheckoutSessionCompleted(
         });
         await clearCartForSession(session);
         void sendOrderConfirmationForOrder(orderByPI, session);
+        void autoPlaceSupplierOrders(orderByPI.id);
         return;
       }
     }
@@ -114,7 +116,9 @@ async function handleCheckoutSessionCompleted(
   });
 
   await clearCartForSession(session);
+  // Fire-and-forget: send confirmation email + auto-place supplier orders
   void sendOrderConfirmationForOrder(order, session);
+  void autoPlaceSupplierOrders(order.id);
 }
 
 type OrderWithItemsAndUser = Awaited<

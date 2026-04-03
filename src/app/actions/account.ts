@@ -127,6 +127,24 @@ export async function deleteAccount(): Promise<{ success?: string; error?: strin
   return { error: "Account deletion is not yet available. Please contact support." };
 }
 
+// ─── Add to Wishlist ──────────────────────────────────────────────────────────
+
+export async function addToWishlist(
+  productId: string
+): Promise<{ success?: string; error?: string; requiresAuth?: boolean }> {
+  const session = await auth();
+  if (!session?.user?.id) return { error: "Not authenticated", requiresAuth: true };
+
+  await db.wishlistItem.upsert({
+    where: { userId_productId: { userId: session.user.id, productId } },
+    update: {},
+    create: { userId: session.user.id, productId },
+  });
+
+  revalidatePath("/account/wishlist");
+  return { success: "Added to wishlist" };
+}
+
 // ─── Remove Wishlist Item ─────────────────────────────────────────────────────
 
 export async function removeFromWishlist(

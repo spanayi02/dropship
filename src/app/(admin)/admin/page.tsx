@@ -8,6 +8,7 @@ import {
   DollarSign,
   AlertTriangle,
   Package,
+  BadgeDollarSign,
 } from "lucide-react";
 
 export const dynamic = 'force-dynamic';
@@ -53,6 +54,8 @@ async function fetchDashboardData() {
     recentOrdersRaw,
     last30DaysOrders,
     outOfStockSuppliers,
+    profitItemsAll,
+    profitItemsMonth,
   ] = await Promise.all([
     // Revenue today
     db.order.aggregate({
@@ -118,6 +121,33 @@ async function fetchDashboardData() {
       distinct: ["productId"],
       take: 20,
     }),
+    // Gross profit: sum of (priceAtPurchase - costAtPurchase) * quantity
+    db.orderItem.findMany({
+      where: {
+        order: { status: { not: "CANCELLED" } },
+        costAtPurchase: { not: null },
+      },
+      select: {
+        priceAtPurchase: true,
+        costAtPurchase: true,
+        quantity: true,
+      },
+    }),
+    // Gross profit this month
+    db.orderItem.findMany({
+      where: {
+        order: {
+          status: { not: "CANCELLED" },
+          createdAt: { gte: new Date(now.getFullYear(), now.getMonth(), 1) },
+        },
+        costAtPurchase: { not: null },
+      },
+      select: {
+        priceAtPurchase: true,
+        costAtPurchase: true,
+        quantity: true,
+      },
+    }),
   ]);
 
   // Resolve top product titles
@@ -157,6 +187,16 @@ async function fetchDashboardData() {
   const totalOrderCount = revenueAll._count.id;
   const avgOrderValue = totalOrderCount > 0 ? Math.round(totalRevenue / totalOrderCount) : 0;
 
+  // Gross profit (revenue - cost)
+  const grossProfitAll = profitItemsAll.reduce(
+    (sum, item) => sum + (item.priceAtPurchase - (item.costAtPurchase ?? 0)) * item.quantity,
+    0
+  );
+  const grossProfitMonth = profitItemsMonth.reduce(
+    (sum, item) => sum + (item.priceAtPurchase - (item.costAtPurchase ?? 0)) * item.quantity,
+    0
+  );
+
   return {
     revenueToday: revenueToday._sum.total ?? 0,
     revenueMonth: revenueMonth._sum.total ?? 0,
@@ -164,6 +204,8 @@ async function fetchDashboardData() {
     orderCount,
     pendingCount,
     avgOrderValue,
+    grossProfitAll,
+    grossProfitMonth,
     topProducts,
     chartData,
     recentOrders: recentOrdersRaw,
@@ -227,6 +269,8 @@ export default async function AdminDashboardPage() {
     orderCount,
     pendingCount,
     avgOrderValue,
+    grossProfitAll,
+    grossProfitMonth,
     topProducts,
     chartData,
     recentOrders,
@@ -241,7 +285,7 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* Metric Cards */}
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         <MetricCard
           label="Today's Revenue"
           value={formatPrice(revenueToday)}
@@ -262,6 +306,18 @@ export default async function AdminDashboardPage() {
           label="Avg Order Value"
           value={formatPrice(avgOrderValue)}
           icon={DollarSign}
+        />
+        <MetricCard
+          label="Gross Profit (Month)"
+          value={formatPrice(grossProfitMonth)}
+          sub="Revenue minus supplier cost"
+          icon={BadgeDollarSign}
+        />
+        <MetricCard
+          label="Gross Profit (All Time)"
+          value={formatPrice(grossProfitAll)}
+          sub="Revenue minus supplier cost"
+          icon={BadgeDollarSign}
         />
       </div>
 

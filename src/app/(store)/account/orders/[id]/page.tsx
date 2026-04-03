@@ -4,7 +4,7 @@ import Image from "next/image";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { formatPrice, cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/lib/button-variants";
 import type { OrderStatus, SupplierOrderStatus } from "@prisma/client";
 
 export const dynamic = 'force-dynamic';

@@ -35,7 +35,11 @@
       "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); deps={**d.get\\(''''dependencies'''',{}\\), **d.get\\(''''devDependencies'''',{}\\)}; print\\(''''\\\\n''''.join\\(f''''{k}: {v}'''' for k in [''''resend'''',''''@react-email/components'''',''''react'''',''''next''''] if k in deps and \\(v := deps[k]\\)\\)\\)\")",
       "Bash(ls /Users/styllachios/Work/BIZ/dropship/src/app/\\\\\\(admin\\\\\\)/admin/)",
       "Bash(ls:*)",
-      "Bash(find /Users/styllachios/Work/BIZ/dropship/src -name *.tsx -newer /Users/styllachios/Work/BIZ/dropship/prisma/schema.prisma -o -name *.ts -newer /Users/styllachios/Work/BIZ/dropship/prisma/schema.prisma)"
+      "Bash(find /Users/styllachios/Work/BIZ/dropship/src -name *.tsx -newer /Users/styllachios/Work/BIZ/dropship/prisma/schema.prisma -o -name *.ts -newer /Users/styllachios/Work/BIZ/dropship/prisma/schema.prisma)",
+      "Bash(sed -i '' 's|href=\"\"/auth/login\"\"|href=\"\"/login\"\"|g; s|href=\"\"/auth/register\"\"|href=\"\"/register\"\"|g' /Users/styllachios/Work/BIZ/dropship/src/components/store/header.tsx)",
+      "Bash(sed -i '' 's|href=\"\"/auth/login\"\"|href=\"\"/login\"\"|g; s|href=\"\"/auth/register\"\"|href=\"\"/register\"\"|g' /Users/styllachios/Work/BIZ/dropship/src/components/store/footer.tsx)",
+      "Bash(grep -rn '\"\"/wishlist\"\"' /Users/styllachios/Work/BIZ/dropship/src/ --include=\"*.tsx\" --include=\"*.ts\")",
+      "Bash(grep:*)"
     ]
   }
 }
