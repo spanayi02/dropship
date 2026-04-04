@@ -285,6 +285,15 @@ export function StoreHeader() {
                             <Package className="h-3.5 w-3.5" />
                             Orders
                           </Link>
+                          {session.user?.role === "ADMIN" && (
+                            <Link
+                              href="/admin"
+                              className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg text-[var(--emerald)] hover:bg-[var(--emerald)]/10 transition-colors font-medium"
+                            >
+                              <Grid3X3 className="h-3.5 w-3.5" />
+                              Admin Dashboard
+                            </Link>
+                          )}
                         </div>
                         <div className="p-1.5 border-t border-border">
                           <button
@@ -426,6 +435,15 @@ export function StoreHeader() {
                     <Package className="h-4 w-4" />
                     Orders
                   </Link>
+                  {session.user?.role === "ADMIN" && (
+                    <Link
+                      href="/admin"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[var(--emerald)] hover:bg-[var(--emerald)]/10 transition-colors font-medium"
+                    >
+                      <Grid3X3 className="h-4 w-4" />
+                      Admin Dashboard
+                    </Link>
+                  )}
                   <button
                     onClick={() => signOut({ callbackUrl: "/" })}
                     className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
