@@ -166,18 +166,7 @@ export function StoreFooter() {
           {/* Brand column */}
           <div className="lg:col-span-2">
             <Link href="/" className="inline-flex items-center gap-1.5 group mb-4">
-              {/* Replace the span below with an <img> tag pointing to your logo, e.g.: */}
-              {/* <img src="/logo.png" alt="WishlistAZ" className="h-8 w-auto" /> */}
-              <span
-                className="text-xl font-extrabold tracking-tight text-foreground"
-                style={{ fontFamily: "var(--font-plus-jakarta-sans), system-ui, sans-serif" }}
-              >
-                WishlistAZ
-              </span>
-              <span
-                className="h-2 w-2 rounded-full bg-[var(--emerald)]"
-                aria-hidden="true"
-              />
+              <img src="/wishlistAZ.png" alt="WishlistAZ" className="h-8 w-auto" />
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
               Discover thousands of quality products at unbeatable prices.
