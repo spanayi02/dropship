@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import type { OrderStatus } from "@prisma/client";
+import { ClearCart } from "./clear-cart";
 
 interface ConfirmationPageProps {
   params: Promise<{ id: string }>;
@@ -69,6 +70,7 @@ export default async function OrderConfirmationPage({ params }: ConfirmationPage
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6 lg:px-8">
+      <ClearCart />
       {/* Checkmark animation */}
       <div className="mb-8 flex flex-col items-center text-center">
         <div className="relative mb-6">

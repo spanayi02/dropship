@@ -173,7 +173,6 @@ export default function CheckoutPage() {
         return;
       }
 
-      clearCart();
       window.location.href = result.sessionUrl;
     } catch {
       toast.error("Failed to initiate payment. Please try again.");
