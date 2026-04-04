@@ -166,11 +166,13 @@ export function StoreFooter() {
           {/* Brand column */}
           <div className="lg:col-span-2">
             <Link href="/" className="inline-flex items-center gap-1.5 group mb-4">
+              {/* Replace the span below with an <img> tag pointing to your logo, e.g.: */}
+              {/* <img src="/logo.png" alt="WishlistAZ" className="h-8 w-auto" /> */}
               <span
                 className="text-xl font-extrabold tracking-tight text-foreground"
                 style={{ fontFamily: "var(--font-plus-jakarta-sans), system-ui, sans-serif" }}
               >
-                DropShip
+                WishlistAZ
               </span>
               <span
                 className="h-2 w-2 rounded-full bg-[var(--emerald)]"
@@ -212,7 +214,7 @@ export function StoreFooter() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-xs text-muted-foreground">
-              &copy; {currentYear} DropShip. All rights reserved.
+              &copy; {currentYear} WishlistAZ. All rights reserved.
             </p>
 
             {/* Payment method badges */}

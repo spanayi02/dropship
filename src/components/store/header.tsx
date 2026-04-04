@@ -110,13 +110,15 @@ export function StoreHeader() {
             <Link
               href="/"
               className="flex items-center gap-1.5 flex-shrink-0 group"
-              aria-label="DropShip home"
+              aria-label="WishlistAZ home"
             >
+              {/* Replace the span below with an <img> tag pointing to your logo, e.g.: */}
+              {/* <img src="/logo.png" alt="WishlistAZ" className="h-8 w-auto" /> */}
               <span
                 className="text-xl font-extrabold tracking-tight text-foreground group-hover:text-[var(--emerald)] transition-colors duration-200"
                 style={{ fontFamily: "var(--font-plus-jakarta-sans), system-ui, sans-serif" }}
               >
-                DropShip
+                WishlistAZ
               </span>
               <span
                 className="h-2 w-2 rounded-full bg-[var(--emerald)] group-hover:scale-125 transition-transform duration-200"

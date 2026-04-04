@@ -18,8 +18,8 @@ export async function getStoreSettings(): Promise<StoreSettings> {
   if (!settings) {
     settings = await db.storeSettings.create({
       data: {
-        storeName: "DropShip",
-        contactEmail: "support@dropship.com",
+        storeName: "WishlistAZ",
+        contactEmail: "support@wishlistaz.com",
         currency: "USD",
         globalMarkupType: "MULTIPLIER",
         globalMarkupValue: 2.5,

@@ -19,18 +19,23 @@ const dmSans = DM_Sans({
 
 export const metadata: Metadata = {
   title: {
-    default: "DropShip — Premium Products Delivered Fast",
-    template: "%s | DropShip",
+    default: "WishlistAZ — Premium Products Delivered Fast",
+    template: "%s | WishlistAZ",
   },
   description:
     "Discover thousands of quality products at unbeatable prices. Free shipping on orders over $50.",
-  keywords: ["dropshipping", "online store", "ecommerce", "deals"],
+  keywords: ["online store", "ecommerce", "deals", "wishlist"],
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
     url: process.env.NEXT_PUBLIC_APP_URL,
-    siteName: "DropShip",
-    title: "DropShip — Premium Products Delivered Fast",
+    siteName: "WishlistAZ",
+    title: "WishlistAZ — Premium Products Delivered Fast",
     description:
       "Discover thousands of quality products at unbeatable prices.",
   },
