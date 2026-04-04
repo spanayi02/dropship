@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { auth } from "@/lib/auth";
@@ -10,7 +11,8 @@ export const dynamic = 'force-dynamic';
 
 export default async function WishlistPage() {
   const session = await auth();
-  const userId = session!.user!.id!;
+  const userId = session?.user?.id;
+  if (!userId) redirect("/login?callbackUrl=/account/wishlist");
 
   const wishlistItems = await db.wishlistItem.findMany({
     where: { userId },

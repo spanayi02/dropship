@@ -41,7 +41,8 @@ const TIMELINE_STEPS: OrderStatus[] = ["PENDING", "PROCESSING", "SHIPPED", "DELI
 export default async function OrderDetailPage({ params }: OrderDetailPageProps) {
   const { id } = await params;
   const session = await auth();
-  const userId = session!.user!.id!;
+  const userId = session?.user?.id;
+  if (!userId) notFound();
 
   const order = await db.order.findUnique({
     where: { id },

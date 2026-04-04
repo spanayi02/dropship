@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -25,7 +26,8 @@ const STATUS_STYLES: Record<OrderStatus, string> = {
 
 export default async function AccountOverviewPage() {
   const session = await auth();
-  const userId = session!.user!.id!;
+  const userId = session?.user?.id;
+  if (!userId) redirect("/login?callbackUrl=/account");
 
   const [recentOrders, addresses] = await Promise.all([
     db.order.findMany({

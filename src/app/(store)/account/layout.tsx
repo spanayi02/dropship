@@ -61,7 +61,12 @@ const NAV_ITEMS = [
 ];
 
 export default async function AccountLayout({ children }: AccountLayoutProps) {
-  const session = await auth();
+  let session;
+  try {
+    session = await auth();
+  } catch {
+    redirect("/login?callbackUrl=/account");
+  }
 
   if (!session?.user) {
     redirect("/login?callbackUrl=/account");

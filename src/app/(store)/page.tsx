@@ -7,109 +7,14 @@ import {
   ShieldCheck,
   RotateCcw,
   Headphones,
-  ChevronRight,
 } from "lucide-react";
 import { db } from "@/lib/db";
 import { ProductCard, ProductCardSkeleton } from "@/components/store/product-card";
 import { SubscribeForm } from "@/components/store/subscribe-form";
+import { AnimatedHero } from "@/components/store/animated-hero";
+import { FadeInSection } from "@/components/store/fade-in-section";
 
 export const dynamic = 'force-dynamic';
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Hero Section
-// ─────────────────────────────────────────────────────────────────────────────
-function HeroSection() {
-  return (
-    <section className="relative overflow-hidden bg-background">
-      {/* Subtle grid pattern */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0"
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, var(--border) 1px, transparent 1px),
-            linear-gradient(to bottom, var(--border) 1px, transparent 1px)
-          `,
-          backgroundSize: "64px 64px",
-          maskImage:
-            "radial-gradient(ellipse 80% 70% at 50% 50%, black 40%, transparent 100%)",
-          opacity: 0.5,
-        }}
-      />
-      {/* Glow blobs */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 h-96 w-96 rounded-full blur-3xl opacity-20 bg-[var(--emerald)]"
-      />
-
-      <div className="relative z-10 mx-auto max-w-5xl px-4 py-24 sm:py-32 text-center">
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted px-3 py-1 text-xs font-medium text-muted-foreground mb-6">
-          <span className="h-1.5 w-1.5 rounded-full bg-[var(--emerald)] animate-pulse" />
-          New arrivals every week
-        </span>
-
-        <h1
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.08] mb-6"
-          style={{ fontFamily: "var(--font-heading), system-ui, sans-serif" }}
-        >
-          Discover Products{" "}
-          <span
-            className="bg-clip-text text-transparent"
-            style={{
-              backgroundImage:
-                "linear-gradient(135deg, var(--emerald) 0%, oklch(0.65 0.18 200) 50%, oklch(0.60 0.20 260) 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-            }}
-          >
-            You&apos;ll Love
-          </span>
-        </h1>
-
-        <p className="mx-auto max-w-xl text-base sm:text-lg text-muted-foreground mb-10">
-          Curated selection of top-quality products, delivered fast and direct to your
-          door. From electronics to fashion — find it all here.
-        </p>
-
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-          <Link
-            href="/products"
-            className="inline-flex items-center gap-2 rounded-xl bg-[var(--emerald)] px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[var(--emerald)]/25 hover:opacity-90 transition-opacity"
-          >
-            Shop Now
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-          <Link
-            href="/products?sort=price_asc"
-            className="inline-flex items-center gap-2 rounded-xl border border-border bg-background/80 backdrop-blur-sm px-7 py-3.5 text-sm font-semibold text-foreground hover:bg-muted transition-colors"
-          >
-            View Deals
-            <ChevronRight className="h-4 w-4" />
-          </Link>
-        </div>
-
-        {/* Stats row */}
-        <div className="mt-14 grid grid-cols-3 gap-6 sm:gap-8 max-w-lg mx-auto">
-          {[
-            { value: "10K+", label: "Products" },
-            { value: "50K+", label: "Happy Customers" },
-            { value: "4.9★", label: "Average Rating" },
-          ].map((stat) => (
-            <div key={stat.label} className="text-center">
-              <div
-                className="text-2xl sm:text-3xl font-extrabold text-[var(--emerald)]"
-                style={{ fontFamily: "var(--font-heading), system-ui, sans-serif" }}
-              >
-                {stat.value}
-              </div>
-              <div className="text-xs text-muted-foreground mt-0.5">{stat.label}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Section Wrapper
@@ -387,46 +292,56 @@ function CategorySkeleton() {
 export default function HomePage() {
   return (
     <div className="min-h-screen">
-      <HeroSection />
+      <AnimatedHero />
 
-      <Suspense
-        fallback={
-          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
-            <div className="h-8 w-48 rounded bg-muted animate-pulse mb-6" />
-            <CategorySkeleton />
-          </section>
-        }
-      >
-        <CategoriesGrid />
-      </Suspense>
-
-      <Suspense
-        fallback={
-          <section className="py-14 bg-muted/40">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <FadeInSection>
+        <Suspense
+          fallback={
+            <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
               <div className="h-8 w-48 rounded bg-muted animate-pulse mb-6" />
-              <CarouselSkeleton />
-            </div>
-          </section>
-        }
-      >
-        <TrendingNow />
-      </Suspense>
+              <CategorySkeleton />
+            </section>
+          }
+        >
+          <CategoriesGrid />
+        </Suspense>
+      </FadeInSection>
 
-      <TrustBadges />
+      <FadeInSection delay={0.05}>
+        <Suspense
+          fallback={
+            <section className="py-14 bg-muted/40">
+              <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="h-8 w-48 rounded bg-muted animate-pulse mb-6" />
+                <CarouselSkeleton />
+              </div>
+            </section>
+          }
+        >
+          <TrendingNow />
+        </Suspense>
+      </FadeInSection>
 
-      <Suspense
-        fallback={
-          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
-            <div className="h-8 w-48 rounded bg-muted animate-pulse mb-6" />
-            <ProductGridSkeleton count={8} />
-          </section>
-        }
-      >
-        <NewArrivals />
-      </Suspense>
+      <FadeInSection delay={0.05}>
+        <TrustBadges />
+      </FadeInSection>
 
-      <Newsletter />
+      <FadeInSection delay={0.05}>
+        <Suspense
+          fallback={
+            <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
+              <div className="h-8 w-48 rounded bg-muted animate-pulse mb-6" />
+              <ProductGridSkeleton count={8} />
+            </section>
+          }
+        >
+          <NewArrivals />
+        </Suspense>
+      </FadeInSection>
+
+      <FadeInSection delay={0.05}>
+        <Newsletter />
+      </FadeInSection>
     </div>
   );
 }
