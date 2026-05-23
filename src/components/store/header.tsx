@@ -40,7 +40,7 @@ export function StoreHeader() {
   const router = useRouter();
   const pathname = usePathname();
   const { data: session } = useSession();
-  const { getTotalItems, openCart, toggleCart } = useCartStore();
+  const { getTotalItems, toggleCart } = useCartStore();
 
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -49,6 +49,7 @@ export function StoreHeader() {
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [wishlistCount] = useState(0);
+  const [announcementVisible, setAnnouncementVisible] = useState(true);
 
   const categoryRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -63,9 +64,13 @@ export function StoreHeader() {
   }, []);
 
   useEffect(() => {
-    setMobileOpen(false);
-    setCategoryOpen(false);
-    setUserMenuOpen(false);
+    const id = window.requestAnimationFrame(() => {
+      setMobileOpen(false);
+      setCategoryOpen(false);
+      setUserMenuOpen(false);
+    });
+
+    return () => window.cancelAnimationFrame(id);
   }, [pathname]);
 
   useEffect(() => {
@@ -104,6 +109,32 @@ export function StoreHeader() {
             : "bg-background border-b border-transparent"
         )}
       >
+        {/* Announcement bar */}
+        {announcementVisible && (
+          <div
+            className="relative flex items-center justify-center gap-2 px-10 py-2 text-[13px] font-medium text-white"
+            style={{
+              background: "linear-gradient(90deg, oklch(0.45 0.18 155) 0%, oklch(0.50 0.20 185) 50%, oklch(0.45 0.18 155) 100%)",
+            }}
+          >
+            <span
+              className="inline-block h-1.5 w-1.5 rounded-full bg-white/80 animate-pulse"
+              aria-hidden="true"
+            />
+            Free shipping on orders over $50 — Flash sale on now!{" "}
+            <Link href="/products?sale=true" className="font-bold underline underline-offset-2 hover:no-underline">
+              Shop deals
+            </Link>
+            <button
+              onClick={() => setAnnouncementVisible(false)}
+              aria-label="Dismiss announcement"
+              className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-0.5 opacity-70 hover:opacity-100 transition-opacity"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        )}
+
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center gap-4">
             {/* Logo */}
@@ -212,6 +243,7 @@ export function StoreHeader() {
               {/* Wishlist */}
               <Link
                 href="/account/wishlist"
+                prefetch={false}
                 className="relative flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                 aria-label={`Wishlist${wishlistCount > 0 ? `, ${wishlistCount} items` : ""}`}
               >
@@ -473,8 +505,8 @@ export function StoreHeader() {
         </div>
       </header>
 
-      {/* Spacer to offset fixed header */}
-      <div className="h-16" aria-hidden="true" />
+      {/* Spacer to offset fixed header (nav 64px + announcement bar ~36px) */}
+      <div className={cn("transition-all duration-300", announcementVisible ? "h-[100px]" : "h-16")} aria-hidden="true" />
     </>
   );
 }

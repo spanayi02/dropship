@@ -44,7 +44,26 @@
       "Bash(git push:*)",
       "Bash(npx vercel:*)",
       "Bash(npm i:*)",
-      "Bash(sudo npm:*)"
+      "Bash(sudo npm:*)",
+      "mcp__claude_ai_Supabase__list_projects",
+      "mcp__claude_ai_Supabase__execute_sql",
+      "mcp__claude_ai_Supabase__get_project_url",
+      "Bash(vercel env:*)",
+      "Read(//Users/styllachios/**)",
+      "Read(//Users/styllachios/.vercel/**)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(''''token found'''' if d.get\\(''''token''''\\) else ''''no token''''\\)\")",
+      "Bash(vercel --version)",
+      "Bash(npm --version)",
+      "Bash(npm config:*)",
+      "Bash(find /Users/styllachios/Work/BIZ/dropship -name *.env* -type f)",
+      "Bash(find /Users/styllachios/Work/BIZ/dropship/src/app -type f -name *sign* -o -name *register* -o -name *auth*)",
+      "Bash(ls -la \"/Users/styllachios/Work/BIZ/dropship/src/app/\\(store\\)/register/page.tsx\")",
+      "Bash(cat \"/Users/styllachios/Work/BIZ/dropship/src/app/\\(store\\)/register/page.tsx\")",
+      "Bash(git rm:*)",
+      "Bash(DATABASE_URL=\"postgresql://postgres.kjkrpkoupygzqtutpfmn:tnZTm6h8fFhpa1k5@aws-1-eu-central-1.pooler.supabase.com:5432/postgres\" npx prisma migrate deploy 2>&1)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(d[''''data''''][''''accessToken'''']\\)\")",
+      "Bash(TOKEN=\"API@CJ5295548@CJ:eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIzNDc5MSIsInR5cGUiOiJBQ0NFU1NfVE9LRU4iLCJzdWIiOiJicUxvYnFRMGxtTm55UXB4UFdMWnl2Q3lNR3ByU2N0NW9CNERpMFpOU0NnZnJCNzdmRExPUXhOMkdyV3BldGV4c05jakVvRmFsYXZBdWF2TUs4TDByQlRQVGlhNFlhRTNodkQ3bEdQOERneFVOV3k1ZC92cVJ1SElkc3F3SzAyYVR4dUZaT01vNkZyNFUwemQra05pcStHbWNWck85VkVQU2M4Z0tJNXhTYXV3ZlBGaGtQdWRBQUkySGhKWVQ2SkVhS21sbXN3RnNhdERIY2NHM3BnNWo4TTRtb1FCbDlJUmttcldoUmJmTldHZ3VjMVBqSWk4WXRFeE9SaFR3Y1J3TU4ydUtEbXZ6MXIvdmtGMzY2NlpFYzExNE41anRuWk9TZ3oyT3FERVRnbmRDbCtER3RmNjNXSUFTOHVrK2M2eiIsImlhdCI6MTc3NTMxNDQ4N30.QgCVfTY2nQxl1u2RRUftXHD2KYOmwXr38dRNbXglUcM\" __NEW_LINE_68b5cc5e2e74e455__ curl -s \"https://developers.cjdropshipping.com/api2.0/v1/product/query?pid=1737828106674647040\" --header \"CJ-Access-Token: $TOKEN\")",
+      "Bash(python3 -m json.tool)"
     ]
   }
 }

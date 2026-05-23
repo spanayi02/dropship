@@ -22,6 +22,14 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "placehold.co" },
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
+      // CJ Dropshipping CDNs
+      { protocol: "https", hostname: "oss-cf.cjdropshipping.com" },
+      { protocol: "https", hostname: "cjdropshipping.com" },
+      { protocol: "https", hostname: "**.cjdropshipping.com" },
+      // AliExpress CDNs
+      { protocol: "https", hostname: "**.aliexpress.com" },
+      { protocol: "https", hostname: "**.alicdn.com" },
+      { protocol: "https", hostname: "ae01.alicdn.com" },
     ],
   },
   experimental: {

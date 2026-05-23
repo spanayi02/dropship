@@ -29,16 +29,22 @@ function SectionHeader({
   viewAllLabel?: string;
 }) {
   return (
-    <div className="flex items-end justify-between mb-6">
-      <h2
-        className="text-2xl sm:text-3xl font-bold tracking-tight"
-        style={{ fontFamily: "var(--font-heading), system-ui, sans-serif" }}
-      >
-        {title}
-      </h2>
+    <div className="flex items-end justify-between mb-8">
+      <div>
+        <div className="flex items-center gap-2 mb-2">
+          <span className="inline-block h-1 w-8 rounded-full bg-[var(--emerald)]" />
+          <span className="inline-block h-1 w-3 rounded-full bg-[var(--emerald)]/40" />
+        </div>
+        <h2
+          className="text-2xl sm:text-3xl font-extrabold tracking-tight"
+          style={{ fontFamily: "var(--font-heading), system-ui, sans-serif" }}
+        >
+          {title}
+        </h2>
+      </div>
       <Link
         href={viewAllHref}
-        className="flex items-center gap-1 text-sm font-medium text-[var(--emerald)] hover:underline transition-colors"
+        className="flex items-center gap-1.5 text-sm font-semibold text-[var(--emerald)] border border-[var(--emerald)]/30 rounded-lg px-3 py-1.5 hover:bg-[var(--emerald)]/10 transition-colors"
       >
         {viewAllLabel}
         <ArrowRight className="h-3.5 w-3.5" />
@@ -65,11 +71,11 @@ async function CategoriesGrid() {
     <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
       <SectionHeader title="Shop by Category" viewAllHref="/products" viewAllLabel="All Categories" />
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-        {categories.map((cat, index) => (
+        {categories.map((cat) => (
           <Link
             key={cat.id}
             href={`/products?category=${cat.slug}`}
-            className="group relative flex flex-col items-center rounded-2xl border border-border bg-card overflow-hidden hover:shadow-md transition-shadow duration-200"
+            className="group relative flex flex-col items-center rounded-2xl overflow-hidden border border-border hover:border-[var(--emerald)]/40 hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
           >
             <div className="relative w-full aspect-square overflow-hidden bg-muted">
               <Image
@@ -77,13 +83,18 @@ async function CategoriesGrid() {
                 alt={cat.name}
                 fill
                 sizes="(min-width: 1024px) 20vw, (min-width: 640px) 33vw, 50vw"
-                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                className="object-cover transition-transform duration-500 group-hover:scale-110"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+              {/* Gradient overlay — stronger at bottom */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+              {/* Subtle emerald tint on hover */}
+              <div className="absolute inset-0 bg-[var(--emerald)]/0 group-hover:bg-[var(--emerald)]/15 transition-colors duration-300" />
             </div>
             <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
-              <p className="text-sm font-semibold leading-tight">{cat.name}</p>
-              <p className="text-xs opacity-80 mt-0.5">{cat._count.products} products</p>
+              <p className="text-sm font-bold leading-tight">{cat.name}</p>
+              <span className="inline-block mt-1 rounded-full bg-white/20 backdrop-blur-sm px-2 py-0.5 text-[10px] font-medium text-white/90">
+                {cat._count.products} items
+              </span>
             </div>
           </Link>
         ))}
@@ -109,9 +120,9 @@ async function TrendingNow() {
   if (products.length === 0) return null;
 
   return (
-    <section className="py-14 bg-muted/40">
+    <section className="py-14" style={{ background: "linear-gradient(180deg, var(--muted) 0%, transparent 100%)" }}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <SectionHeader title="Trending Now" viewAllHref="/products?sort=best_selling" />
+        <SectionHeader title="Trending Now 🔥" viewAllHref="/products?sort=best_selling" />
       </div>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-none -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
@@ -165,38 +176,46 @@ function TrustBadges() {
       icon: Truck,
       title: "Free Shipping",
       subtitle: "On orders over $50",
+      iconBg: "bg-sky-500/10",
+      iconColor: "text-sky-500",
     },
     {
       icon: ShieldCheck,
       title: "Secure Payment",
       subtitle: "256-bit SSL encryption",
+      iconBg: "bg-[var(--emerald)]/10",
+      iconColor: "text-[var(--emerald)]",
     },
     {
       icon: RotateCcw,
       title: "Easy Returns",
       subtitle: "30-day return policy",
+      iconBg: "bg-amber-500/10",
+      iconColor: "text-amber-500",
     },
     {
       icon: Headphones,
       title: "24/7 Support",
       subtitle: "Always here to help",
+      iconBg: "bg-violet-500/10",
+      iconColor: "text-violet-500",
     },
   ];
 
   return (
     <section className="border-y border-border bg-card">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
           {badges.map((badge) => (
             <div
               key={badge.title}
               className="flex flex-col sm:flex-row items-center sm:items-start gap-3 text-center sm:text-left"
             >
-              <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-[var(--emerald)]/10">
-                <badge.icon className="h-5 w-5 text-[var(--emerald)]" />
+              <div className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl ${badge.iconBg}`}>
+                <badge.icon className={`h-5 w-5 ${badge.iconColor}`} />
               </div>
-              <div>
-                <p className="text-sm font-semibold text-foreground">{badge.title}</p>
+              <div className="pt-0.5">
+                <p className="text-sm font-bold text-foreground">{badge.title}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">{badge.subtitle}</p>
               </div>
             </div>
@@ -213,34 +232,47 @@ function TrustBadges() {
 function Newsletter() {
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
-      <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-[var(--emerald)]/15 via-background to-background border border-[var(--emerald)]/20 px-6 py-12 sm:px-12 text-center">
+      <div
+        className="relative rounded-3xl overflow-hidden px-6 py-14 sm:px-14 text-center text-white"
+        style={{ background: "oklch(0.12 0.04 155)" }}
+      >
+        {/* Background grid */}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 z-0"
           style={{
             backgroundImage: `
-              linear-gradient(to right, var(--border) 1px, transparent 1px),
-              linear-gradient(to bottom, var(--border) 1px, transparent 1px)
+              linear-gradient(to right, oklch(1 0 0 / 6%) 1px, transparent 1px),
+              linear-gradient(to bottom, oklch(1 0 0 / 6%) 1px, transparent 1px)
             `,
             backgroundSize: "40px 40px",
-            opacity: 0.4,
           }}
         />
+        {/* Glow */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 h-64 w-64 rounded-full blur-[80px]"
+          style={{ background: "oklch(0.55 0.20 155 / 40%)" }}
+        />
         <div className="relative z-10">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/8 px-3 py-1 text-xs font-semibold text-white/80 mb-5"
+            style={{ backgroundColor: "oklch(1 0 0 / 8%)" }}>
+            Exclusive offers
+          </span>
           <h2
-            className="text-2xl sm:text-3xl font-bold mb-3"
+            className="text-2xl sm:text-3xl font-extrabold mb-3 text-white"
             style={{ fontFamily: "var(--font-heading), system-ui, sans-serif" }}
           >
-            Stay in the loop
+            Get deals before everyone else
           </h2>
-          <p className="text-muted-foreground mb-8 max-w-md mx-auto text-sm sm:text-base">
-            Get notified about new products, exclusive deals, and early access to sales.
+          <p className="mb-8 max-w-md mx-auto text-sm sm:text-base" style={{ color: "oklch(0.80 0 0)" }}>
+            Join 50,000+ shoppers. Get exclusive deals, new arrivals, and early access to sales.
             No spam, ever.
           </p>
           <SubscribeForm />
-          <p className="text-xs text-muted-foreground mt-4">
+          <p className="text-xs mt-4" style={{ color: "oklch(0.60 0 0)" }}>
             By subscribing you agree to our{" "}
-            <Link href="/privacy" className="underline hover:text-foreground transition-colors">
+            <Link href="/privacy" className="underline hover:text-white transition-colors">
               privacy policy
             </Link>
             .
