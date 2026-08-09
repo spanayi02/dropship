@@ -3,9 +3,10 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingCart, Star, Check } from "lucide-react";
+import { ShoppingCart, Star, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn, formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/store/cart-store";
+import { WishlistButton } from "@/components/store/wishlist-button";
 
 export interface ProductCardProduct {
   id: string;
@@ -61,14 +62,30 @@ function StarRating({ rating, count }: { rating: number; count: number }) {
 export function ProductCard({ product, className }: ProductCardProps) {
   const { addItem, openCart } = useCartStore();
   const [added, setAdded] = useState(false);
+  const [imageIndex, setImageIndex] = useState(0);
 
   const avgRating =
     product.reviews.length > 0
       ? product.reviews.reduce((sum, r) => sum + r.rating, 0) / product.reviews.length
       : 0;
 
-  const primaryImage =
-    product.images[0] ?? `https://picsum.photos/seed/${product.id}/400/400`;
+  const images =
+    product.images.length > 0
+      ? product.images
+      : [`https://picsum.photos/seed/${product.id}/400/400`];
+  const activeImage = images[imageIndex];
+
+  function showPrevImage(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    setImageIndex((i) => (i - 1 + images.length) % images.length);
+  }
+
+  function showNextImage(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    setImageIndex((i) => (i + 1) % images.length);
+  }
 
   const isNew =
     product.createdAt != null &&
@@ -90,7 +107,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
       productId: product.id,
       title: product.title,
       price: product.sellingPrice,
-      image: primaryImage,
+      image: images[0],
       slug: product.slug,
     });
     openCart();
@@ -120,20 +137,58 @@ export function ProductCard({ product, className }: ProductCardProps) {
         )}
       </div>
 
+      {/* Wishlist */}
+      <WishlistButton
+        productId={product.id}
+        className="absolute top-2 right-2 z-10 h-8 w-8 rounded-lg bg-background/90 backdrop-blur-sm border-transparent shadow-sm"
+      />
+
       {/* Image */}
       <Link
         href={`/products/${product.slug}`}
         className="relative block aspect-square overflow-hidden bg-muted"
-        tabIndex={-1}
-        aria-hidden="true"
       >
         <Image
-          src={primaryImage}
+          src={activeImage}
           alt={product.title}
           fill
           sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
           className="object-cover transition-transform duration-300 group-hover:scale-105"
         />
+
+        {images.length > 1 && (
+          <>
+            <div className="pointer-events-none absolute inset-0 flex items-center justify-between p-1.5 opacity-0 transition-opacity group-hover:opacity-100">
+              <button
+                type="button"
+                onClick={showPrevImage}
+                aria-label="Previous image"
+                className="pointer-events-auto flex h-6 w-6 items-center justify-center rounded-full bg-background/90 text-foreground shadow-sm"
+              >
+                <ChevronLeft className="h-3.5 w-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={showNextImage}
+                aria-label="Next image"
+                className="pointer-events-auto flex h-6 w-6 items-center justify-center rounded-full bg-background/90 text-foreground shadow-sm"
+              >
+                <ChevronRight className="h-3.5 w-3.5" />
+              </button>
+            </div>
+            <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1">
+              {images.map((_, i) => (
+                <span
+                  key={i}
+                  className={cn(
+                    "h-1 rounded-full bg-white/70 shadow-sm transition-all",
+                    i === imageIndex ? "w-3 bg-white" : "w-1"
+                  )}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </Link>
 
       {/* Body */}

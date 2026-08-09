@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { formatPrice, cn } from "@/lib/utils";
 import { buttonVariants } from "@/lib/button-variants";
+import { OrderTracking } from "@/components/ui/order-tracking";
 import type { OrderStatus, SupplierOrderStatus } from "@prisma/client";
 
 export const dynamic = 'force-dynamic';
@@ -37,6 +38,23 @@ const SUPPLIER_STATUS_LABELS: Record<SupplierOrderStatus, string> = {
 };
 
 const TIMELINE_STEPS: OrderStatus[] = ["PENDING", "PROCESSING", "SHIPPED", "DELIVERED"];
+
+const TIMELINE_LABELS: Record<OrderStatus, string> = {
+  PENDING: "Order placed",
+  PROCESSING: "Processing",
+  SHIPPED: "Shipped",
+  DELIVERED: "Delivered",
+  CANCELLED: "Cancelled",
+};
+
+function formatDateTime(date: Date): string {
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
 
 export default async function OrderDetailPage({ params }: OrderDetailPageProps) {
   const { id } = await params;
@@ -120,53 +138,21 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
       {/* Timeline */}
       {order.status !== "CANCELLED" && (
         <section className="rounded-xl border border-border bg-card p-6">
-          <h2 className="mb-5 text-sm font-semibold">Order status</h2>
-          <div className="relative flex items-center">
-            {/* Background line */}
-            <div className="absolute top-4 left-4 right-4 h-0.5 bg-border" />
-            {/* Progress line */}
-            {currentStepIndex > 0 && (
-              <div
-                className="absolute top-4 left-4 h-0.5 bg-primary transition-all"
-                style={{
-                  width: `${(currentStepIndex / (TIMELINE_STEPS.length - 1)) * (100 - (8 / TIMELINE_STEPS.length) * 100)}%`,
-                  maxWidth: "calc(100% - 2rem)",
-                }}
-              />
-            )}
-            {TIMELINE_STEPS.map((s, idx) => {
-              const isDone = idx <= currentStepIndex;
-              const isActive = idx === currentStepIndex;
-              return (
-                <div key={s} className="relative flex flex-1 flex-col items-center gap-2">
-                  <div
-                    className={[
-                      "relative z-10 flex h-8 w-8 items-center justify-center rounded-full border-2 transition-colors",
-                      isDone
-                        ? "border-primary bg-primary text-primary-foreground"
-                        : "border-border bg-background text-muted-foreground",
-                    ].join(" ")}
-                  >
-                    {isDone ? (
-                      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                    ) : (
-                      <span className="text-xs">{idx + 1}</span>
-                    )}
-                  </div>
-                  <span
-                    className={[
-                      "text-center text-xs",
-                      isActive ? "font-semibold text-foreground" : isDone ? "text-foreground" : "text-muted-foreground",
-                    ].join(" ")}
-                  >
-                    {STATUS_LABELS[s]}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
+          <h2 className="mb-4 text-sm font-semibold">Order status</h2>
+          <OrderTracking
+            steps={TIMELINE_STEPS.map((s, idx) => ({
+              name: TIMELINE_LABELS[s],
+              isCompleted: idx <= currentStepIndex,
+              timestamp:
+                idx === 0
+                  ? formatDateTime(order.createdAt)
+                  : idx === currentStepIndex
+                    ? formatDateTime(order.updatedAt)
+                    : idx < currentStepIndex
+                      ? "Completed"
+                      : "Pending",
+            }))}
+          />
         </section>
       )}
 

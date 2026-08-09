@@ -1,139 +1,163 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, ChevronRight } from "lucide-react";
+import { ArrowRight, Truck, Star } from "lucide-react";
+
+export interface HeroProduct {
+  id: string;
+  title: string;
+  slug: string;
+  images: string[];
+}
+
+interface AnimatedHeroProps {
+  products: HeroProduct[];
+  avgRating: number;
+  reviewCount: number;
+  productCount: number;
+}
 
 const container = {
   hidden: {},
   show: {
     transition: {
-      staggerChildren: 0.1,
+      staggerChildren: 0.08,
     },
   },
 };
 
 const item = {
-  hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } },
+  hidden: { opacity: 0, y: 16 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
+  },
 };
 
-const STATS = [
-  { value: "10K+", label: "Products" },
-  { value: "50K+", label: "Happy Customers" },
-  { value: "4.9★", label: "Average Rating" },
+const FALLBACK_IMAGES = [
+  "https://picsum.photos/seed/hero-main/800/1000",
+  "https://picsum.photos/seed/hero-sub1/600/600",
+  "https://picsum.photos/seed/hero-sub2/600/600",
 ];
 
-export function AnimatedHero() {
+export function AnimatedHero({ products, avgRating, reviewCount, productCount }: AnimatedHeroProps) {
+  const images = [0, 1, 2].map(
+    (i) => products[i]?.images[0] ?? FALLBACK_IMAGES[i]
+  );
+  const mainProduct = products[0];
+  const productHref = mainProduct ? `/products/${mainProduct.slug}` : "/products";
+
   return (
-    <section className="relative overflow-hidden bg-background">
-      {/* Grid pattern */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0"
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, var(--border) 1px, transparent 1px),
-            linear-gradient(to bottom, var(--border) 1px, transparent 1px)
-          `,
-          backgroundSize: "64px 64px",
-          maskImage:
-            "radial-gradient(ellipse 80% 70% at 50% 50%, black 40%, transparent 100%)",
-          opacity: 0.5,
-        }}
-      />
-      {/* Glow blob */}
-      <motion.div
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 h-96 w-96 rounded-full blur-3xl bg-[var(--emerald)]"
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 0.2, scale: 1 }}
-        transition={{ duration: 1.2, ease: "easeOut" }}
-      />
+    <section className="relative overflow-hidden bg-background border-b border-border">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
+        <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
+          {/* Copy column */}
+          <motion.div variants={container} initial="hidden" animate="show">
+            <motion.div variants={item} className="flex items-center gap-2.5 mb-6">
+              <span className="h-px w-8 bg-[var(--emerald)]" aria-hidden="true" />
+              <span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                WishlistAZ
+              </span>
+            </motion.div>
 
-      <motion.div
-        className="relative z-10 mx-auto max-w-5xl px-4 py-24 sm:py-32 text-center"
-        variants={container}
-        initial="hidden"
-        animate="show"
-      >
-        {/* Badge */}
-        <motion.span
-          variants={item}
-          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted px-3 py-1 text-xs font-medium text-muted-foreground mb-6"
-        >
-          <span className="h-1.5 w-1.5 rounded-full bg-[var(--emerald)] animate-pulse" />
-          New arrivals every week
-        </motion.span>
+            <motion.h1
+              variants={item}
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05] mb-6 text-foreground"
+              style={{ fontFamily: "var(--font-heading), system-ui, sans-serif" }}
+            >
+              Good finds,
+              <br />
+              <span className="italic font-medium">without the search.</span>
+            </motion.h1>
 
-        {/* Heading */}
-        <motion.h1
-          variants={item}
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.08] mb-6"
-          style={{ fontFamily: "var(--font-heading), system-ui, sans-serif" }}
-        >
-          Discover Products{" "}
-          <span
-            className="bg-clip-text text-transparent"
-            style={{
-              backgroundImage:
-                "linear-gradient(135deg, var(--emerald) 0%, oklch(0.65 0.18 200) 50%, oklch(0.60 0.20 260) 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-            }}
-          >
-            You&apos;ll Love
-          </span>
-        </motion.h1>
+            <motion.p
+              variants={item}
+              className="max-w-md text-base sm:text-lg text-muted-foreground mb-8 leading-relaxed"
+            >
+              We sort through the noise so you don&apos;t have to — a tight
+              selection of quality products, priced fairly and shipped fast.
+            </motion.p>
 
-        {/* Subtitle */}
-        <motion.p
-          variants={item}
-          className="mx-auto max-w-xl text-base sm:text-lg text-muted-foreground mb-10"
-        >
-          Curated selection of top-quality products, delivered fast and direct to your
-          door. From electronics to fashion — find it all here.
-        </motion.p>
-
-        {/* Buttons */}
-        <motion.div
-          variants={item}
-          className="flex flex-col sm:flex-row items-center justify-center gap-3"
-        >
-          <Link
-            href="/products"
-            className="inline-flex items-center gap-2 rounded-xl bg-[var(--emerald)] px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[var(--emerald)]/25 hover:opacity-90 transition-opacity"
-          >
-            Shop Now
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-          <Link
-            href="/products?sort=price_asc"
-            className="inline-flex items-center gap-2 rounded-xl border border-border bg-background/80 backdrop-blur-sm px-7 py-3.5 text-sm font-semibold text-foreground hover:bg-muted transition-colors"
-          >
-            View Deals
-            <ChevronRight className="h-4 w-4" />
-          </Link>
-        </motion.div>
-
-        {/* Stats */}
-        <motion.div
-          variants={item}
-          className="mt-14 grid grid-cols-3 gap-6 sm:gap-8 max-w-lg mx-auto"
-        >
-          {STATS.map((stat) => (
-            <div key={stat.label} className="text-center">
-              <div
-                className="text-2xl sm:text-3xl font-extrabold text-[var(--emerald)]"
-                style={{ fontFamily: "var(--font-heading), system-ui, sans-serif" }}
+            <motion.div variants={item} className="flex flex-wrap items-center gap-3 mb-10">
+              <Link
+                href="/products"
+                className="inline-flex items-center gap-2 rounded-lg bg-[var(--emerald)] px-6 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
-                {stat.value}
-              </div>
-              <div className="text-xs text-muted-foreground mt-0.5">{stat.label}</div>
+                Shop the collection
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                href="/products?sort=price_asc"
+                className="inline-flex items-center gap-2 rounded-lg border border-border px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+              >
+                Browse deals
+              </Link>
+            </motion.div>
+
+            <motion.div
+              variants={item}
+              className="flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-border pt-6 text-sm text-muted-foreground"
+            >
+              <span className="font-medium text-foreground">{productCount}+ products</span>
+              {reviewCount > 0 && (
+                <span className="flex items-center gap-1.5">
+                  <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                  <span className="font-medium text-foreground">{avgRating.toFixed(1)}</span>
+                  from {reviewCount} reviews
+                </span>
+              )}
+              <span className="flex items-center gap-1.5">
+                <Truck className="h-3.5 w-3.5" />
+                Free shipping over $50
+              </span>
+            </motion.div>
+          </motion.div>
+
+          {/* Image collage */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.97 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="relative mx-auto w-full max-w-sm lg:max-w-none"
+          >
+            <Link
+              href={productHref}
+              className="relative block aspect-[4/5] w-full overflow-hidden rounded-2xl border border-border bg-muted shadow-sm"
+            >
+              <Image
+                src={images[0]}
+                alt={mainProduct?.title ?? "Featured product"}
+                fill
+                priority
+                sizes="(min-width: 1024px) 40vw, 80vw"
+                className="object-cover"
+              />
+            </Link>
+
+            <div className="absolute -left-6 -bottom-8 h-28 w-28 sm:h-32 sm:w-32 overflow-hidden rounded-xl border-4 border-background shadow-lg rotate-[-6deg]">
+              <Image
+                src={images[1]}
+                alt={products[1]?.title ?? "Product"}
+                fill
+                sizes="128px"
+                className="object-cover"
+              />
             </div>
-          ))}
-        </motion.div>
-      </motion.div>
+            <div className="absolute -right-4 top-10 h-24 w-24 sm:h-28 sm:w-28 overflow-hidden rounded-xl border-4 border-background shadow-lg rotate-[5deg] hidden sm:block">
+              <Image
+                src={images[2]}
+                alt={products[2]?.title ?? "Product"}
+                fill
+                sizes="112px"
+                className="object-cover"
+              />
+            </div>
+          </motion.div>
+        </div>
+      </div>
     </section>
   );
 }

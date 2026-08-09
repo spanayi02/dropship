@@ -10,7 +10,6 @@ import {
 } from "lucide-react";
 import { db } from "@/lib/db";
 import { ProductCard, ProductCardSkeleton } from "@/components/store/product-card";
-import { SubscribeForm } from "@/components/store/subscribe-form";
 import { AnimatedHero } from "@/components/store/animated-hero";
 import { FadeInSection } from "@/components/store/fade-in-section";
 
@@ -208,50 +207,6 @@ function TrustBadges() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Newsletter
-// ─────────────────────────────────────────────────────────────────────────────
-function Newsletter() {
-  return (
-    <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
-      <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-[var(--emerald)]/15 via-background to-background border border-[var(--emerald)]/20 px-6 py-12 sm:px-12 text-center">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-0"
-          style={{
-            backgroundImage: `
-              linear-gradient(to right, var(--border) 1px, transparent 1px),
-              linear-gradient(to bottom, var(--border) 1px, transparent 1px)
-            `,
-            backgroundSize: "40px 40px",
-            opacity: 0.4,
-          }}
-        />
-        <div className="relative z-10">
-          <h2
-            className="text-2xl sm:text-3xl font-bold mb-3"
-            style={{ fontFamily: "var(--font-heading), system-ui, sans-serif" }}
-          >
-            Stay in the loop
-          </h2>
-          <p className="text-muted-foreground mb-8 max-w-md mx-auto text-sm sm:text-base">
-            Get notified about new products, exclusive deals, and early access to sales.
-            No spam, ever.
-          </p>
-          <SubscribeForm />
-          <p className="text-xs text-muted-foreground mt-4">
-            By subscribing you agree to our{" "}
-            <Link href="/privacy" className="underline hover:text-foreground transition-colors">
-              privacy policy
-            </Link>
-            .
-          </p>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
 // Skeleton fallbacks
 // ─────────────────────────────────────────────────────────────────────────────
 function ProductGridSkeleton({ count = 8 }: { count?: number }) {
@@ -289,10 +244,37 @@ function CategorySkeleton() {
 // ─────────────────────────────────────────────────────────────────────────────
 // Page
 // ─────────────────────────────────────────────────────────────────────────────
-export default function HomePage() {
+async function getHeroData() {
+  const [heroProducts, reviewAgg, productCount] = await Promise.all([
+    db.product.findMany({
+      where: { isActive: true, images: { isEmpty: false } },
+      orderBy: { orderItems: { _count: "desc" } },
+      take: 3,
+      select: { id: true, title: true, slug: true, images: true },
+    }),
+    db.review.aggregate({ _avg: { rating: true }, _count: { rating: true } }),
+    db.product.count({ where: { isActive: true } }),
+  ]);
+
+  return {
+    heroProducts,
+    avgRating: reviewAgg._avg.rating ?? 0,
+    reviewCount: reviewAgg._count.rating,
+    productCount,
+  };
+}
+
+export default async function HomePage() {
+  const { heroProducts, avgRating, reviewCount, productCount } = await getHeroData();
+
   return (
     <div className="min-h-screen">
-      <AnimatedHero />
+      <AnimatedHero
+        products={heroProducts}
+        avgRating={avgRating}
+        reviewCount={reviewCount}
+        productCount={productCount}
+      />
 
       <FadeInSection>
         <Suspense
@@ -337,10 +319,6 @@ export default function HomePage() {
         >
           <NewArrivals />
         </Suspense>
-      </FadeInSection>
-
-      <FadeInSection delay={0.05}>
-        <Newsletter />
       </FadeInSection>
     </div>
   );
