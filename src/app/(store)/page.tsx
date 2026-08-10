@@ -12,6 +12,8 @@ import { db } from "@/lib/db";
 import { ProductCard, ProductCardSkeleton } from "@/components/store/product-card";
 import { AnimatedHero } from "@/components/store/animated-hero";
 import { FadeInSection } from "@/components/store/fade-in-section";
+import { StaggerGrid, StaggerItem } from "@/components/store/stagger-grid";
+import { Testimonials } from "@/components/store/testimonials";
 
 export const dynamic = 'force-dynamic';
 
@@ -63,30 +65,31 @@ async function CategoriesGrid() {
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
       <SectionHeader title="Shop by Category" viewAllHref="/products" viewAllLabel="All Categories" />
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-        {categories.map((cat, index) => (
-          <Link
-            key={cat.id}
-            href={`/products?category=${cat.slug}`}
-            className="group relative flex flex-col items-center rounded-2xl border border-border bg-card overflow-hidden hover:shadow-md transition-shadow duration-200"
-          >
-            <div className="relative w-full aspect-square overflow-hidden bg-muted">
-              <Image
-                src={cat.image ?? `https://picsum.photos/seed/${cat.slug}/300/300`}
-                alt={cat.name}
-                fill
-                sizes="(min-width: 1024px) 20vw, (min-width: 640px) 33vw, 50vw"
-                className="object-cover transition-transform duration-300 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-            </div>
-            <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
-              <p className="text-sm font-semibold leading-tight">{cat.name}</p>
-              <p className="text-xs opacity-80 mt-0.5">{cat._count.products} products</p>
-            </div>
-          </Link>
+      <StaggerGrid className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+        {categories.map((cat) => (
+          <StaggerItem key={cat.id}>
+            <Link
+              href={`/products?category=${cat.slug}`}
+              className="group relative flex flex-col items-center rounded-2xl border border-border bg-card overflow-hidden hover:shadow-md transition-shadow duration-200"
+            >
+              <div className="relative w-full aspect-square overflow-hidden bg-muted">
+                <Image
+                  src={cat.image ?? `https://picsum.photos/seed/${cat.slug}/300/300`}
+                  alt={cat.name}
+                  fill
+                  sizes="(min-width: 1024px) 20vw, (min-width: 640px) 33vw, 50vw"
+                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
+                <p className="text-sm font-semibold leading-tight">{cat.name}</p>
+                <p className="text-xs opacity-80 mt-0.5">{cat._count.products} products</p>
+              </div>
+            </Link>
+          </StaggerItem>
         ))}
-      </div>
+      </StaggerGrid>
     </section>
   );
 }
@@ -146,11 +149,48 @@ async function NewArrivals() {
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
       <SectionHeader title="New Arrivals" viewAllHref="/products?sort=newest" />
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+      <StaggerGrid className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
         {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <StaggerItem key={product.id}>
+            <ProductCard product={product} />
+          </StaggerItem>
         ))}
-      </div>
+      </StaggerGrid>
+    </section>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Testimonials — pulled from real reviews
+// ─────────────────────────────────────────────────────────────────────────────
+async function ReviewsSection() {
+  const reviews = await db.review.findMany({
+    where: { rating: { gte: 4 }, comment: { not: null } },
+    orderBy: [{ isVerified: "desc" }, { createdAt: "desc" }],
+    take: 6,
+    include: {
+      user: { select: { name: true } },
+      product: { select: { title: true, slug: true } },
+    },
+  });
+
+  if (reviews.length === 0) return null;
+
+  return (
+    <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
+      <SectionHeader title="What customers say" viewAllHref="/products" viewAllLabel="Shop All" />
+      <Testimonials
+        reviews={reviews.map((r) => ({
+          id: r.id,
+          rating: r.rating,
+          title: r.title,
+          comment: r.comment,
+          isVerified: r.isVerified,
+          authorName: r.user.name ?? "Verified buyer",
+          productTitle: r.product.title,
+          productSlug: r.product.slug,
+        }))}
+      />
     </section>
   );
 }
@@ -225,6 +265,20 @@ function CarouselSkeleton({ count = 6 }: { count?: number }) {
       {Array.from({ length: count }).map((_, i) => (
         <div key={i} className="flex-none w-56 sm:w-64">
           <ProductCardSkeleton />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function TestimonialsSkeleton() {
+  return (
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <div key={i} className="rounded-xl border border-border bg-card p-5 space-y-3">
+          <div className="h-4 w-24 rounded bg-muted animate-pulse" />
+          <div className="h-4 w-full rounded bg-muted animate-pulse" />
+          <div className="h-4 w-3/4 rounded bg-muted animate-pulse" />
         </div>
       ))}
     </div>
@@ -318,6 +372,19 @@ export default async function HomePage() {
           }
         >
           <NewArrivals />
+        </Suspense>
+      </FadeInSection>
+
+      <FadeInSection delay={0.05}>
+        <Suspense
+          fallback={
+            <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
+              <div className="h-8 w-48 rounded bg-muted animate-pulse mb-6" />
+              <TestimonialsSkeleton />
+            </section>
+          }
+        >
+          <ReviewsSection />
         </Suspense>
       </FadeInSection>
     </div>
