@@ -1,7 +1,9 @@
 "use client";
 
+import { motion, AnimatePresence } from "framer-motion";
+import NumberFlow from "@number-flow/react";
 import { useCartStore } from "@/store/cart-store";
-import { formatPrice, cn } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -12,6 +14,16 @@ import {
   ArrowRight,
   ShoppingCart,
 } from "lucide-react";
+
+function AnimatedPrice({ cents, className }: { cents: number; className?: string }) {
+  return (
+    <NumberFlow
+      value={cents / 100}
+      format={{ style: "currency", currency: "USD" }}
+      className={className}
+    />
+  );
+}
 
 export function CartDrawer() {
   const { items, isOpen, closeCart, removeItem, updateQuantity, getTotalPrice } =
@@ -105,78 +117,92 @@ export function CartDrawer() {
           ) : (
             /* Cart items */
             <ul className="divide-y divide-border">
-              {items.map((item) => (
-                <li key={item.id} className="flex gap-4 px-6 py-4">
-                  {/* Image */}
-                  <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-muted">
-                    {item.image ? (
-                      <Image
-                        src={item.image}
-                        alt={item.title}
-                        fill
-                        className="object-cover"
-                        sizes="80px"
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center">
-                        <ShoppingBag className="h-6 w-6 text-muted-foreground" />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Details */}
-                  <div className="flex flex-1 flex-col gap-2 min-w-0">
-                    <div className="flex items-start justify-between gap-2">
-                      <Link
-                        href={`/products/${item.slug}`}
-                        onClick={closeCart}
-                        className="text-sm font-medium leading-tight hover:text-[var(--emerald)] transition-colors line-clamp-2"
-                      >
-                        {item.title}
-                      </Link>
-                      <button
-                        onClick={() => removeItem(item.productId)}
-                        className="flex-shrink-0 flex h-6 w-6 items-center justify-center rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-                        aria-label={`Remove ${item.title}`}
-                      >
-                        <X className="h-3.5 w-3.5" />
-                      </button>
+              <AnimatePresence initial={false} mode="popLayout">
+                {items.map((item) => (
+                  <motion.li
+                    key={item.id}
+                    layout
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="flex gap-4 overflow-hidden px-6 py-4"
+                  >
+                    {/* Image */}
+                    <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-muted">
+                      {item.image ? (
+                        <Image
+                          src={item.image}
+                          alt={item.title}
+                          fill
+                          className="object-cover"
+                          sizes="80px"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center">
+                          <ShoppingBag className="h-6 w-6 text-muted-foreground" />
+                        </div>
+                      )}
                     </div>
 
-                    <div className="flex items-center justify-between">
-                      {/* Quantity controls */}
-                      <div className="flex items-center rounded-lg border border-border overflow-hidden">
-                        <button
-                          onClick={() =>
-                            updateQuantity(item.productId, item.quantity - 1)
-                          }
-                          className="flex h-7 w-7 items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-                          aria-label="Decrease quantity"
+                    {/* Details */}
+                    <div className="flex flex-1 flex-col gap-2 min-w-0">
+                      <div className="flex items-start justify-between gap-2">
+                        <Link
+                          href={`/products/${item.slug}`}
+                          onClick={closeCart}
+                          className="text-sm font-medium leading-tight hover:text-[var(--emerald)] transition-colors line-clamp-2"
                         >
-                          <Minus className="h-3 w-3" />
-                        </button>
-                        <span className="flex h-7 w-8 items-center justify-center text-sm font-medium border-x border-border">
-                          {item.quantity}
-                        </span>
-                        <button
-                          onClick={() =>
-                            updateQuantity(item.productId, item.quantity + 1)
-                          }
-                          className="flex h-7 w-7 items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-                          aria-label="Increase quantity"
+                          {item.title}
+                        </Link>
+                        <motion.button
+                          whileTap={{ scale: 0.9 }}
+                          onClick={() => removeItem(item.productId)}
+                          className="flex-shrink-0 flex h-6 w-6 items-center justify-center rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                          aria-label={`Remove ${item.title}`}
                         >
-                          <Plus className="h-3 w-3" />
-                        </button>
+                          <X className="h-3.5 w-3.5" />
+                        </motion.button>
                       </div>
 
-                      {/* Price */}
-                      <span className="text-sm font-semibold text-[var(--emerald)]">
-                        {formatPrice(item.price * item.quantity)}
-                      </span>
+                      <div className="flex items-center justify-between">
+                        {/* Quantity controls */}
+                        <div className="flex items-center rounded-lg border border-border overflow-hidden">
+                          <motion.button
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() =>
+                              updateQuantity(item.productId, item.quantity - 1)
+                            }
+                            className="flex h-7 w-7 items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                            aria-label="Decrease quantity"
+                          >
+                            <Minus className="h-3 w-3" />
+                          </motion.button>
+                          <span className="flex h-7 w-8 items-center justify-center text-sm font-medium border-x border-border tabular-nums">
+                            <NumberFlow value={item.quantity} />
+                          </span>
+                          <motion.button
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() =>
+                              updateQuantity(item.productId, item.quantity + 1)
+                            }
+                            className="flex h-7 w-7 items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                            aria-label="Increase quantity"
+                          >
+                            <Plus className="h-3 w-3" />
+                          </motion.button>
+                        </div>
+
+                        {/* Price */}
+                        <AnimatedPrice
+                          cents={item.price * item.quantity}
+                          className="text-sm font-semibold text-[var(--emerald)] tabular-nums"
+                        />
+                      </div>
                     </div>
-                  </div>
-                </li>
-              ))}
+                  </motion.li>
+                ))}
+              </AnimatePresence>
             </ul>
           )}
         </div>
@@ -187,12 +213,10 @@ export function CartDrawer() {
             {/* Subtotal */}
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">Subtotal</span>
-              <span
-                className="text-lg font-semibold"
-                style={{ fontFamily: "var(--font-plus-jakarta-sans), system-ui, sans-serif" }}
-              >
-                {formatPrice(totalPrice)}
-              </span>
+              <AnimatedPrice
+                cents={totalPrice}
+                className="text-lg font-semibold tabular-nums"
+              />
             </div>
             <p className="text-xs text-muted-foreground">
               Shipping and taxes calculated at checkout.
