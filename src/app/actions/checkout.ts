@@ -11,6 +11,18 @@ import type { CartItem } from "@/store/cart-store";
 const FLAT_SHIPPING_RATE = 499; // cents
 const FREE_SHIPPING_THRESHOLD = 5000; // cents
 
+// Stripe requires product_data.images to be fully-qualified http(s) URLs —
+// reject anything else instead of letting a bad image string fail checkout.
+function asAbsoluteImageUrl(value: string | undefined | null): string | undefined {
+  if (!value) return undefined;
+  try {
+    const url = new URL(value);
+    return url.protocol === "http:" || url.protocol === "https:" ? value : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 export async function createCheckoutSession(
   formData: CheckoutInput,
   cartItems: CartItem[]
@@ -103,7 +115,10 @@ export async function createCheckoutSession(
         currency: "usd",
         product_data: {
           name: cartItem.title,
-          images: cartItem.image ? [cartItem.image] : undefined,
+          images: (() => {
+            const url = asAbsoluteImageUrl(cartItem.image);
+            return url ? [url] : undefined;
+          })(),
         },
         unit_amount: dbPrice,
       },
