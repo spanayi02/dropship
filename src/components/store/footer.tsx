@@ -9,9 +9,9 @@ const SHOP_LINKS = [
 ];
 
 const ACCOUNT_LINKS = [
-  { label: "My Account", href: "/account" },
-  { label: "Orders", href: "/account/orders" },
-  { label: "Wishlist", href: "/account/wishlist" },
+  { label: "My Account", href: "/account", prefetch: false },
+  { label: "Orders", href: "/account/orders", prefetch: false },
+  { label: "Wishlist", href: "/account/wishlist", prefetch: false },
   { label: "Login", href: "/login" },
 ];
 
@@ -87,7 +87,7 @@ const SOCIAL_LINKS = [
 
 interface FooterColumnProps {
   title: string;
-  links: { label: string; href: string }[];
+  links: { label: string; href: string; prefetch?: boolean }[];
 }
 
 function FooterColumn({ title, links }: FooterColumnProps) {
@@ -104,6 +104,7 @@ function FooterColumn({ title, links }: FooterColumnProps) {
           <li key={link.href}>
             <Link
               href={link.href}
+              prefetch={link.prefetch}
               className="text-sm text-muted-foreground hover:text-foreground hover:translate-x-0.5 transition-all duration-200 inline-block"
             >
               {link.label}

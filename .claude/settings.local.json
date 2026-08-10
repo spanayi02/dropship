@@ -44,7 +44,10 @@
       "Bash(git push:*)",
       "Bash(npx vercel:*)",
       "Bash(npm i:*)",
-      "Bash(sudo npm:*)"
+      "Bash(sudo npm:*)",
+      "Bash(git merge *)",
+      "Bash(git checkout *)",
+      "Bash(git rm *)"
     ]
   }
 }
