@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingCart, Star, Check, ChevronLeft, ChevronRight, Zap } from "lucide-react";
+import { ShoppingCart, Star, Check, ChevronLeft, ChevronRight, Zap, Truck } from "lucide-react";
 import { cn, formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/store/cart-store";
 import { WishlistButton } from "@/components/store/wishlist-button";
@@ -63,6 +63,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
   const { addItem, openCart } = useCartStore();
   const [added, setAdded] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
+  const [imageHovered, setImageHovered] = useState(false);
   const [now] = useState(() => Date.now());
 
   const avgRating =
@@ -119,8 +120,8 @@ export function ProductCard({ product, className }: ProductCardProps) {
   return (
     <article
       className={cn(
-        "group relative flex flex-col rounded-2xl border border-border bg-card overflow-hidden",
-        "transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-[var(--emerald)]/30",
+        "group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card",
+        "shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[var(--emerald)]/35 hover:shadow-2xl hover:shadow-emerald/10",
         className
       )}
     >
@@ -129,7 +130,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
         {isSale && (
           <span className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-bold bg-rose-500 text-white shadow-sm shadow-rose-500/30">
             <Zap className="h-2.5 w-2.5" />
-            -{discount}%
+            Save {discount}%
           </span>
         )}
         {isNew && !isSale && (
@@ -146,7 +147,11 @@ export function ProductCard({ product, className }: ProductCardProps) {
       />
 
       {/* Image */}
-      <div className="relative block aspect-square overflow-hidden bg-muted">
+      <div
+        className="relative block aspect-square overflow-hidden bg-gradient-to-br from-muted via-card to-emerald/5"
+        onMouseEnter={() => setImageHovered(true)}
+        onMouseLeave={() => setImageHovered(false)}
+      >
         <Link
           href={`/products/${product.slug}`}
           tabIndex={-1}
@@ -184,13 +189,21 @@ export function ProductCard({ product, className }: ProductCardProps) {
         )}
 
         {/* Quick-add overlay */}
-        <div className="absolute inset-x-0 bottom-0 flex items-center justify-center pb-3 opacity-0 translate-y-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
+        <div
+          className={cn(
+            "absolute inset-x-0 bottom-0 flex items-center justify-center bg-gradient-to-t from-black/55 via-black/15 to-transparent pb-3 pt-10 transition-all duration-300",
+            imageHovered ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
+          )}
+        >
           <button
             onClick={handleAddToCart}
             aria-label={`Add ${product.title} to cart`}
             className={cn(
-              "flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold text-white shadow-lg backdrop-blur-sm transition-all duration-200",
-              added ? "bg-[var(--emerald)] scale-105" : "bg-black/70 hover:bg-[var(--emerald)]"
+              "flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold text-white shadow-lg transition-all duration-200",
+              "backdrop-blur-sm",
+              added
+                ? "bg-[var(--emerald)] scale-105"
+                : "bg-foreground/90 hover:bg-[var(--emerald)]"
             )}
           >
             {added ? (
@@ -210,10 +223,15 @@ export function ProductCard({ product, className }: ProductCardProps) {
 
       {/* Body */}
       <div className="flex flex-1 flex-col gap-2 p-3.5">
+        <span className="inline-flex w-fit items-center gap-1 rounded-full bg-emerald/10 px-2 py-0.5 text-[11px] font-bold text-emerald">
+          <Truck className="h-3 w-3" />
+          Ships free $50+
+        </span>
+
         {/* Title */}
         <Link
           href={`/products/${product.slug}`}
-          className="text-sm font-semibold leading-snug line-clamp-2 hover:text-[var(--emerald)] transition-colors"
+          className="text-sm font-bold leading-snug line-clamp-2 hover:text-[var(--emerald)] transition-colors"
         >
           {product.title}
         </Link>

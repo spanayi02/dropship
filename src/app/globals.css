@@ -51,23 +51,23 @@
 }
 
 :root {
-  --background: oklch(0.99 0 0);
-  --foreground: oklch(0.15 0 0);
+  --background: oklch(0.985 0.012 95);
+  --foreground: oklch(0.17 0.025 250);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.15 0 0);
+  --card-foreground: oklch(0.17 0.025 250);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.15 0 0);
-  --primary: oklch(0.16 0 0);
+  --popover-foreground: oklch(0.17 0.025 250);
+  --primary: oklch(0.22 0.045 250);
   --primary-foreground: oklch(0.98 0 0);
-  --secondary: oklch(0.96 0 0);
-  --secondary-foreground: oklch(0.16 0 0);
-  --muted: oklch(0.96 0 0);
-  --muted-foreground: oklch(0.50 0 0);
-  --accent: oklch(0.96 0 0);
-  --accent-foreground: oklch(0.16 0 0);
+  --secondary: oklch(0.95 0.025 95);
+  --secondary-foreground: oklch(0.22 0.045 250);
+  --muted: oklch(0.95 0.02 100);
+  --muted-foreground: oklch(0.48 0.025 250);
+  --accent: oklch(0.94 0.04 155);
+  --accent-foreground: oklch(0.22 0.045 250);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.90 0 0);
-  --input: oklch(0.90 0 0);
+  --border: oklch(0.88 0.018 95);
+  --input: oklch(0.88 0.018 95);
   --ring: oklch(0.50 0.15 155);
   /* Emerald accent */
   --emerald: oklch(0.53 0.17 155);

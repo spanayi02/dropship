@@ -111,10 +111,19 @@ export function StoreHeader() {
       >
         {/* Announcement bar */}
         {announcementVisible && (
-          <div className="relative flex items-center justify-center gap-2 bg-[var(--emerald)] px-10 py-2 text-[13px] font-medium text-white">
-            Free shipping on orders over $50.{" "}
-            <Link href="/products?sale=true" className="font-semibold underline underline-offset-2 hover:no-underline">
-              Shop current deals
+          <div
+            className="relative flex items-center justify-center gap-2 px-10 py-2 text-[13px] font-medium text-white"
+            style={{
+              background: "linear-gradient(90deg, oklch(0.38 0.16 155) 0%, oklch(0.56 0.20 35) 50%, oklch(0.36 0.16 205) 100%)",
+            }}
+          >
+            <span
+              className="inline-block h-1.5 w-1.5 rounded-full bg-white/80 animate-pulse"
+              aria-hidden="true"
+            />
+            Free shipping on orders over $50 — Flash sale on now!{" "}
+            <Link href="/products?sale=true" className="font-bold underline underline-offset-2 hover:no-underline">
+              Shop deals
             </Link>
             <button
               onClick={() => setAnnouncementVisible(false)}
