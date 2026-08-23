@@ -22,6 +22,7 @@ import { AnimatedHero } from "@/components/store/animated-hero";
 import { FadeInSection } from "@/components/store/fade-in-section";
 import { StaggerGrid, StaggerItem } from "@/components/store/stagger-grid";
 import { Testimonials } from "@/components/store/testimonials";
+import { SubscribeForm } from "@/components/store/subscribe-form";
 
 export const dynamic = 'force-dynamic';
 
@@ -630,6 +631,10 @@ export default async function HomePage() {
         >
           <ReviewsSection />
         </Suspense>
+      </FadeInSection>
+
+      <FadeInSection delay={0.05}>
+        <Newsletter />
       </FadeInSection>
     </div>
   );
