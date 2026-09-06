@@ -73,10 +73,10 @@ export async function generateMetadata({
     select: { title: true, description: true, images: true },
   });
 
-  if (!product) return { title: "Product Not Found | DropShip" };
+  if (!product) return { title: "Product Not Found | WishlistAZ" };
 
   return {
-    title: `${product.title} | DropShip`,
+    title: `${product.title} | WishlistAZ`,
     description: product.description.slice(0, 160),
     openGraph: {
       title: product.title,
@@ -275,7 +275,7 @@ export default async function ProductPage({
               )}
               <h1
                 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight tracking-tight"
-                style={{ fontFamily: "var(--font-heading), system-ui, sans-serif" }}
+                style={{ fontFamily: "var(--font-heading), Georgia, serif" }}
               >
                 {product.title}
               </h1>
@@ -295,7 +295,7 @@ export default async function ProductPage({
                   <div className="mt-1 flex items-baseline gap-3">
                     <span
                       className="text-4xl font-extrabold text-foreground"
-                      style={{ fontFamily: "var(--font-heading), system-ui, sans-serif" }}
+                      style={{ fontFamily: "var(--font-heading), Georgia, serif" }}
                     >
                       {formatPrice(product.sellingPrice)}
                     </span>
@@ -317,11 +317,11 @@ export default async function ProductPage({
                   <Truck className="h-3.5 w-3.5" />
                   Free $50+
                 </span>
-                <span className="inline-flex items-center gap-2 rounded-xl bg-sky-50 px-3 py-2 text-xs font-bold text-sky-700 dark:bg-sky-950/25 dark:text-sky-300">
+                <span className="inline-flex items-center gap-2 rounded-xl bg-muted px-3 py-2 text-xs font-bold text-foreground">
                   <CreditCard className="h-3.5 w-3.5" />
                   Secure pay
                 </span>
-                <span className="inline-flex items-center gap-2 rounded-xl bg-amber-50 px-3 py-2 text-xs font-bold text-amber-700 dark:bg-amber-950/25 dark:text-amber-300">
+                <span className="inline-flex items-center gap-2 rounded-xl bg-emerald/10 px-3 py-2 text-xs font-bold text-emerald">
                   <Sparkles className="h-3.5 w-3.5" />
                   Giftable
                 </span>
@@ -337,8 +337,8 @@ export default async function ProductPage({
             {/* Quantity + Add to Cart */}
             <AddToCartSection product={product} primaryImage={primaryImage} initialWishlisted={!!wishlistItem} />
 
-            <div className="rounded-2xl border border-emerald/20 bg-gradient-to-br from-emerald/10 via-card to-sky-50 p-5 dark:to-sky-950/20">
-              <p className="text-sm font-extrabold text-foreground">Why this is easy to say yes to</p>
+            <div className="rounded-2xl border border-emerald/20 bg-gradient-to-br from-emerald/10 via-card to-card p-5">
+              <p className="text-sm font-extrabold text-foreground">The fine print, up front</p>
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 {[
                   { icon: Truck, label: "Estimated delivery", text: "7-15 business days" },
@@ -387,7 +387,7 @@ export default async function ProductPage({
             <div className="flex items-end justify-between mb-6">
               <h2
                 className="text-2xl font-bold tracking-tight"
-                style={{ fontFamily: "var(--font-heading), system-ui, sans-serif" }}
+                style={{ fontFamily: "var(--font-heading), Georgia, serif" }}
               >
                 You Might Also Like
               </h2>
