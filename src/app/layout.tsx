@@ -1,43 +1,42 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, DM_Sans } from "next/font/google";
+import { Fraunces, Outfit } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SessionProvider } from "@/components/session-provider";
 
-const plusJakartaSans = Plus_Jakarta_Sans({
-  variable: "--font-plus-jakarta-sans",
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  style: ["normal", "italic"],
+  axes: ["opsz", "SOFT", "WONK"],
 });
 
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
+const outfit = Outfit({
+  variable: "--font-outfit",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "WishlistAZ — Premium Products Delivered Fast",
+    default: "WishlistAZ — the shortlist for things worth buying",
     template: "%s | WishlistAZ",
   },
   description:
-    "Discover thousands of quality products at unbeatable prices. Free shipping on orders over $50.",
-  keywords: ["online store", "ecommerce", "deals", "wishlist"],
+    "A tight, hand-picked catalog across electronics, home, fashion, sports, and beauty — vetted suppliers, fair markups, and shipping you can actually track.",
+  keywords: ["online store", "ecommerce", "curated deals", "wishlist"],
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
+    icon: "/icon.png",
   },
   openGraph: {
     type: "website",
     locale: "en_US",
     url: process.env.NEXT_PUBLIC_APP_URL,
     siteName: "WishlistAZ",
-    title: "WishlistAZ — Premium Products Delivered Fast",
+    title: "WishlistAZ — the shortlist for things worth buying",
     description:
-      "Discover thousands of quality products at unbeatable prices.",
+      "A tight, hand-picked catalog across electronics, home, fashion, sports, and beauty.",
   },
 };
 
@@ -50,9 +49,10 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${plusJakartaSans.variable} ${dmSans.variable} h-full`}
+      className={`${fraunces.variable} ${outfit.variable} h-full`}
     >
       <body className="min-h-full flex flex-col">
+        <div className="grain-overlay" aria-hidden="true" />
         <ThemeProvider
           attribute="class"
           defaultTheme="light"

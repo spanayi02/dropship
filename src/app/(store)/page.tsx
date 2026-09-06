@@ -47,7 +47,7 @@ function SectionHeader({
         </div>
         <h2
           className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground"
-          style={{ fontFamily: "var(--font-heading), system-ui, sans-serif" }}
+          style={{ fontFamily: "var(--font-heading), Georgia, serif" }}
         >
           {title}
         </h2>
@@ -169,36 +169,36 @@ async function FeaturedDeal() {
         </Link>
 
         <div className="relative p-7 sm:p-10">
-          <span className="mb-5 inline-flex items-center gap-2 rounded-full bg-amber-100 px-3 py-1 text-xs font-extrabold text-amber-700">
+          <span className="mb-5 inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1 text-xs font-extrabold text-muted-foreground">
             <Gift className="h-3.5 w-3.5" />
-            Giftable, useful, easy yes
+            Checked against last month&apos;s price
           </span>
           <h2
-            className="max-w-xl text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl"
-            style={{ fontFamily: "var(--font-heading), system-ui, sans-serif" }}
+            className="max-w-xl text-3xl font-medium tracking-tight text-foreground sm:text-4xl"
+            style={{ fontFamily: "var(--font-heading), Georgia, serif" }}
           >
-            A standout deal that feels too good to scroll past.
+            A markdown we&apos;d actually call a markdown.
           </h2>
           <p className="mt-4 max-w-xl text-sm leading-7 text-muted-foreground sm:text-base">
-            Save on a customer-friendly pick with everyday usefulness, strong value,
-            and a price that makes adding it to cart feel easy.
+            The struck-through price below is what this sold for four weeks
+            ago — not a number invented today to make the badge look bigger.
           </p>
 
           <div className="mt-7 grid gap-3 sm:grid-cols-3">
             <div className="rounded-2xl bg-emerald/10 p-4">
               <PackageCheck className="mb-3 h-5 w-5 text-emerald" />
               <p className="text-xs font-bold uppercase text-muted-foreground">Price now</p>
-              <p className="mt-1 text-xl font-extrabold text-foreground">{formatPrice(product.sellingPrice)}</p>
+              <p className="mt-1 text-xl font-extrabold tabular-nums text-foreground">{formatPrice(product.sellingPrice)}</p>
             </div>
-            <div className="rounded-2xl bg-rose-50 p-4 dark:bg-rose-950/25">
-              <BadgePercent className="mb-3 h-5 w-5 text-rose-600" />
+            <div className="rounded-2xl bg-muted p-4">
+              <BadgePercent className="mb-3 h-5 w-5 text-muted-foreground" />
               <p className="text-xs font-bold uppercase text-muted-foreground">Was</p>
-              <p className="mt-1 text-xl font-extrabold text-foreground">{formatPrice(product.compareAtPrice)}</p>
+              <p className="mt-1 text-xl font-extrabold tabular-nums text-foreground">{formatPrice(product.compareAtPrice)}</p>
             </div>
-            <div className="rounded-2xl bg-amber-50 p-4 dark:bg-amber-950/25">
+            <div className="rounded-2xl bg-muted p-4">
               <Star className="mb-3 h-5 w-5 fill-amber-400 text-amber-500" />
               <p className="text-xs font-bold uppercase text-muted-foreground">Rating</p>
-              <p className="mt-1 text-xl font-extrabold text-foreground">{rating.toFixed(1)} / 5</p>
+              <p className="mt-1 text-xl font-extrabold tabular-nums text-foreground">{rating.toFixed(1)} / 5</p>
             </div>
           </div>
 
@@ -234,7 +234,7 @@ async function TrendingNow() {
   return (
     <section className="py-14 bg-muted/40">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <SectionHeader title="Trending, cart-worthy picks" viewAllHref="/products?sort=best_selling" />
+        <SectionHeader title="What people are actually buying" viewAllHref="/products?sort=best_selling" />
       </div>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-none -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
@@ -269,7 +269,7 @@ async function NewArrivals() {
 
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
-      <SectionHeader title="Fresh arrivals worth opening" viewAllHref="/products?sort=newest" />
+      <SectionHeader title="Just landed" viewAllHref="/products?sort=newest" />
       <StaggerGrid className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
         {products.map((product) => (
           <StaggerItem key={product.id}>
@@ -338,13 +338,13 @@ function TrustBadges() {
     },
     {
       icon: Headphones,
-      title: "24/7 Support",
-      subtitle: "Always here to help",
+      title: "Real Support",
+      subtitle: "A person replies, not a bot",
     },
   ];
 
   return (
-    <section className="border-y border-border bg-gradient-to-r from-card via-emerald/5 to-sky-50 dark:to-sky-950/20">
+    <section className="border-y border-border bg-gradient-to-r from-card via-emerald/5 to-card">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
           {badges.map((badge) => (
@@ -375,50 +375,44 @@ function ConversionStrip() {
     {
       icon: BadgePercent,
       title: "Real savings",
-      text: "Sale badges show the difference before checkout.",
-      color: "text-rose-600",
-      bg: "bg-rose-50",
+      text: "The percent off is computed from an actual prior price, every time.",
     },
     {
       icon: Clock3,
       title: "Fast decisions",
-      text: "Browse by best sellers, newest drops, and categories.",
-      color: "text-sky-600",
-      bg: "bg-sky-50",
+      text: "Sort by best sellers, newest drops, or category — no infinite scroll.",
     },
     {
       icon: Star,
-      title: "Social proof",
-      text: "Verified reviews help shoppers trust the pick.",
-      color: "text-amber-600",
-      bg: "bg-amber-50",
+      title: "Unfiltered reviews",
+      text: "We don't hide the 3-star ones. You shouldn't have to dig for them either.",
     },
   ];
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-      <div className="grid overflow-hidden rounded-3xl border border-border bg-foreground text-background shadow-2xl shadow-black/10 dark:bg-card dark:text-card-foreground lg:grid-cols-[0.9fr_1.1fr]">
+      <div className="grid overflow-hidden rounded-3xl bg-foreground text-background shadow-2xl shadow-black/10 dark:bg-card dark:text-card-foreground lg:grid-cols-[0.9fr_1.1fr]">
         <div className="p-8 sm:p-10">
           <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-background/10 px-3 py-1 text-xs font-bold text-background/80 dark:bg-foreground/10 dark:text-foreground/80">
-            <Sparkles className="h-3.5 w-3.5 text-amber-300" />
+            <Sparkles className="h-3.5 w-3.5 text-[var(--emerald)]" />
             Built to make checkout easy
           </span>
           <h2
-            className="max-w-md text-3xl font-extrabold tracking-tight sm:text-4xl"
-            style={{ fontFamily: "var(--font-heading), system-ui, sans-serif" }}
+            className="max-w-md text-3xl font-medium tracking-tight sm:text-4xl"
+            style={{ fontFamily: "var(--font-heading), Georgia, serif" }}
           >
-            More confidence before every add to cart.
+            Everything you&apos;d want to check before you buy.
           </h2>
           <p className="mt-4 max-w-lg text-sm leading-7 text-background/70 dark:text-muted-foreground sm:text-base">
-            Clear savings, useful filters, verified reviews, and protected checkout
-            help every find feel like the right one.
+            No dark patterns, no manufactured urgency timers. Just the honest
+            version of the things every store claims to do.
           </p>
         </div>
         <div className="grid gap-px bg-background/10 p-px dark:bg-border sm:grid-cols-3">
           {items.map((item) => (
             <div key={item.title} className="bg-card p-6 text-card-foreground">
-              <div className={`mb-5 flex h-11 w-11 items-center justify-center rounded-xl ${item.bg} dark:bg-muted`}>
-                <item.icon className={`h-5 w-5 ${item.color}`} />
+              <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-emerald/10">
+                <item.icon className="h-5 w-5 text-emerald" />
               </div>
               <h3 className="text-sm font-extrabold">{item.title}</h3>
               <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.text}</p>
@@ -434,7 +428,7 @@ function Newsletter() {
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
       <div
-        className="relative overflow-hidden rounded-3xl bg-[linear-gradient(135deg,oklch(0.97_0.05_95),oklch(0.97_0.045_155),oklch(0.96_0.045_205))] px-6 py-14 text-center text-foreground shadow-xl dark:bg-[oklch(0.12_0.04_155)] sm:px-14"
+        className="relative overflow-hidden rounded-3xl bg-[linear-gradient(135deg,oklch(0.97_0.014_75),oklch(0.94_0.035_55),oklch(0.91_0.045_45))] px-6 py-14 text-center text-foreground shadow-xl dark:bg-[oklch(0.22_0.03_50)] sm:px-14"
       >
         {/* Background grid */}
         <div
@@ -442,8 +436,8 @@ function Newsletter() {
           className="pointer-events-none absolute inset-0 z-0"
           style={{
             backgroundImage: `
-              linear-gradient(to right, oklch(0.65 0.08 155 / 15%) 1px, transparent 1px),
-              linear-gradient(to bottom, oklch(0.65 0.08 155 / 15%) 1px, transparent 1px)
+              linear-gradient(to right, oklch(0.5 0.1 50 / 12%) 1px, transparent 1px),
+              linear-gradient(to bottom, oklch(0.5 0.1 50 / 12%) 1px, transparent 1px)
             `,
             backgroundSize: "40px 40px",
           }}
@@ -452,7 +446,7 @@ function Newsletter() {
         <div
           aria-hidden="true"
           className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 h-64 w-64 rounded-full blur-[80px]"
-          style={{ background: "oklch(0.75 0.15 90 / 45%)" }}
+          style={{ background: "oklch(0.75 0.13 55 / 40%)" }}
         />
         <div className="relative z-10">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald/20 bg-card/70 px-3 py-1 text-xs font-bold text-emerald mb-5">
@@ -460,7 +454,7 @@ function Newsletter() {
           </span>
           <h2
             className="text-2xl sm:text-3xl font-extrabold mb-3 text-foreground"
-            style={{ fontFamily: "var(--font-heading), system-ui, sans-serif" }}
+            style={{ fontFamily: "var(--font-heading), Georgia, serif" }}
           >
             Get the good deals before everyone else
           </h2>

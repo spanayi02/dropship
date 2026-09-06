@@ -59,26 +59,27 @@ export function AnimatedHero({ products, avgRating, reviewCount, productCount }:
             <motion.div variants={item} className="flex items-center gap-2.5 mb-6">
               <span className="h-px w-8 bg-[var(--emerald)]" aria-hidden="true" />
               <span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-                WishlistAZ
+                Hand-checked inventory
               </span>
             </motion.div>
 
             <motion.h1
               variants={item}
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05] mb-6 text-foreground"
-              style={{ fontFamily: "var(--font-heading), system-ui, sans-serif" }}
+              className="text-4xl sm:text-5xl lg:text-6xl font-medium tracking-tight leading-[1.05] mb-6 text-foreground"
+              style={{ fontFamily: "var(--font-heading), Georgia, serif" }}
             >
               Good finds,
               <br />
-              <span className="italic font-medium">without the search.</span>
+              <span className="italic">without the digging.</span>
             </motion.h1>
 
             <motion.p
               variants={item}
               className="max-w-md text-base sm:text-lg text-muted-foreground mb-8 leading-relaxed"
             >
-              We sort through the noise so you don&apos;t have to — a tight
-              selection of quality products, priced fairly and shipped fast.
+              Every listing here passed a supplier check and a price check
+              before it went live — no dropship dumping ground, no inflated
+              &ldquo;was&rdquo; prices to make the sale look bigger than it is.
             </motion.p>
 
             <motion.div variants={item} className="flex flex-wrap items-center gap-3 mb-10">
@@ -125,7 +126,7 @@ export function AnimatedHero({ products, avgRating, reviewCount, productCount }:
           >
             <Link
               href={productHref}
-              className="relative block aspect-[4/5] w-full overflow-hidden rounded-2xl border border-border bg-muted shadow-sm"
+              className="relative block aspect-[4/5] w-full overflow-hidden rounded-2xl border border-border bg-muted shadow-[0_20px_50px_-25px_oklch(0.3_0.05_50/0.4)]"
             >
               <Image
                 src={images[0]}
@@ -137,7 +138,7 @@ export function AnimatedHero({ products, avgRating, reviewCount, productCount }:
               />
             </Link>
 
-            <div className="absolute -left-6 -bottom-8 h-28 w-28 sm:h-32 sm:w-32 overflow-hidden rounded-xl border-4 border-background shadow-lg rotate-[-6deg]">
+            <div className="absolute -left-6 -bottom-8 h-28 w-28 sm:h-32 sm:w-32 overflow-hidden rounded-xl border-4 border-background shadow-[0_12px_30px_-12px_oklch(0.3_0.05_50/0.45)] rotate-[-6deg]">
               <Image
                 src={images[1]}
                 alt={products[1]?.title ?? "Product"}
@@ -146,7 +147,7 @@ export function AnimatedHero({ products, avgRating, reviewCount, productCount }:
                 className="object-cover"
               />
             </div>
-            <div className="absolute -right-4 top-10 h-24 w-24 sm:h-28 sm:w-28 overflow-hidden rounded-xl border-4 border-background shadow-lg rotate-[5deg] hidden sm:block">
+            <div className="absolute -right-4 top-10 h-24 w-24 sm:h-28 sm:w-28 overflow-hidden rounded-xl border-4 border-background shadow-[0_12px_30px_-12px_oklch(0.3_0.05_50/0.45)] rotate-[5deg] hidden sm:block">
               <Image
                 src={images[2]}
                 alt={products[2]?.title ?? "Product"}

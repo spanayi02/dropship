@@ -63,7 +63,7 @@ export function CartDrawer() {
             <ShoppingBag className="h-5 w-5 text-[var(--emerald)]" />
             <h2
               className="text-lg font-semibold"
-              style={{ fontFamily: "var(--font-plus-jakarta-sans), system-ui, sans-serif" }}
+              style={{ fontFamily: "var(--font-heading), Georgia, serif" }}
             >
               Shopping Cart
             </h2>
@@ -93,7 +93,7 @@ export function CartDrawer() {
               <div>
                 <p
                   className="text-lg font-semibold"
-                  style={{ fontFamily: "var(--font-plus-jakarta-sans), system-ui, sans-serif" }}
+                  style={{ fontFamily: "var(--font-heading), Georgia, serif" }}
                 >
                   Your cart is empty
                 </p>
