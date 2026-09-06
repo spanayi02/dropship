@@ -1,42 +1,43 @@
 import type { Metadata } from "next";
-import { Fraunces, Outfit } from "next/font/google";
+import { Plus_Jakarta_Sans, DM_Sans } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SessionProvider } from "@/components/session-provider";
 
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+const plusJakartaSans = Plus_Jakarta_Sans({
+  variable: "--font-plus-jakarta-sans",
   subsets: ["latin"],
-  style: ["normal", "italic"],
-  axes: ["opsz", "SOFT", "WONK"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
-const outfit = Outfit({
-  variable: "--font-outfit",
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "WishlistAZ — the shortlist for things worth buying",
+    default: "WishlistAZ — Premium Products Delivered Fast",
     template: "%s | WishlistAZ",
   },
   description:
-    "A tight, hand-picked catalog across electronics, home, fashion, sports, and beauty — vetted suppliers, fair markups, and shipping you can actually track.",
-  keywords: ["online store", "ecommerce", "curated deals", "wishlist"],
+    "Discover thousands of quality products at unbeatable prices. Free shipping on orders over $50.",
+  keywords: ["online store", "ecommerce", "deals", "wishlist"],
   icons: {
-    icon: "/icon.png",
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
   },
   openGraph: {
     type: "website",
     locale: "en_US",
     url: process.env.NEXT_PUBLIC_APP_URL,
     siteName: "WishlistAZ",
-    title: "WishlistAZ — the shortlist for things worth buying",
+    title: "WishlistAZ — Premium Products Delivered Fast",
     description:
-      "A tight, hand-picked catalog across electronics, home, fashion, sports, and beauty.",
+      "Discover thousands of quality products at unbeatable prices.",
   },
 };
 
@@ -49,10 +50,9 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${fraunces.variable} ${outfit.variable} h-full`}
+      className={`${plusJakartaSans.variable} ${dmSans.variable} h-full`}
     >
       <body className="min-h-full flex flex-col">
-        <div className="grain-overlay" aria-hidden="true" />
         <ThemeProvider
           attribute="class"
           defaultTheme="light"

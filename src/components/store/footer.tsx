@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { Logo } from "@/components/store/logo";
 
 const SHOP_LINKS = [
   { label: "Products", href: "/products" },
@@ -96,7 +95,7 @@ function FooterColumn({ title, links }: FooterColumnProps) {
     <div>
       <h3
         className="text-sm font-semibold text-foreground mb-4"
-        style={{ fontFamily: "var(--font-heading), Georgia, serif" }}
+        style={{ fontFamily: "var(--font-plus-jakarta-sans), system-ui, sans-serif" }}
       >
         {title}
       </h3>
@@ -129,7 +128,7 @@ export function StoreFooter() {
             <div>
               <h2
                 className="text-xl font-bold text-foreground"
-                style={{ fontFamily: "var(--font-heading), Georgia, serif" }}
+                style={{ fontFamily: "var(--font-plus-jakarta-sans), system-ui, sans-serif" }}
               >
                 Stay in the loop
               </h2>
@@ -167,11 +166,12 @@ export function StoreFooter() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-10 lg:gap-8">
           {/* Brand column */}
           <div className="lg:col-span-2">
-            <Logo className="mb-4" />
+            <Link href="/" className="inline-flex items-center gap-1.5 group mb-4">
+              <img src="/wishlistAZ.png" alt="WishlistAZ" className="h-8 w-auto" />
+            </Link>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
-              We test suppliers before we list them, price everything by hand,
-              and answer support email ourselves. No warehouse of 50,000 SKUs —
-              just the picks we&apos;d actually buy.
+              Discover thousands of quality products at unbeatable prices.
+              Fast shipping, hassle-free returns, and exceptional service — every time.
             </p>
 
             {/* Social links */}

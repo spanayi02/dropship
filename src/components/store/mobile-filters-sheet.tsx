@@ -78,7 +78,7 @@ export function MobileFiltersSheet({
         <div className="flex items-center justify-between px-5 py-3 border-b border-border">
           <h3
             className="font-semibold text-base"
-            style={{ fontFamily: "var(--font-heading), Georgia, serif" }}
+            style={{ fontFamily: "var(--font-heading), system-ui, sans-serif" }}
           >
             Filters
           </h3>

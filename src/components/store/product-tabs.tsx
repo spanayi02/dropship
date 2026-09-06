@@ -113,7 +113,7 @@ function RatingSummary({ reviews }: { reviews: Review[] }) {
       <div className="flex flex-col items-center justify-center gap-1 min-w-[80px]">
         <span
           className="text-5xl font-extrabold text-foreground"
-          style={{ fontFamily: "var(--font-heading), Georgia, serif" }}
+          style={{ fontFamily: "var(--font-heading), system-ui, sans-serif" }}
         >
           {avg.toFixed(1)}
         </span>
