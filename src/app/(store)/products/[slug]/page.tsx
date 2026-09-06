@@ -11,6 +11,7 @@ import { QuantitySelector } from "@/components/store/quantity-selector";
 import { WishlistButton } from "@/components/store/wishlist-button";
 import { DescriptionToggle } from "@/components/store/description-toggle";
 import { ProductTabs } from "@/components/store/product-tabs";
+import { StaggerGrid, StaggerItem } from "@/components/store/stagger-grid";
 import {
   BadgeCheck,
   BadgePercent,
@@ -408,11 +409,13 @@ export default async function ProductPage({
                 </div>
               }
             >
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5">
+              <StaggerGrid className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5">
                 {relatedProducts.map((p) => (
-                  <ProductCard key={p.id} product={p} />
+                  <StaggerItem key={p.id}>
+                    <ProductCard product={p} />
+                  </StaggerItem>
                 ))}
-              </div>
+              </StaggerGrid>
             </Suspense>
           </section>
         )}

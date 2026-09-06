@@ -6,6 +6,8 @@ import { ProductFilters } from "@/components/store/product-filters";
 import { ProductSort } from "@/components/store/product-sort";
 import { MobileFiltersSheet } from "@/components/store/mobile-filters-sheet";
 import { Pagination } from "@/components/store/pagination";
+import { FadeInSection } from "@/components/store/fade-in-section";
+import { StaggerGrid, StaggerItem } from "@/components/store/stagger-grid";
 import { BadgePercent, PackageCheck, Search, ShieldCheck, Sparkles, Truck } from "lucide-react";
 import Link from "next/link";
 
@@ -314,7 +316,9 @@ export default async function ProductsPage({ searchParams }: PageProps) {
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-      <CatalogHero categories={categories} />
+      <FadeInSection>
+        <CatalogHero categories={categories} />
+      </FadeInSection>
 
       <div className="mb-8 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
@@ -385,11 +389,13 @@ export default async function ProductsPage({ searchParams }: PageProps) {
             {products.length === 0 ? (
               <EmptyState />
             ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
+              <StaggerGrid className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
                 {products.map((product) => (
-                  <ProductCard key={product.id} product={product} />
+                  <StaggerItem key={product.id}>
+                    <ProductCard product={product} />
+                  </StaggerItem>
                 ))}
-              </div>
+              </StaggerGrid>
             )}
           </Suspense>
 

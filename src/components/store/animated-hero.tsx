@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import NumberFlow from "@number-flow/react";
 import { ArrowRight, Truck, Star } from "lucide-react";
 
 export interface HeroProduct {
@@ -101,11 +102,18 @@ export function AnimatedHero({ products, avgRating, reviewCount, productCount }:
               variants={item}
               className="flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-border pt-6 text-sm text-muted-foreground"
             >
-              <span className="font-medium text-foreground">{productCount}+ products</span>
+              <span className="font-medium text-foreground">
+                <NumberFlow value={productCount} />+ products
+              </span>
               {reviewCount > 0 && (
                 <span className="flex items-center gap-1.5">
                   <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                  <span className="font-medium text-foreground">{avgRating.toFixed(1)}</span>
+                  <span className="font-medium tabular-nums text-foreground">
+                    <NumberFlow
+                      value={avgRating}
+                      format={{ minimumFractionDigits: 1, maximumFractionDigits: 1 }}
+                    />
+                  </span>
                   from {reviewCount} reviews
                 </span>
               )}

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { AnimatePresence, motion } from "framer-motion";
 import { ShoppingCart, Star, Check, ChevronLeft, ChevronRight, Zap } from "lucide-react";
 import { cn, formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/store/cart-store";
@@ -195,29 +196,45 @@ export function ProductCard({ product, className }: ProductCardProps) {
             imageHovered ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
           )}
         >
-          <button
+          <motion.button
             onClick={handleAddToCart}
             aria-label={`Add ${product.title} to cart`}
+            animate={added ? { scale: [1, 1.08, 1] } : { scale: 1 }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
             className={cn(
-              "flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold text-white shadow-lg transition-all duration-200",
-              "backdrop-blur-sm",
-              added
-                ? "bg-[var(--emerald)] scale-105"
-                : "bg-foreground/90 hover:bg-[var(--emerald)]"
+              "flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold text-white shadow-lg transition-colors duration-200",
+              "backdrop-blur-sm overflow-hidden",
+              added ? "bg-[var(--emerald)]" : "bg-foreground/90 hover:bg-[var(--emerald)]"
             )}
           >
-            {added ? (
-              <>
-                <Check className="h-3.5 w-3.5" />
-                Added!
-              </>
-            ) : (
-              <>
-                <ShoppingCart className="h-3.5 w-3.5" />
-                Quick Add
-              </>
-            )}
-          </button>
+            <AnimatePresence mode="wait" initial={false}>
+              {added ? (
+                <motion.span
+                  key="added"
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                  className="flex items-center gap-2"
+                >
+                  <Check className="h-3.5 w-3.5" />
+                  Added!
+                </motion.span>
+              ) : (
+                <motion.span
+                  key="add"
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                  className="flex items-center gap-2"
+                >
+                  <ShoppingCart className="h-3.5 w-3.5" />
+                  Quick Add
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </motion.button>
         </div>
       </div>
 
@@ -252,22 +269,43 @@ export function ProductCard({ product, className }: ProductCardProps) {
           </div>
 
           {/* Corner add-to-cart */}
-          <button
+          <motion.button
             onClick={handleAddToCart}
             aria-label={`Add ${product.title} to cart`}
+            whileTap={{ scale: 0.9 }}
+            animate={added ? { scale: [1, 1.15, 1] } : { scale: 1 }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
             className={cn(
-              "flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg transition-all duration-200",
+              "flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg transition-colors duration-200",
               added
-                ? "bg-[var(--emerald)] text-white scale-110"
-                : "bg-[var(--emerald)]/10 text-[var(--emerald)] hover:bg-[var(--emerald)] hover:text-white"
+                ? "bg-[var(--emerald)] text-[var(--emerald-foreground)]"
+                : "bg-[var(--emerald)]/10 text-[var(--emerald)] hover:bg-[var(--emerald)] hover:text-[var(--emerald-foreground)]"
             )}
           >
-            {added ? (
-              <Check className="h-4 w-4" />
-            ) : (
-              <ShoppingCart className="h-4 w-4" />
-            )}
-          </button>
+            <AnimatePresence mode="wait" initial={false}>
+              {added ? (
+                <motion.span
+                  key="added"
+                  initial={{ scale: 0.5, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.5, opacity: 0 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                >
+                  <Check className="h-4 w-4" />
+                </motion.span>
+              ) : (
+                <motion.span
+                  key="add"
+                  initial={{ scale: 0.5, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.5, opacity: 0 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                >
+                  <ShoppingCart className="h-4 w-4" />
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </motion.button>
         </div>
       </div>
     </article>
