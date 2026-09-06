@@ -12,8 +12,8 @@ import Link from "next/link";
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: "Products | DropShip",
-  description: "Browse our full catalog of top-quality products.",
+  title: "Products | WishlistAZ",
+  description: "Every listing here passed a supplier and price check before it went live. Filter by category, price, and rating.",
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -190,7 +190,7 @@ function EmptyState() {
       <div>
         <p
           className="text-lg font-semibold"
-          style={{ fontFamily: "var(--font-heading), system-ui, sans-serif" }}
+          style={{ fontFamily: "var(--font-heading), Helvetica, Arial, sans-serif" }}
         >
           No products found
         </p>
@@ -212,17 +212,14 @@ function CatalogHero({ categories }: { categories: Awaited<ReturnType<typeof fet
   const featured = categories.slice(0, 5);
 
   return (
-    <section className="mb-10 overflow-hidden rounded-3xl border border-border bg-card shadow-xl shadow-emerald/10">
+    <section className="mb-10 overflow-hidden rounded-3xl border border-border bg-card">
       <div className="grid lg:grid-cols-[1fr_0.72fr]">
-        <div className="relative bg-[linear-gradient(135deg,oklch(0.985_0.03_95),oklch(0.97_0.04_155),oklch(0.96_0.04_205))] p-7 dark:bg-[oklch(0.11_0.04_155)] sm:p-10">
-          <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-emerald/20 bg-card/75 px-3 py-1 text-xs font-extrabold text-emerald">
+        <div className="relative bg-muted p-7 sm:p-10">
+          <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-extrabold text-foreground">
             <Sparkles className="h-3.5 w-3.5" />
             Curated to make shopping quick
           </span>
-          <h1
-            className="max-w-2xl text-3xl font-extrabold tracking-tight sm:text-5xl"
-            style={{ fontFamily: "var(--font-heading), system-ui, sans-serif" }}
-          >
+          <h1 className="max-w-2xl text-3xl font-extrabold tracking-tight sm:text-5xl">
             Find the thing you came for, then find three more you want.
           </h1>
           <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground sm:text-base">
@@ -323,7 +320,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
         <div>
           <h2
             className="text-2xl font-extrabold tracking-tight sm:text-3xl"
-            style={{ fontFamily: "var(--font-heading), system-ui, sans-serif" }}
+            style={{ fontFamily: "var(--font-heading), Helvetica, Arial, sans-serif" }}
           >
             {params.search ? `Results for "${params.search}"` : "Shop the catalog"}
           </h2>

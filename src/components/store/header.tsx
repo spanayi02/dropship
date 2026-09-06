@@ -21,6 +21,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useCartStore } from "@/store/cart-store";
 import { ThemeToggle } from "@/components/store/theme-toggle";
+import { Logo } from "@/components/store/logo";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
@@ -109,21 +110,12 @@ export function StoreHeader() {
             : "bg-background border-b border-transparent"
         )}
       >
-        {/* Announcement bar */}
+        {/* Announcement bar — plain ink, no color */}
         {announcementVisible && (
-          <div
-            className="relative flex items-center justify-center gap-2 px-10 py-2 text-[13px] font-medium text-white"
-            style={{
-              background: "linear-gradient(90deg, oklch(0.38 0.16 155) 0%, oklch(0.56 0.20 35) 50%, oklch(0.36 0.16 205) 100%)",
-            }}
-          >
-            <span
-              className="inline-block h-1.5 w-1.5 rounded-full bg-white/80 animate-pulse"
-              aria-hidden="true"
-            />
-            Free shipping on orders over $50 — Flash sale on now!{" "}
-            <Link href="/products?sale=true" className="font-bold underline underline-offset-2 hover:no-underline">
-              Shop deals
+          <div className="relative flex items-center justify-center gap-2 bg-foreground px-10 py-2 text-[13px] font-medium text-background">
+            Orders over $50 ship free — through Sunday.{" "}
+            <Link href="/products?sale=true" className="font-semibold underline underline-offset-2 hover:no-underline">
+              See what&apos;s on sale
             </Link>
             <button
               onClick={() => setAnnouncementVisible(false)}
@@ -137,14 +129,7 @@ export function StoreHeader() {
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center gap-4">
-            {/* Logo */}
-            <Link
-              href="/"
-              className="flex items-center gap-1.5 flex-shrink-0 group"
-              aria-label="WishlistAZ home"
-            >
-              <img src="/wishlistAZ.png" alt="WishlistAZ" className="h-8 w-auto" />
-            </Link>
+            <Logo className="flex-shrink-0" />
 
             {/* Desktop Nav */}
             <nav className="hidden md:flex items-center gap-1 ml-4" aria-label="Main navigation">

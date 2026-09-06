@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingCart, Star, Check, ChevronLeft, ChevronRight, Zap, Truck } from "lucide-react";
+import { ShoppingCart, Star, Check, ChevronLeft, ChevronRight, Zap } from "lucide-react";
 import { cn, formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/store/cart-store";
 import { WishlistButton } from "@/components/store/wishlist-button";
@@ -120,21 +120,21 @@ export function ProductCard({ product, className }: ProductCardProps) {
   return (
     <article
       className={cn(
-        "group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card",
-        "shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[var(--emerald)]/35 hover:shadow-2xl hover:shadow-emerald/10",
+        "group relative flex flex-col overflow-hidden rounded-2xl bg-card",
+        "shadow-[0_1px_2px_rgba(0,0,0,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_32px_-16px_rgba(0,0,0,0.35)]",
         className
       )}
     >
       {/* Badges */}
       <div className="absolute top-2.5 left-2.5 z-10 flex flex-col gap-1.5">
         {isSale && (
-          <span className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-bold bg-rose-500 text-white shadow-sm shadow-rose-500/30">
+          <span className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-bold bg-destructive text-white">
             <Zap className="h-2.5 w-2.5" />
             Save {discount}%
           </span>
         )}
         {isNew && !isSale && (
-          <span className="inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-bold bg-[var(--emerald)] text-white shadow-sm shadow-[var(--emerald)]/30">
+          <span className="inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-bold bg-[var(--emerald)] text-[var(--emerald-foreground)]">
             New
           </span>
         )}
@@ -148,7 +148,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
 
       {/* Image */}
       <div
-        className="relative block aspect-square overflow-hidden bg-gradient-to-br from-muted via-card to-emerald/5"
+        className="relative block aspect-square overflow-hidden bg-muted"
         onMouseEnter={() => setImageHovered(true)}
         onMouseLeave={() => setImageHovered(false)}
       >
@@ -223,11 +223,6 @@ export function ProductCard({ product, className }: ProductCardProps) {
 
       {/* Body */}
       <div className="flex flex-1 flex-col gap-2 p-3.5">
-        <span className="inline-flex w-fit items-center gap-1 rounded-full bg-emerald/10 px-2 py-0.5 text-[11px] font-bold text-emerald">
-          <Truck className="h-3 w-3" />
-          Ships free $50+
-        </span>
-
         {/* Title */}
         <Link
           href={`/products/${product.slug}`}
@@ -246,7 +241,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
         {/* Price row */}
         <div className="mt-auto flex items-center justify-between gap-2 pt-1">
           <div className="flex items-baseline gap-1.5">
-            <span className="text-base font-bold text-foreground">
+            <span className="text-base font-bold tabular-nums text-foreground">
               {formatPrice(product.sellingPrice)}
             </span>
             {isSale && product.compareAtPrice && (
@@ -283,7 +278,7 @@ export function ProductCardSkeleton({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "flex flex-col rounded-2xl border border-border bg-card overflow-hidden animate-pulse",
+        "flex flex-col rounded-2xl bg-card shadow-[0_1px_2px_rgba(0,0,0,0.06)] overflow-hidden animate-pulse",
         className
       )}
     >

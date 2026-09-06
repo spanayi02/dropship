@@ -7,8 +7,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-dm-sans);
-  --font-heading: var(--font-plus-jakarta-sans);
+  --font-sans: var(--font-archivo);
+  --font-heading: var(--font-archivo);
   --font-mono: var(--font-geist-mono);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -50,95 +50,118 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/*
+ * Palette grounded in Nike's real commerce chrome (see the awesome-design-md
+ * skill's `nike` reference): near-monochrome black/white/gray, photography
+ * (or product imagery) carries the color, and the ONLY saturated hues are
+ * functional — sale red, success green — never decorative. No cream, no
+ * coral, no serif: that combination is Anthropic's own Claude brand
+ * (also in that skill's `claude` reference) and reads as "the AI redesign
+ * look" precisely because so many coding assistants default to it.
+ */
 :root {
-  --background: oklch(0.985 0.012 95);
-  --foreground: oklch(0.17 0.025 250);
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.19 0 0);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.17 0.025 250);
+  --card-foreground: oklch(0.19 0 0);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.17 0.025 250);
-  --primary: oklch(0.22 0.045 250);
-  --primary-foreground: oklch(0.98 0 0);
-  --secondary: oklch(0.95 0.025 95);
-  --secondary-foreground: oklch(0.22 0.045 250);
-  --muted: oklch(0.95 0.02 100);
-  --muted-foreground: oklch(0.48 0.025 250);
-  --accent: oklch(0.94 0.04 155);
-  --accent-foreground: oklch(0.22 0.045 250);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.88 0.018 95);
-  --input: oklch(0.88 0.018 95);
-  --ring: oklch(0.50 0.15 155);
-  /* Emerald accent */
-  --emerald: oklch(0.53 0.17 155);
+  --popover-foreground: oklch(0.19 0 0);
+  --primary: oklch(0.19 0 0);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.96 0 0);
+  --secondary-foreground: oklch(0.19 0 0);
+  --muted: oklch(0.96 0 0);
+  --muted-foreground: oklch(0.46 0 0);
+  --accent: oklch(0.96 0 0);
+  --accent-foreground: oklch(0.19 0 0);
+  --destructive: oklch(0.5 0.22 25);
+  --border: oklch(0.9 0 0);
+  --input: oklch(0.9 0 0);
+  --ring: oklch(0.19 0 0);
+  /* Brand primary — ink black, not a color. Kept the var name --emerald
+     for the ~130 existing call sites; it is not green. */
+  --emerald: oklch(0.19 0 0);
   --emerald-foreground: oklch(1 0 0);
-  --chart-1: oklch(0.53 0.17 155);
-  --chart-2: oklch(0.65 0.15 210);
-  --chart-3: oklch(0.70 0.15 270);
-  --chart-4: oklch(0.75 0.15 45);
-  --chart-5: oklch(0.60 0.18 30);
-  --radius: 0.5rem;
-  --sidebar: oklch(0.98 0 0);
-  --sidebar-foreground: oklch(0.15 0 0);
-  --sidebar-primary: oklch(0.16 0 0);
-  --sidebar-primary-foreground: oklch(0.98 0 0);
-  --sidebar-accent: oklch(0.94 0 0);
-  --sidebar-accent-foreground: oklch(0.16 0 0);
-  --sidebar-border: oklch(0.90 0 0);
-  --sidebar-ring: oklch(0.50 0.15 155);
+  --chart-1: oklch(0.19 0 0);
+  --chart-2: oklch(0.46 0 0);
+  --chart-3: oklch(0.5 0.22 25);
+  --chart-4: oklch(0.5 0.14 155);
+  --chart-5: oklch(0.65 0 0);
+  --radius: 1.1rem;
+  --sidebar: oklch(1 0 0);
+  --sidebar-foreground: oklch(0.19 0 0);
+  --sidebar-primary: oklch(0.19 0 0);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.96 0 0);
+  --sidebar-accent-foreground: oklch(0.19 0 0);
+  --sidebar-border: oklch(0.9 0 0);
+  --sidebar-ring: oklch(0.19 0 0);
 }
 
 .dark {
-  --background: oklch(0.13 0 0);
-  --foreground: oklch(0.97 0 0);
-  --card: oklch(0.17 0 0);
-  --card-foreground: oklch(0.97 0 0);
-  --popover: oklch(0.17 0 0);
-  --popover-foreground: oklch(0.97 0 0);
-  --primary: oklch(0.95 0 0);
-  --primary-foreground: oklch(0.17 0 0);
-  --secondary: oklch(0.22 0 0);
-  --secondary-foreground: oklch(0.97 0 0);
-  --muted: oklch(0.22 0 0);
-  --muted-foreground: oklch(0.62 0 0);
-  --accent: oklch(0.22 0 0);
-  --accent-foreground: oklch(0.97 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.57 0.17 155);
-  --emerald: oklch(0.57 0.17 155);
+  --background: oklch(0.09 0 0);
+  --foreground: oklch(0.96 0 0);
+  --card: oklch(0.13 0 0);
+  --card-foreground: oklch(0.96 0 0);
+  --popover: oklch(0.13 0 0);
+  --popover-foreground: oklch(0.96 0 0);
+  --primary: oklch(0.96 0 0);
+  --primary-foreground: oklch(0.13 0 0);
+  --secondary: oklch(0.19 0 0);
+  --secondary-foreground: oklch(0.96 0 0);
+  --muted: oklch(0.17 0 0);
+  --muted-foreground: oklch(0.64 0 0);
+  --accent: oklch(0.19 0 0);
+  --accent-foreground: oklch(0.96 0 0);
+  --destructive: oklch(0.62 0.22 25);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 14%);
+  --ring: oklch(0.96 0 0);
+  --emerald: oklch(0.96 0 0);
   --emerald-foreground: oklch(0.13 0 0);
-  --chart-1: oklch(0.57 0.17 155);
-  --chart-2: oklch(0.65 0.15 210);
-  --chart-3: oklch(0.70 0.15 270);
-  --chart-4: oklch(0.75 0.15 45);
-  --chart-5: oklch(0.68 0.18 30);
-  --sidebar: oklch(0.17 0 0);
-  --sidebar-foreground: oklch(0.97 0 0);
-  --sidebar-primary: oklch(0.57 0.17 155);
+  --chart-1: oklch(0.96 0 0);
+  --chart-2: oklch(0.64 0 0);
+  --chart-3: oklch(0.62 0.22 25);
+  --chart-4: oklch(0.62 0.14 155);
+  --chart-5: oklch(0.46 0 0);
+  --sidebar: oklch(0.13 0 0);
+  --sidebar-foreground: oklch(0.96 0 0);
+  --sidebar-primary: oklch(0.96 0 0);
   --sidebar-primary-foreground: oklch(0.13 0 0);
-  --sidebar-accent: oklch(0.22 0 0);
-  --sidebar-accent-foreground: oklch(0.97 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.57 0.17 155);
+  --sidebar-accent: oklch(0.19 0 0);
+  --sidebar-accent-foreground: oklch(0.96 0 0);
+  --sidebar-border: oklch(1 0 0 / 12%);
+  --sidebar-ring: oklch(0.96 0 0);
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    scroll-behavior: smooth;
+  }
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: var(--font-dm-sans), system-ui, sans-serif;
+    font-family: var(--font-archivo), Helvetica, Arial, sans-serif;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-plus-jakarta-sans), system-ui, sans-serif;
+    font-family: var(--font-archivo), Helvetica, Arial, sans-serif;
+    text-wrap: balance;
+    letter-spacing: -0.02em;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: oklch(0.70 0 0); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: oklch(0.50 0 0); }
+::-webkit-scrollbar-thumb { background: oklch(0.7 0 0); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: oklch(0.46 0 0); }

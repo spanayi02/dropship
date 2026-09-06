@@ -57,41 +57,41 @@ export function AnimatedHero({ products, avgRating, reviewCount, productCount }:
           {/* Copy column */}
           <motion.div variants={container} initial="hidden" animate="show">
             <motion.div variants={item} className="flex items-center gap-2.5 mb-6">
-              <span className="h-px w-8 bg-[var(--emerald)]" aria-hidden="true" />
+              <span className="h-px w-8 bg-foreground" aria-hidden="true" />
               <span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-                WishlistAZ
+                Hand-checked inventory
               </span>
             </motion.div>
 
             <motion.h1
               variants={item}
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05] mb-6 text-foreground"
-              style={{ fontFamily: "var(--font-heading), system-ui, sans-serif" }}
+              className="text-4xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight leading-[0.95] mb-6 text-foreground"
             >
               Good finds,
               <br />
-              <span className="italic font-medium">without the search.</span>
+              without the digging.
             </motion.h1>
 
             <motion.p
               variants={item}
               className="max-w-md text-base sm:text-lg text-muted-foreground mb-8 leading-relaxed"
             >
-              We sort through the noise so you don&apos;t have to — a tight
-              selection of quality products, priced fairly and shipped fast.
+              Every listing here passed a supplier check and a price check
+              before it went live — no dropship dumping ground, no inflated
+              &ldquo;was&rdquo; prices to make the sale look bigger than it is.
             </motion.p>
 
             <motion.div variants={item} className="flex flex-wrap items-center gap-3 mb-10">
               <Link
                 href="/products"
-                className="inline-flex items-center gap-2 rounded-lg bg-[var(--emerald)] px-6 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:shadow-md"
+                className="inline-flex items-center gap-2 rounded-full bg-[var(--emerald)] px-6 py-3 text-sm font-semibold text-[var(--emerald-foreground)] transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
                 Shop the collection
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
                 href="/products?sort=price_asc"
-                className="inline-flex items-center gap-2 rounded-lg border border-border px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+                className="inline-flex items-center gap-2 rounded-full border border-border px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
               >
                 Browse deals
               </Link>
