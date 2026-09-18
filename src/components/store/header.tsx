@@ -25,6 +25,7 @@ import { Logo } from "@/components/store/logo";
 import { LocaleSwitcher } from "@/components/store/locale-switcher";
 import { useI18n } from "@/lib/i18n/client";
 import { FREE_SHIPPING_THRESHOLD } from "@/lib/store-config";
+import { useHydrated } from "@/hooks/use-hydrated";
 
 const CATEGORY_SLUGS = [
   "electronics",
@@ -49,6 +50,11 @@ export function StoreHeader() {
   const { getTotalItems, toggleCart } = useCartStore();
   const { t, intl } = useI18n();
 
+  // The cart is persisted to localStorage, so its count is only known after
+  // the client mounts — render 0 until then to match the server-rendered
+  // markup and avoid a hydration mismatch.
+  const mounted = useHydrated();
+
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -62,7 +68,7 @@ export function StoreHeader() {
   const userMenuRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLFormElement>(null);
 
-  const cartCount = getTotalItems();
+  const cartCount = mounted ? getTotalItems() : 0;
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 8);
