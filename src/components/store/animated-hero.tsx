@@ -4,6 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Truck, Star } from "lucide-react";
+import { useI18n } from "@/lib/i18n/client";
+import { formatPrice } from "@/lib/utils";
+import { FREE_SHIPPING_THRESHOLD } from "@/lib/store-config";
 
 export interface HeroProduct {
   id: string;
@@ -38,17 +41,17 @@ const item = {
 };
 
 const FALLBACK_IMAGES = [
-  "https://picsum.photos/seed/hero-main/800/1000",
-  "https://picsum.photos/seed/hero-sub1/600/600",
-  "https://picsum.photos/seed/hero-sub2/600/600",
+  "/demo/products/mechanical-keyboard-rgb-backlit-tkl-1.jpg",
+  "/demo/products/wireless-noise-canceling-earbuds-pro-1.jpg",
+  "/demo/products/insulated-water-bottle-32oz-stainless-1.jpg",
 ];
 
 export function AnimatedHero({ products, avgRating, reviewCount, productCount }: AnimatedHeroProps) {
-  const images = [0, 1, 2].map(
-    (i) => products[i]?.images[0] ?? FALLBACK_IMAGES[i]
-  );
+  const { t, intl } = useI18n();
+  const images = [0, 1, 2].map((i) => products[i]?.images[0] ?? FALLBACK_IMAGES[i]);
   const mainProduct = products[0];
   const productHref = mainProduct ? `/products/${mainProduct.slug}` : "/products";
+  const freeShipAmount = formatPrice(FREE_SHIPPING_THRESHOLD, undefined, intl);
 
   return (
     <section className="relative overflow-hidden bg-background border-b border-border">
@@ -56,68 +59,69 @@ export function AnimatedHero({ products, avgRating, reviewCount, productCount }:
         <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
           {/* Copy column */}
           <motion.div variants={container} initial="hidden" animate="show">
-            <motion.div variants={item} className="flex items-center gap-2.5 mb-6">
-              <span className="h-px w-8 bg-[var(--emerald)]" aria-hidden="true" />
-              <span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-                Hand-checked inventory
-              </span>
+            <motion.div
+              variants={item}
+              className="mb-6 inline-flex items-center gap-2 rounded-[3px] bg-signal px-2.5 py-1.5 label-sign text-signal-foreground"
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-ink animate-led" aria-hidden="true" />
+              {t("home.boardSubtitle")}
             </motion.div>
 
             <motion.h1
               variants={item}
-              className="text-4xl sm:text-5xl lg:text-6xl font-medium tracking-tight leading-[1.05] mb-6 text-foreground"
-              style={{ fontFamily: "var(--font-heading), Georgia, serif" }}
+              className="font-board text-4xl sm:text-5xl lg:text-[3.75rem] font-bold uppercase tracking-tight leading-[1.05] mb-6 text-foreground"
             >
-              Good finds,
+              {t("home.headline1")}
               <br />
-              <span className="italic">without the digging.</span>
+              {t("home.headline2")}
             </motion.h1>
 
             <motion.p
               variants={item}
               className="max-w-md text-base sm:text-lg text-muted-foreground mb-8 leading-relaxed"
             >
-              Every listing here passed a supplier check and a price check
-              before it went live — no dropship dumping ground, no inflated
-              &ldquo;was&rdquo; prices to make the sale look bigger than it is.
+              {t("home.intro")}
             </motion.p>
 
             <motion.div variants={item} className="flex flex-wrap items-center gap-3 mb-10">
               <Link
                 href="/products"
-                className="inline-flex items-center gap-2 rounded-lg bg-[var(--emerald)] px-6 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:shadow-md"
+                className="inline-flex items-center gap-2 rounded-[3px] bg-signal px-6 py-3 text-sm font-bold text-signal-foreground transition-all hover:-translate-y-0.5 hover:bg-signal-deep"
               >
-                Shop the collection
+                {t("home.ctaPrimary")}
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
                 href="/products?sort=price_asc"
-                className="inline-flex items-center gap-2 rounded-lg border border-border px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+                className="inline-flex items-center gap-2 rounded-[3px] border border-border px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
               >
-                Browse deals
+                {t("home.ctaSecondary")}
               </Link>
             </motion.div>
 
             <motion.div
               variants={item}
-              className="flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-border pt-6 text-sm text-muted-foreground"
+              className="flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-border pt-6 text-sm text-muted-foreground tnum"
             >
-              <span className="font-medium text-foreground">{productCount}+ products</span>
+              <span className="font-semibold text-foreground">
+                {t("home.proofProducts", { count: productCount })}
+              </span>
               {reviewCount > 0 && (
                 <span className="flex items-center gap-1.5">
-                  <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                  <span className="font-medium text-foreground">{avgRating.toFixed(1)}</span>
-                  from {reviewCount} reviews
+                  <Star className="h-3.5 w-3.5 fill-signal-deep text-signal-deep" />
+                  <span className="font-semibold text-foreground">
+                    {t("home.proofReviews", { rating: avgRating.toFixed(1), count: reviewCount })}
+                  </span>
                 </span>
               )}
               <span className="flex items-center gap-1.5">
                 <Truck className="h-3.5 w-3.5" />
-                Free shipping over $50
+                {t("home.proofShipping", { amount: freeShipAmount })}
               </span>
             </motion.div>
           </motion.div>
 
-          {/* Image collage */}
+          {/* Image collage — luggage tags dropped on the counter */}
           <motion.div
             initial={{ opacity: 0, scale: 0.97 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -126,7 +130,7 @@ export function AnimatedHero({ products, avgRating, reviewCount, productCount }:
           >
             <Link
               href={productHref}
-              className="relative block aspect-[4/5] w-full overflow-hidden rounded-2xl border border-border bg-muted shadow-[0_20px_50px_-25px_oklch(0.3_0.05_50/0.4)]"
+              className="relative block aspect-[4/5] w-full overflow-hidden rounded-[4px] border-2 border-ink bg-muted shadow-[0_20px_50px_-25px_oklch(0_0_0/0.35)]"
             >
               <Image
                 src={images[0]}
@@ -136,9 +140,12 @@ export function AnimatedHero({ products, avgRating, reviewCount, productCount }:
                 sizes="(min-width: 1024px) 40vw, 80vw"
                 className="object-cover"
               />
+              <span className="absolute left-3 top-3 rounded-[2px] bg-signal px-2 py-1 label-sign text-signal-foreground shadow-sm">
+                {t("home.nowBoarding")}
+              </span>
             </Link>
 
-            <div className="absolute -left-6 -bottom-8 h-28 w-28 sm:h-32 sm:w-32 overflow-hidden rounded-xl border-4 border-background shadow-[0_12px_30px_-12px_oklch(0.3_0.05_50/0.45)] rotate-[-6deg]">
+            <div className="tag-punch absolute -left-6 -bottom-8 h-28 w-28 sm:h-32 sm:w-32 overflow-hidden rounded-[3px] border-4 border-background bg-muted shadow-[0_12px_30px_-12px_oklch(0_0_0/0.4)] rotate-[-6deg] animate-tag-drop">
               <Image
                 src={images[1]}
                 alt={products[1]?.title ?? "Product"}
@@ -147,7 +154,7 @@ export function AnimatedHero({ products, avgRating, reviewCount, productCount }:
                 className="object-cover"
               />
             </div>
-            <div className="absolute -right-4 top-10 h-24 w-24 sm:h-28 sm:w-28 overflow-hidden rounded-xl border-4 border-background shadow-[0_12px_30px_-12px_oklch(0.3_0.05_50/0.45)] rotate-[5deg] hidden sm:block">
+            <div className="tag-punch absolute -right-4 top-10 h-24 w-24 sm:h-28 sm:w-28 overflow-hidden rounded-[3px] border-4 border-background bg-muted shadow-[0_12px_30px_-12px_oklch(0_0_0/0.4)] rotate-[5deg] hidden sm:block animate-tag-drop">
               <Image
                 src={images[2]}
                 alt={products[2]?.title ?? "Product"}

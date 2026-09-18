@@ -8,15 +8,16 @@ import {
   RotateCcw,
   Headphones,
   BadgePercent,
-  Clock3,
+  Star,
   Gift,
   PackageCheck,
   ShoppingBag,
-  Sparkles,
-  Star,
 } from "lucide-react";
 import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/utils";
+import { getT } from "@/lib/i18n/server";
+import type { TFunction } from "@/lib/i18n";
+import { FREE_SHIPPING_THRESHOLD } from "@/lib/store-config";
 import { ProductCard, ProductCardSkeleton } from "@/components/store/product-card";
 import { AnimatedHero } from "@/components/store/animated-hero";
 import { FadeInSection } from "@/components/store/fade-in-section";
@@ -26,35 +27,35 @@ import { SubscribeForm } from "@/components/store/subscribe-form";
 
 export const dynamic = 'force-dynamic';
 
+const CATEGORY_FALLBACK_IMAGE = "/demo/categories/electronics.jpg";
+const PRODUCT_FALLBACK_IMAGE = "/demo/products/mechanical-keyboard-rgb-backlit-tkl-1.jpg";
+
 // ─────────────────────────────────────────────────────────────────────────────
-// Section Wrapper
+// Section Wrapper — a small signal tab + board-face heading
 // ─────────────────────────────────────────────────────────────────────────────
 function SectionHeader({
   title,
+  subtitle,
   viewAllHref,
-  viewAllLabel = "View All",
+  viewAllLabel,
 }: {
   title: string;
+  subtitle?: string;
   viewAllHref: string;
-  viewAllLabel?: string;
+  viewAllLabel: string;
 }) {
   return (
-    <div className="flex items-end justify-between mb-8">
+    <div className="flex items-end justify-between mb-8 gap-4">
       <div>
-        <div className="flex items-center gap-2 mb-2">
-          <span className="inline-block h-1 w-8 rounded-full bg-[var(--emerald)]" />
-          <span className="inline-block h-1 w-3 rounded-full bg-[var(--emerald)]/40" />
-        </div>
-        <h2
-          className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground"
-          style={{ fontFamily: "var(--font-heading), Georgia, serif" }}
-        >
+        <span className="mb-2 inline-flex h-1.5 w-8 rounded-[1px] bg-signal" aria-hidden="true" />
+        <h2 className="font-board text-2xl sm:text-3xl font-bold uppercase tracking-tight text-foreground">
           {title}
         </h2>
+        {subtitle && <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>}
       </div>
       <Link
         href={viewAllHref}
-        className="flex items-center gap-1 text-sm font-medium text-[var(--emerald)] hover:underline transition-colors"
+        className="flex flex-shrink-0 items-center gap-1 text-sm font-semibold text-ink dark:text-signal hover:underline transition-colors"
       >
         {viewAllLabel}
         <ArrowRight className="h-3.5 w-3.5" />
@@ -64,9 +65,10 @@ function SectionHeader({
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Categories Grid
+// Categories Grid — "Gates"
 // ─────────────────────────────────────────────────────────────────────────────
 async function CategoriesGrid() {
+  const { t } = await getT();
   const categories = await db.category.findMany({
     include: {
       _count: { select: { products: true } },
@@ -79,31 +81,36 @@ async function CategoriesGrid() {
 
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
-      <SectionHeader title="Shop the good stuff" viewAllHref="/products" viewAllLabel="All Categories" />
+      <SectionHeader
+        title={t("home.gates")}
+        subtitle={t("home.gatesSubtitle")}
+        viewAllHref="/products"
+        viewAllLabel={t("common.viewAll")}
+      />
       <StaggerGrid className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-        {categories.map((cat) => (
+        {categories.map((cat, index) => (
           <StaggerItem key={cat.id}>
             <Link
               href={`/products?category=${cat.slug}`}
-              className="group relative flex flex-col items-center overflow-hidden rounded-2xl border border-border bg-card shadow-sm hover:border-[var(--emerald)]/40 hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+              className="group relative flex flex-col items-center overflow-hidden rounded-[4px] border border-border bg-card transition-all duration-300 hover:-translate-y-1 hover:border-ink/40 dark:hover:border-signal/40"
             >
               <div className="relative w-full aspect-square overflow-hidden bg-muted">
                 <Image
-                  src={cat.image ?? `https://picsum.photos/seed/${cat.slug}/300/300`}
+                  src={cat.image ?? CATEGORY_FALLBACK_IMAGE}
                   alt={cat.name}
                   fill
                   sizes="(min-width: 1024px) 20vw, (min-width: 640px) 33vw, 50vw"
                   className="object-cover transition-transform duration-500 group-hover:scale-110"
                 />
-                {/* Gradient overlay — stronger at bottom */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                {/* Subtle emerald tint on hover */}
-                <div className="absolute inset-0 bg-[var(--emerald)]/0 group-hover:bg-[var(--emerald)]/15 transition-colors duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent" />
+                <span className="label-sign absolute left-2 top-2 rounded-[2px] bg-signal px-1.5 py-0.5 text-signal-foreground">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
               </div>
               <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
                 <p className="text-sm font-bold leading-tight">{cat.name}</p>
-                <span className="inline-block mt-1 rounded-full bg-white/20 backdrop-blur-sm px-2 py-0.5 text-[10px] font-medium text-white/90">
-                  {cat._count.products} items
+                <span className="tnum inline-block mt-1 rounded-[2px] bg-white/15 backdrop-blur-sm px-2 py-0.5 text-[10px] font-medium text-white/90">
+                  {cat._count.products} {t("common.items")}
                 </span>
               </div>
             </Link>
@@ -115,9 +122,10 @@ async function CategoriesGrid() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Featured Deal
+// Featured Deal — "Price drop"
 // ─────────────────────────────────────────────────────────────────────────────
 async function FeaturedDeal() {
+  const { t } = await getT();
   const saleProducts = await db.product.findMany({
     where: {
       isActive: true,
@@ -136,7 +144,7 @@ async function FeaturedDeal() {
 
   if (!product || !product.compareAtPrice) return null;
 
-  const image = product.images[0] ?? `https://picsum.photos/seed/${product.id}/700/700`;
+  const image = product.images[0] ?? PRODUCT_FALLBACK_IMAGE;
   const discount = Math.round(
     ((product.compareAtPrice - product.sellingPrice) / product.compareAtPrice) * 100
   );
@@ -147,7 +155,7 @@ async function FeaturedDeal() {
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-      <div className="grid overflow-hidden rounded-3xl border border-border bg-card shadow-2xl shadow-emerald/10 lg:grid-cols-[0.92fr_1.08fr]">
+      <div className="grid overflow-hidden rounded-[4px] border border-border bg-card lg:grid-cols-[0.92fr_1.08fr]">
         <Link href={`/products/${product.slug}`} className="group relative min-h-[360px] overflow-hidden bg-muted">
           <Image
             src={image}
@@ -159,54 +167,50 @@ async function FeaturedDeal() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
           <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between gap-4 text-white">
             <div>
-              <p className="text-xs font-bold uppercase tracking-wide text-white/80">Featured steal</p>
+              <p className="label-sign text-white/80">{t("home.featuredDeal")}</p>
               <p className="mt-1 max-w-sm text-2xl font-extrabold leading-tight">{product.title}</p>
             </div>
-            <span className="rounded-full bg-rose-500 px-3 py-1.5 text-sm font-extrabold shadow-lg">
-              Save {discount}%
+            <span className="label-sign rounded-[2px] bg-stop px-3 py-1.5 text-white shadow-lg">
+              {t("product.save", { percent: discount })}
             </span>
           </div>
         </Link>
 
         <div className="relative p-7 sm:p-10">
-          <span className="mb-5 inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1 text-xs font-extrabold text-muted-foreground">
+          <span className="mb-5 inline-flex items-center gap-2 rounded-[2px] bg-muted px-3 py-1 label-sign text-muted-foreground">
             <Gift className="h-3.5 w-3.5" />
-            Checked against last month&apos;s price
+            {t("home.featuredDeal")}
           </span>
-          <h2
-            className="max-w-xl text-3xl font-medium tracking-tight text-foreground sm:text-4xl"
-            style={{ fontFamily: "var(--font-heading), Georgia, serif" }}
-          >
-            A markdown we&apos;d actually call a markdown.
+          <h2 className="font-board max-w-xl text-3xl font-bold uppercase tracking-tight text-foreground sm:text-4xl">
+            {t("home.featuredDealTitle")}
           </h2>
           <p className="mt-4 max-w-xl text-sm leading-7 text-muted-foreground sm:text-base">
-            The struck-through price below is what this sold for four weeks
-            ago — not a number invented today to make the badge look bigger.
+            {t("home.featuredDealText")}
           </p>
 
           <div className="mt-7 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl bg-emerald/10 p-4">
-              <PackageCheck className="mb-3 h-5 w-5 text-emerald" />
-              <p className="text-xs font-bold uppercase text-muted-foreground">Price now</p>
-              <p className="mt-1 text-xl font-extrabold tabular-nums text-foreground">{formatPrice(product.sellingPrice)}</p>
+            <div className="rounded-[3px] bg-signal/15 p-4">
+              <PackageCheck className="mb-3 h-5 w-5 text-ink dark:text-signal" />
+              <p className="label-sign text-muted-foreground">{t("home.priceNow")}</p>
+              <p className="mt-1 text-xl font-extrabold tnum text-foreground">{formatPrice(product.sellingPrice)}</p>
             </div>
-            <div className="rounded-2xl bg-muted p-4">
+            <div className="rounded-[3px] bg-muted p-4">
               <BadgePercent className="mb-3 h-5 w-5 text-muted-foreground" />
-              <p className="text-xs font-bold uppercase text-muted-foreground">Was</p>
-              <p className="mt-1 text-xl font-extrabold tabular-nums text-foreground">{formatPrice(product.compareAtPrice)}</p>
+              <p className="label-sign text-muted-foreground">{t("home.priceWas")}</p>
+              <p className="mt-1 text-xl font-extrabold tnum text-foreground">{formatPrice(product.compareAtPrice)}</p>
             </div>
-            <div className="rounded-2xl bg-muted p-4">
-              <Star className="mb-3 h-5 w-5 fill-amber-400 text-amber-500" />
-              <p className="text-xs font-bold uppercase text-muted-foreground">Rating</p>
-              <p className="mt-1 text-xl font-extrabold tabular-nums text-foreground">{rating.toFixed(1)} / 5</p>
+            <div className="rounded-[3px] bg-muted p-4">
+              <Star className="mb-3 h-5 w-5 fill-signal-deep text-signal-deep" />
+              <p className="label-sign text-muted-foreground">{t("home.rating")}</p>
+              <p className="mt-1 text-xl font-extrabold tnum text-foreground">{rating.toFixed(1)} / 5</p>
             </div>
           </div>
 
           <Link
             href={`/products/${product.slug}`}
-            className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-foreground px-7 py-3.5 text-sm font-extrabold text-background shadow-xl shadow-black/10 transition-all hover:-translate-y-0.5 hover:shadow-2xl sm:w-auto"
+            className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-[3px] bg-ink px-7 py-3.5 text-sm font-bold text-ink-foreground transition-all hover:-translate-y-0.5 dark:bg-signal dark:text-signal-foreground sm:w-auto"
           >
-            Grab this deal
+            {t("home.grabDeal")}
             <ShoppingBag className="h-4 w-4" />
           </Link>
         </div>
@@ -216,9 +220,10 @@ async function FeaturedDeal() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Trending Now — horizontal scroll carousel
+// Trending Now — "Now boarding", horizontal scroll carousel
 // ─────────────────────────────────────────────────────────────────────────────
 async function TrendingNow() {
+  const { t } = await getT();
   const products = await db.product.findMany({
     where: { isActive: true },
     include: {
@@ -234,7 +239,12 @@ async function TrendingNow() {
   return (
     <section className="py-14 bg-muted/40">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <SectionHeader title="What people are actually buying" viewAllHref="/products?sort=best_selling" />
+        <SectionHeader
+          title={t("home.nowBoarding")}
+          subtitle={t("home.nowBoardingSubtitle")}
+          viewAllHref="/products?sort=best_selling"
+          viewAllLabel={t("common.viewAll")}
+        />
       </div>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-none -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
@@ -253,9 +263,10 @@ async function TrendingNow() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// New Arrivals
+// New Arrivals — "Just landed"
 // ─────────────────────────────────────────────────────────────────────────────
 async function NewArrivals() {
+  const { t } = await getT();
   const products = await db.product.findMany({
     where: { isActive: true },
     include: {
@@ -269,7 +280,12 @@ async function NewArrivals() {
 
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
-      <SectionHeader title="Just landed" viewAllHref="/products?sort=newest" />
+      <SectionHeader
+        title={t("home.justLanded")}
+        subtitle={t("home.justLandedSubtitle")}
+        viewAllHref="/products?sort=newest"
+        viewAllLabel={t("common.viewAll")}
+      />
       <StaggerGrid className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
         {products.map((product) => (
           <StaggerItem key={product.id}>
@@ -282,9 +298,10 @@ async function NewArrivals() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Testimonials — pulled from real reviews
+// Reviews — "From the arrivals hall", pulled from real reviews
 // ─────────────────────────────────────────────────────────────────────────────
 async function ReviewsSection() {
+  const { t } = await getT();
   const reviews = await db.review.findMany({
     where: { rating: { gte: 4 }, comment: { not: null } },
     orderBy: [{ isVerified: "desc" }, { createdAt: "desc" }],
@@ -299,7 +316,12 @@ async function ReviewsSection() {
 
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
-      <SectionHeader title="What customers say" viewAllHref="/products" viewAllLabel="Shop All" />
+      <SectionHeader
+        title={t("home.reviewsTitle")}
+        subtitle={t("home.reviewsSubtitle")}
+        viewAllHref="/products"
+        viewAllLabel={t("common.viewAll")}
+      />
       <Testimonials
         reviews={reviews.map((r) => ({
           id: r.id,
@@ -319,32 +341,19 @@ async function ReviewsSection() {
 // ─────────────────────────────────────────────────────────────────────────────
 // Trust Badges
 // ─────────────────────────────────────────────────────────────────────────────
-function TrustBadges() {
+async function TrustBadges() {
+  const { t, locale } = await getT();
+  const freeShipAmount = formatPrice(FREE_SHIPPING_THRESHOLD, undefined, locale === "el" ? "el-GR" : "en-IE");
+
   const badges = [
-    {
-      icon: Truck,
-      title: "Free Shipping",
-      subtitle: "On orders over $50",
-    },
-    {
-      icon: ShieldCheck,
-      title: "Secure Payment",
-      subtitle: "256-bit SSL encryption",
-    },
-    {
-      icon: RotateCcw,
-      title: "Easy Returns",
-      subtitle: "30-day return policy",
-    },
-    {
-      icon: Headphones,
-      title: "Real Support",
-      subtitle: "A person replies, not a bot",
-    },
+    { icon: Truck, title: t("home.trustShipping", { amount: freeShipAmount }), subtitle: t("home.trustShippingSub") },
+    { icon: ShieldCheck, title: t("home.trustSecure"), subtitle: t("home.trustSecureSub") },
+    { icon: RotateCcw, title: t("home.trustReturns"), subtitle: t("home.trustReturnsSub") },
+    { icon: Headphones, title: t("home.trustSupport"), subtitle: t("home.trustSupportSub") },
   ];
 
   return (
-    <section className="border-y border-border bg-gradient-to-r from-card via-emerald/5 to-card">
+    <section className="border-y border-border bg-muted/30">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
           {badges.map((badge) => (
@@ -352,8 +361,8 @@ function TrustBadges() {
               key={badge.title}
               className="flex flex-col sm:flex-row items-center sm:items-start gap-3 text-center sm:text-left"
             >
-              <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-[var(--emerald)]/10">
-                <badge.icon className="h-5 w-5 text-[var(--emerald)]" />
+              <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-[3px] bg-signal/20">
+                <badge.icon className="h-5 w-5 text-ink dark:text-signal" />
               </div>
               <div>
                 <p className="text-sm font-semibold text-foreground">{badge.title}</p>
@@ -368,54 +377,43 @@ function TrustBadges() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Conversion strip
+// How an order travels
 // ─────────────────────────────────────────────────────────────────────────────
-function ConversionStrip() {
-  const items = [
-    {
-      icon: BadgePercent,
-      title: "Real savings",
-      text: "The percent off is computed from an actual prior price, every time.",
-    },
-    {
-      icon: Clock3,
-      title: "Fast decisions",
-      text: "Sort by best sellers, newest drops, or category — no infinite scroll.",
-    },
-    {
-      icon: Star,
-      title: "Unfiltered reviews",
-      text: "We don't hide the 3-star ones. You shouldn't have to dig for them either.",
-    },
+function orderSteps(t: TFunction) {
+  return [
+    { icon: ShoppingBag, title: t("home.how1Title"), text: t("home.how1Text") },
+    { icon: PackageCheck, title: t("home.how2Title"), text: t("home.how2Text") },
+    { icon: Truck, title: t("home.how3Title"), text: t("home.how3Text") },
+    { icon: Star, title: t("home.how4Title"), text: t("home.how4Text") },
   ];
+}
+
+async function ConversionStrip() {
+  const { t } = await getT();
+  const steps = orderSteps(t);
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-      <div className="grid overflow-hidden rounded-3xl bg-foreground text-background shadow-2xl shadow-black/10 dark:bg-card dark:text-card-foreground lg:grid-cols-[0.9fr_1.1fr]">
-        <div className="p-8 sm:p-10">
-          <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-background/10 px-3 py-1 text-xs font-bold text-background/80 dark:bg-foreground/10 dark:text-foreground/80">
-            <Sparkles className="h-3.5 w-3.5 text-[var(--emerald)]" />
-            Built to make checkout easy
+      <div className="grid overflow-hidden rounded-[4px] border border-ink/10 bg-ink text-ink-foreground dark:border-border">
+        <div className="p-8 sm:p-10 pb-0 sm:pb-0">
+          <span className="label-sign mb-4 inline-flex items-center gap-2 rounded-[2px] bg-signal px-3 py-1 text-signal-foreground">
+            {t("home.boardTitle")}
           </span>
-          <h2
-            className="max-w-md text-3xl font-medium tracking-tight sm:text-4xl"
-            style={{ fontFamily: "var(--font-heading), Georgia, serif" }}
-          >
-            Everything you&apos;d want to check before you buy.
+          <h2 className="font-board max-w-xl text-3xl font-bold uppercase tracking-tight sm:text-4xl">
+            {t("home.howTitle")}
           </h2>
-          <p className="mt-4 max-w-lg text-sm leading-7 text-background/70 dark:text-muted-foreground sm:text-base">
-            No dark patterns, no manufactured urgency timers. Just the honest
-            version of the things every store claims to do.
-          </p>
         </div>
-        <div className="grid gap-px bg-background/10 p-px dark:bg-border sm:grid-cols-3">
-          {items.map((item) => (
-            <div key={item.title} className="bg-card p-6 text-card-foreground">
-              <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-emerald/10">
-                <item.icon className="h-5 w-5 text-emerald" />
+        <div className="grid gap-px bg-ink-foreground/10 p-px sm:grid-cols-2 lg:grid-cols-4 mt-8">
+          {steps.map((stepItem, i) => (
+            <div key={stepItem.title} className="bg-ink p-6">
+              <div className="mb-5 flex items-center gap-2">
+                <span className="label-sign flex h-6 w-6 items-center justify-center rounded-[2px] bg-signal text-signal-foreground tnum">
+                  {i + 1}
+                </span>
+                <stepItem.icon className="h-5 w-5 text-signal" />
               </div>
-              <h3 className="text-sm font-extrabold">{item.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.text}</p>
+              <h3 className="text-sm font-bold">{stepItem.title}</h3>
+              <p className="mt-2 text-sm leading-6 text-ink-foreground/70">{stepItem.text}</p>
             </div>
           ))}
         </div>
@@ -424,50 +422,32 @@ function ConversionStrip() {
   );
 }
 
-function Newsletter() {
+async function Newsletter() {
+  const { t } = await getT();
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
-      <div
-        className="relative overflow-hidden rounded-3xl bg-[linear-gradient(135deg,oklch(0.97_0.014_75),oklch(0.94_0.035_55),oklch(0.91_0.045_45))] px-6 py-14 text-center text-foreground shadow-xl dark:bg-[oklch(0.22_0.03_50)] sm:px-14"
-      >
-        {/* Background grid */}
+      <div className="board-surface relative overflow-hidden rounded-[4px] px-6 py-14 text-center shadow-xl sm:px-14">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-0"
+          className="pointer-events-none absolute inset-0 z-0 opacity-40"
           style={{
-            backgroundImage: `
-              linear-gradient(to right, oklch(0.5 0.1 50 / 12%) 1px, transparent 1px),
-              linear-gradient(to bottom, oklch(0.5 0.1 50 / 12%) 1px, transparent 1px)
-            `,
-            backgroundSize: "40px 40px",
+            backgroundImage: `repeating-linear-gradient(to bottom, transparent 0px, transparent 47px, var(--board-line) 47px, var(--board-line) 48px)`,
           }}
         />
-        {/* Glow */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 h-64 w-64 rounded-full blur-[80px]"
-          style={{ background: "oklch(0.75 0.13 55 / 40%)" }}
-        />
         <div className="relative z-10">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald/20 bg-card/70 px-3 py-1 text-xs font-bold text-emerald mb-5">
-            Private deals
+          <span className="label-sign inline-flex items-center gap-1.5 rounded-[2px] bg-signal px-3 py-1 text-signal-foreground mb-5">
+            <span className="h-1.5 w-1.5 rounded-full bg-ink animate-led" aria-hidden="true" />
+            {t("home.boardTitle")}
           </span>
-          <h2
-            className="text-2xl sm:text-3xl font-extrabold mb-3 text-foreground"
-            style={{ fontFamily: "var(--font-heading), Georgia, serif" }}
-          >
-            Get the good deals before everyone else
+          <h2 className="font-board text-2xl sm:text-3xl font-bold uppercase mb-3 text-board-text">
+            {t("home.newsletterTitle")}
           </h2>
-          <p className="mb-8 max-w-md mx-auto text-sm text-muted-foreground sm:text-base">
-            New drops, price cuts, and giftable finds sent first. No spam, ever.
+          <p className="mb-8 max-w-md mx-auto text-sm text-board-dim sm:text-base">
+            {t("home.newsletterText")}
           </p>
           <SubscribeForm />
-          <p className="text-xs mt-4 text-muted-foreground">
-            By subscribing you agree to our{" "}
-            <Link href="/privacy" className="underline hover:text-foreground transition-colors">
-              privacy policy
-            </Link>
-            .
+          <p className="text-xs mt-4 text-board-dim">
+            {t("home.newsletterLegal")}
           </p>
         </div>
       </div>
@@ -504,7 +484,7 @@ function TestimonialsSkeleton() {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {Array.from({ length: 3 }).map((_, i) => (
-        <div key={i} className="rounded-xl border border-border bg-card p-5 space-y-3">
+        <div key={i} className="rounded-[4px] border border-border bg-card p-5 space-y-3">
           <div className="h-4 w-24 rounded bg-muted animate-pulse" />
           <div className="h-4 w-full rounded bg-muted animate-pulse" />
           <div className="h-4 w-3/4 rounded bg-muted animate-pulse" />
@@ -518,7 +498,7 @@ function CategorySkeleton() {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
       {Array.from({ length: 5 }).map((_, i) => (
-        <div key={i} className="rounded-2xl aspect-square bg-muted animate-pulse" />
+        <div key={i} className="rounded-[4px] aspect-square bg-muted animate-pulse" />
       ))}
     </div>
   );
@@ -594,11 +574,15 @@ export default async function HomePage() {
       </FadeInSection>
 
       <FadeInSection delay={0.05}>
-        <TrustBadges />
+        <Suspense fallback={null}>
+          <TrustBadges />
+        </Suspense>
       </FadeInSection>
 
       <FadeInSection delay={0.05}>
-        <ConversionStrip />
+        <Suspense fallback={null}>
+          <ConversionStrip />
+        </Suspense>
       </FadeInSection>
 
       <FadeInSection delay={0.05}>
@@ -628,7 +612,9 @@ export default async function HomePage() {
       </FadeInSection>
 
       <FadeInSection delay={0.05}>
-        <Newsletter />
+        <Suspense fallback={null}>
+          <Newsletter />
+        </Suspense>
       </FadeInSection>
     </div>
   );

@@ -36,6 +36,8 @@ enum SupplierApiType {
   MANUAL
   ALIEXPRESS
   CJ
+  ALIBABA
+  MADE_IN_CHINA
   CUSTOM
 }
 
@@ -126,15 +128,25 @@ model Product {
 }
 
 model Supplier {
-  id              String          @id @default(cuid())
-  name            String
-  website         String?
-  apiType         SupplierApiType @default(MANUAL)
-  apiCredentials  Json?
-  rating          Float?
-  avgShippingDays Int?
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
+  id               String          @id @default(cuid())
+  name             String
+  website          String?
+  apiType          SupplierApiType @default(MANUAL)
+  apiCredentials   Json?
+  rating           Float?
+  avgShippingDays  Int?
+  /// ISO-3166 alpha-2 of the warehouse goods ship from (DE, CN, CY…). Drives the "ships from EU" promise.
+  warehouseCountry String?
+  /// Days between placing the supplier order and dispatch (B2B suppliers: production/lead time).
+  leadTimeDays     Int?
+  contactEmail     String?
+  /// Chat / storefront URL (Alibaba TradeManager, Made-in-China inquiry page, CJ ticket…)
+  contactUrl       String?
+  paymentTerms     String?
+  notes            String?         @db.Text
+  isActive         Boolean         @default(true)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
 
   products       ProductSupplier[]
   supplierOrders SupplierOrder[]
@@ -147,11 +159,21 @@ model ProductSupplier {
   supplierId            String
   supplierProductUrl    String
   supplierSku           String?
+  /// Supplier variant id (CJ "vid", AliExpress sku id). Required for API auto-ordering.
+  variantId             String?
   costPrice             Int
   shippingCost          Int
   totalCost             Int
   estimatedDeliveryDays Int?
+  /// Minimum order quantity (B2B suppliers). 1 for dropship-ready suppliers.
+  moq                   Int      @default(1)
+  /// Override of Supplier.warehouseCountry for this listing (e.g. CJ product stocked in DE).
+  warehouseCountry      String?
+  /// Original quote as given by a B2B supplier, before conversion to store currency.
+  sourceCurrency        String?
+  sourceCostPrice       Float?
   inStock               Boolean  @default(true)
+  stockQty              Int?
   lastChecked           DateTime @default(now())
   isLocked              Boolean  @default(false)
   createdAt             DateTime @default(now())
@@ -313,10 +335,10 @@ model WishlistItem {
 
 model StoreSettings {
   id                    String     @id @default(cuid())
-  storeName             String     @default("DropShip")
+  storeName             String     @default("WishlistAZ")
   logoUrl               String?
-  contactEmail          String     @default("support@dropship.com")
-  currency              String     @default("USD")
+  contactEmail          String     @default("hello@wishlistaz.com")
+  currency              String     @default("EUR")
   globalMarkupType      MarkupType @default(MULTIPLIER)
   globalMarkupValue     Float      @default(2.5)
   freeShippingThreshold Int        @default(5000)

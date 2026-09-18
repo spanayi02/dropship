@@ -1,0 +1,26 @@
+-- AlterEnum
+ALTER TYPE "SupplierApiType" ADD VALUE IF NOT EXISTS 'ALIBABA';
+ALTER TYPE "SupplierApiType" ADD VALUE IF NOT EXISTS 'MADE_IN_CHINA';
+
+-- AlterTable Supplier
+ALTER TABLE "Supplier"
+  ADD COLUMN IF NOT EXISTS "warehouseCountry" TEXT,
+  ADD COLUMN IF NOT EXISTS "leadTimeDays" INTEGER,
+  ADD COLUMN IF NOT EXISTS "contactEmail" TEXT,
+  ADD COLUMN IF NOT EXISTS "contactUrl" TEXT,
+  ADD COLUMN IF NOT EXISTS "paymentTerms" TEXT,
+  ADD COLUMN IF NOT EXISTS "notes" TEXT,
+  ADD COLUMN IF NOT EXISTS "isActive" BOOLEAN NOT NULL DEFAULT true;
+
+-- AlterTable ProductSupplier
+ALTER TABLE "ProductSupplier"
+  ADD COLUMN IF NOT EXISTS "variantId" TEXT,
+  ADD COLUMN IF NOT EXISTS "moq" INTEGER NOT NULL DEFAULT 1,
+  ADD COLUMN IF NOT EXISTS "warehouseCountry" TEXT,
+  ADD COLUMN IF NOT EXISTS "sourceCurrency" TEXT,
+  ADD COLUMN IF NOT EXISTS "sourceCostPrice" DOUBLE PRECISION,
+  ADD COLUMN IF NOT EXISTS "stockQty" INTEGER;
+
+-- Default currency is now EUR for new stores
+ALTER TABLE "StoreSettings" ALTER COLUMN "currency" SET DEFAULT 'EUR';
+ALTER TABLE "StoreSettings" ALTER COLUMN "storeName" SET DEFAULT 'WishlistAZ';

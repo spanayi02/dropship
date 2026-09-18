@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/lib/i18n/client";
 
 interface Category {
   id: string;
@@ -32,6 +33,7 @@ export function ProductFilters({
   onClose,
 }: ProductFiltersProps) {
   const router = useRouter();
+  const { t } = useI18n();
 
   const buildUrl = useCallback(
     (overrides: Record<string, string | undefined>) => {
@@ -60,38 +62,34 @@ export function ProductFilters({
     <div className="space-y-7">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h3
-          className="font-semibold text-sm tracking-wide uppercase text-muted-foreground"
-        >
-          Filters
-        </h3>
+        <h3 className="label-sign text-muted-foreground">{t("products.filters")}</h3>
         {hasFilters && (
           <button
             onClick={() => navigate("/products")}
             className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive transition-colors"
           >
             <X className="h-3 w-3" />
-            Clear
+            {t("products.clearFilters")}
           </button>
         )}
       </div>
 
       {/* Categories */}
       <div>
-        <p className="text-sm font-semibold mb-3 text-foreground">Category</p>
+        <p className="text-sm font-semibold mb-3 text-foreground">{t("products.category")}</p>
         <div className="space-y-1">
           <button
             onClick={() =>
               navigate(buildUrl({ category: undefined }))
             }
             className={cn(
-              "flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors",
+              "flex w-full items-center justify-between rounded-[3px] px-3 py-2 text-sm transition-colors",
               !currentCategory
-                ? "bg-[var(--emerald)]/10 text-[var(--emerald)] font-medium"
+                ? "bg-signal/20 text-ink dark:text-signal font-medium"
                 : "text-muted-foreground hover:bg-muted hover:text-foreground"
             )}
           >
-            <span>All Categories</span>
+            <span>{t("products.allCategories")}</span>
           </button>
           {categories.map((cat) => (
             <button
@@ -100,14 +98,14 @@ export function ProductFilters({
                 navigate(buildUrl({ category: cat.slug }))
               }
               className={cn(
-                "flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors",
+                "flex w-full items-center justify-between rounded-[3px] px-3 py-2 text-sm transition-colors",
                 currentCategory === cat.slug
-                  ? "bg-[var(--emerald)]/10 text-[var(--emerald)] font-medium"
+                  ? "bg-signal/20 text-ink dark:text-signal font-medium"
                   : "text-muted-foreground hover:bg-muted hover:text-foreground"
               )}
             >
               <span>{cat.name}</span>
-              <span className="text-xs opacity-60">{cat._count.products}</span>
+              <span className="text-xs tnum opacity-60">{cat._count.products}</span>
             </button>
           ))}
         </div>
@@ -126,47 +124,41 @@ export function ProductFilters({
           );
         }}
       >
-        <p className="text-sm font-semibold mb-3 text-foreground">Price Range</p>
+        <p className="text-sm font-semibold mb-3 text-foreground">{t("products.price")}</p>
         <div className="flex items-center gap-2">
           <div className="relative flex-1">
-            <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
-              $
-            </span>
             <input
               type="number"
               name="minPrice"
               defaultValue={currentMinPrice ?? ""}
-              placeholder="Min"
+              placeholder={t("products.priceMin")}
               min={0}
-              className="w-full rounded-lg border border-border bg-background pl-5 pr-2 py-2 text-sm outline-none focus:border-[var(--emerald)] focus:ring-2 focus:ring-[var(--emerald)]/20 transition-all"
+              className="w-full rounded-[3px] border border-border bg-background px-3 py-2 text-sm outline-none focus:border-ink focus:ring-1 focus:ring-ink/15 dark:focus:border-signal dark:focus:ring-signal/20 transition-all"
             />
           </div>
           <span className="text-muted-foreground text-xs">–</span>
           <div className="relative flex-1">
-            <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
-              $
-            </span>
             <input
               type="number"
               name="maxPrice"
               defaultValue={currentMaxPrice ?? ""}
-              placeholder="Max"
+              placeholder={t("products.priceMax")}
               min={0}
-              className="w-full rounded-lg border border-border bg-background pl-5 pr-2 py-2 text-sm outline-none focus:border-[var(--emerald)] focus:ring-2 focus:ring-[var(--emerald)]/20 transition-all"
+              className="w-full rounded-[3px] border border-border bg-background px-3 py-2 text-sm outline-none focus:border-ink focus:ring-1 focus:ring-ink/15 dark:focus:border-signal dark:focus:ring-signal/20 transition-all"
             />
           </div>
         </div>
         <button
           type="submit"
-          className="mt-2.5 w-full rounded-lg border border-border py-2 text-xs font-medium hover:bg-muted transition-colors"
+          className="mt-2.5 w-full rounded-[3px] border border-border py-2 text-xs font-semibold hover:bg-muted transition-colors"
         >
-          Apply
+          {t("common.apply")}
         </button>
       </form>
 
       {/* In Stock */}
       <div>
-        <p className="text-sm font-semibold mb-3 text-foreground">Availability</p>
+        <p className="text-sm font-semibold mb-3 text-foreground">{t("products.availability")}</p>
         <label className="flex items-center gap-3 cursor-pointer group">
           <div className="relative">
             <input
@@ -179,9 +171,9 @@ export function ProductFilters({
               }
               className="sr-only peer"
             />
-            <div className="h-5 w-5 rounded border border-border bg-background peer-checked:bg-[var(--emerald)] peer-checked:border-[var(--emerald)] transition-colors flex items-center justify-center">
+            <div className="h-5 w-5 rounded-[2px] border border-border bg-background peer-checked:bg-signal peer-checked:border-signal transition-colors flex items-center justify-center">
               <svg
-                className="h-3 w-3 text-white opacity-0 peer-checked:opacity-100 scale-0 peer-checked:scale-100 transition-all"
+                className="h-3 w-3 text-signal-foreground opacity-0 peer-checked:opacity-100 scale-0 peer-checked:scale-100 transition-all"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -191,8 +183,8 @@ export function ProductFilters({
               </svg>
             </div>
           </div>
-          <span className="text-sm text-foreground group-hover:text-[var(--emerald)] transition-colors">
-            In Stock Only
+          <span className="text-sm text-foreground group-hover:text-ink dark:group-hover:text-signal transition-colors">
+            {t("products.inStockOnly")}
           </span>
         </label>
       </div>

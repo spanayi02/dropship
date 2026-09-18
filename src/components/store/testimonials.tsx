@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Star, Quote } from "lucide-react";
+import { useI18n } from "@/lib/i18n/client";
 
 export interface Testimonial {
   id: string;
@@ -30,6 +31,7 @@ const item = {
 };
 
 export function Testimonials({ reviews }: { reviews: Testimonial[] }) {
+  const { t } = useI18n();
   if (reviews.length === 0) return null;
 
   return (
@@ -44,9 +46,9 @@ export function Testimonials({ reviews }: { reviews: Testimonial[] }) {
         <motion.div
           key={review.id}
           variants={item}
-          className="flex flex-col rounded-xl border border-border bg-card p-5"
+          className="flex flex-col rounded-[4px] border border-border bg-card p-5"
         >
-          <Quote className="h-5 w-5 text-[var(--emerald)]/40 mb-3" />
+          <Quote className="h-5 w-5 text-ink/30 dark:text-signal/50 mb-3" />
 
           <div className="flex items-center gap-0.5 mb-2">
             {Array.from({ length: 5 }).map((_, i) => (
@@ -54,7 +56,7 @@ export function Testimonials({ reviews }: { reviews: Testimonial[] }) {
                 key={i}
                 className={
                   i < review.rating
-                    ? "h-3.5 w-3.5 fill-amber-400 text-amber-400"
+                    ? "h-3.5 w-3.5 fill-signal-deep text-signal-deep"
                     : "h-3.5 w-3.5 fill-muted text-muted-foreground/30"
                 }
               />
@@ -74,14 +76,14 @@ export function Testimonials({ reviews }: { reviews: Testimonial[] }) {
             <div className="flex items-center gap-1.5">
               <span className="text-xs font-medium text-foreground">{review.authorName}</span>
               {review.isVerified && (
-                <span className="text-[10px] rounded-full bg-[var(--emerald)]/10 text-[var(--emerald)] px-1.5 py-0.5 font-medium">
-                  Verified
+                <span className="label-sign rounded-[2px] bg-go/15 text-go px-1.5 py-0.5">
+                  {t("home.verified")}
                 </span>
               )}
             </div>
             <Link
               href={`/products/${review.productSlug}`}
-              className="text-xs text-muted-foreground hover:text-[var(--emerald)] transition-colors truncate max-w-[45%]"
+              className="text-xs text-muted-foreground hover:text-ink dark:hover:text-signal transition-colors truncate max-w-[45%]"
             >
               {review.productTitle}
             </Link>

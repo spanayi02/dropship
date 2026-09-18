@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Minus, Plus } from "lucide-react";
+import { useI18n } from "@/lib/i18n/client";
 
 interface QuantitySelectorProps {
   min?: number;
@@ -17,6 +18,7 @@ export function QuantitySelector({
   onChange,
 }: QuantitySelectorProps) {
   const [qty, setQty] = useState(defaultValue);
+  const { t } = useI18n();
 
   function update(next: number) {
     const clamped = Math.min(max, Math.max(min, next));
@@ -26,9 +28,9 @@ export function QuantitySelector({
 
   return (
     <div
-      className="flex items-center rounded-xl border border-border overflow-hidden"
+      className="flex items-center rounded-[3px] border border-border overflow-hidden"
       role="group"
-      aria-label="Quantity selector"
+      aria-label={t("product.quantity")}
     >
       <button
         type="button"
@@ -40,7 +42,7 @@ export function QuantitySelector({
         <Minus className="h-4 w-4" />
       </button>
       <span
-        className="flex h-11 w-12 items-center justify-center border-x border-border text-sm font-semibold tabular-nums"
+        className="flex h-11 w-12 items-center justify-center border-x border-border text-sm font-semibold tnum"
         aria-live="polite"
         aria-atomic="true"
       >

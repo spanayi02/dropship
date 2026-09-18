@@ -1,6 +1,10 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { db } from "@/lib/db";
+import { formatPrice } from "@/lib/utils";
+import { FREE_SHIPPING_THRESHOLD } from "@/lib/store-config";
+import { getT } from "@/lib/i18n/server";
+import type { TFunction } from "@/lib/i18n";
 import { ProductCard, ProductCardSkeleton } from "@/components/store/product-card";
 import { ProductFilters } from "@/components/store/product-filters";
 import { ProductSort } from "@/components/store/product-sort";
@@ -12,7 +16,7 @@ import Link from "next/link";
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: "Products | WishlistAZ",
+  title: "The board | WishlistAZ",
   description: "Every listing here passed a supplier and price check before it went live. Filter by category, price, and rating.",
 };
 
@@ -48,7 +52,7 @@ async function fetchProducts(params: Awaited<PageProps["searchParams"]>) {
   const page = Math.max(1, parseInt(params.page ?? "1", 10));
   const skip = (page - 1) * PAGE_SIZE;
 
-  // Price filter (params are in dollars; DB uses cents)
+  // Price filter (params are in the store's major currency unit; DB uses minor units)
   const minCents = params.minPrice ? Math.round(parseFloat(params.minPrice) * 100) : undefined;
   const maxCents = params.maxPrice ? Math.round(parseFloat(params.maxPrice) * 100) : undefined;
 
@@ -126,21 +130,22 @@ async function fetchCategories() {
 // Results count
 // ─────────────────────────────────────────────────────────────────────────────
 function ResultsCount({
+  t,
   total,
   page,
   pageSize,
 }: {
+  t: TFunction;
   total: number;
   page: number;
   pageSize: number;
 }) {
   const start = Math.min((page - 1) * pageSize + 1, total);
   const end = Math.min(page * pageSize, total);
-  if (total === 0) return <p className="text-sm text-muted-foreground">No products found.</p>;
+  if (total === 0) return <p className="text-sm text-muted-foreground">{t("products.noResults")}</p>;
   return (
-    <p className="text-sm text-muted-foreground">
-      Showing <span className="font-medium text-foreground">{start}–{end}</span> of{" "}
-      <span className="font-medium text-foreground">{total}</span> products
+    <p className="text-sm tnum text-muted-foreground">
+      {t("products.showing", { start, end, total })}
     </p>
   );
 }
@@ -149,9 +154,11 @@ function ResultsCount({
 // Search bar (URL-sync — uses standard form GET)
 // ─────────────────────────────────────────────────────────────────────────────
 function SearchBar({
+  t,
   currentSearch,
   currentParams,
 }: {
+  t: TFunction;
   currentSearch?: string;
   currentParams: Record<string, string>;
 }) {
@@ -170,8 +177,8 @@ function SearchBar({
           type="search"
           name="search"
           defaultValue={currentSearch ?? ""}
-          placeholder="Search products…"
-          className="w-full rounded-xl border border-border bg-background pl-10 pr-4 py-2.5 text-sm outline-none placeholder:text-muted-foreground focus:border-[var(--emerald)] focus:ring-2 focus:ring-[var(--emerald)]/20 transition-all"
+          placeholder={t("common.searchPlaceholder")}
+          className="w-full rounded-[3px] border border-border bg-background pl-10 pr-4 py-2.5 text-sm outline-none placeholder:text-muted-foreground focus:border-ink focus:ring-1 focus:ring-ink/15 dark:focus:border-signal dark:focus:ring-signal/20 transition-all"
         />
       </div>
     </form>
@@ -181,102 +188,99 @@ function SearchBar({
 // ─────────────────────────────────────────────────────────────────────────────
 // Empty state
 // ─────────────────────────────────────────────────────────────────────────────
-function EmptyState() {
+function EmptyState({ t }: { t: TFunction }) {
   return (
     <div className="flex flex-col items-center justify-center py-24 text-center gap-4">
-      <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center">
+      <div className="h-16 w-16 rounded-[4px] bg-muted flex items-center justify-center">
         <Search className="h-7 w-7 text-muted-foreground" />
       </div>
       <div>
-        <p
-          className="text-lg font-semibold"
-          style={{ fontFamily: "var(--font-heading), Georgia, serif" }}
-        >
-          No products found
-        </p>
-        <p className="mt-1 text-sm text-muted-foreground max-w-xs">
-          Try adjusting your filters or search query.
-        </p>
+        <p className="font-board text-lg font-bold uppercase">{t("products.noResults")}</p>
+        <p className="mt-1 text-sm text-muted-foreground max-w-xs">{t("products.noResultsText")}</p>
       </div>
       <Link
         href="/products"
-        className="mt-2 inline-flex items-center gap-2 rounded-xl bg-[var(--emerald)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
+        className="mt-2 inline-flex items-center gap-2 rounded-[3px] bg-signal px-5 py-2.5 text-sm font-bold text-signal-foreground hover:bg-signal-deep transition-colors"
       >
-        Clear all filters
+        {t("products.clearFilters")}
       </Link>
     </div>
   );
 }
 
-function CatalogHero({ categories }: { categories: Awaited<ReturnType<typeof fetchCategories>> }) {
+function CatalogHero({
+  t,
+  categories,
+  freeShipAmount,
+}: {
+  t: TFunction;
+  categories: Awaited<ReturnType<typeof fetchCategories>>;
+  freeShipAmount: string;
+}) {
   const featured = categories.slice(0, 5);
 
   return (
-    <section className="mb-10 overflow-hidden rounded-3xl border border-border bg-card shadow-xl shadow-emerald/10">
+    <section className="mb-10 overflow-hidden rounded-[4px] border border-ink/10 bg-ink text-ink-foreground">
       <div className="grid lg:grid-cols-[1fr_0.72fr]">
-        <div className="relative bg-[linear-gradient(135deg,oklch(0.975_0.012_75),oklch(0.94_0.032_55),oklch(0.9_0.045_45))] p-7 dark:bg-[oklch(0.2_0.03_50)] sm:p-10">
-          <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-emerald/20 bg-card/75 px-3 py-1 text-xs font-extrabold text-emerald">
+        <div className="relative p-7 sm:p-10">
+          <span className="label-sign mb-5 inline-flex items-center gap-2 rounded-[2px] bg-signal px-3 py-1 text-signal-foreground">
             <Sparkles className="h-3.5 w-3.5" />
-            Curated to make shopping quick
+            {t("home.boardTitle")}
           </span>
-          <h1
-            className="max-w-2xl text-3xl font-extrabold tracking-tight sm:text-5xl"
-            style={{ fontFamily: "var(--font-heading), Georgia, serif" }}
-          >
-            Find the thing you came for, then find three more you want.
+          <h1 className="font-board max-w-2xl text-3xl font-bold uppercase tracking-tight sm:text-5xl">
+            {t("products.title")}
           </h1>
-          <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground sm:text-base">
-            Filter fast, sort by what matters, and jump straight into customer-loved
-            picks across home, style, tech, gifts, and everyday upgrades.
+          <p className="mt-4 max-w-2xl text-sm leading-7 text-ink-foreground/70 sm:text-base">
+            {t("home.intro")}
           </p>
           <div className="mt-6 flex flex-wrap gap-2">
             <Link
               href="/products?sort=best_selling"
-              className="inline-flex items-center gap-2 rounded-full bg-foreground px-4 py-2 text-xs font-extrabold text-background shadow-lg shadow-black/10 transition-transform hover:-translate-y-0.5"
+              className="label-sign inline-flex items-center gap-2 rounded-[2px] bg-signal px-4 py-2 text-signal-foreground transition-transform hover:-translate-y-0.5"
             >
-              Best sellers
+              {t("products.sortBestSelling")}
             </Link>
             <Link
               href="/products?sort=newest"
-              className="inline-flex items-center gap-2 rounded-full bg-card px-4 py-2 text-xs font-extrabold text-foreground shadow-sm ring-1 ring-border transition-transform hover:-translate-y-0.5"
+              className="label-sign inline-flex items-center gap-2 rounded-[2px] bg-ink-foreground/10 px-4 py-2 text-ink-foreground ring-1 ring-ink-foreground/15 transition-transform hover:-translate-y-0.5"
             >
-              New drops
+              {t("products.sortNewest")}
             </Link>
             <Link
               href="/products?sort=price_asc"
-              className="inline-flex items-center gap-2 rounded-full bg-card px-4 py-2 text-xs font-extrabold text-foreground shadow-sm ring-1 ring-border transition-transform hover:-translate-y-0.5"
+              className="label-sign inline-flex items-center gap-2 rounded-[2px] bg-ink-foreground/10 px-4 py-2 text-ink-foreground ring-1 ring-ink-foreground/15 transition-transform hover:-translate-y-0.5"
             >
-              Best value
+              {t("products.sortPriceAsc")}
             </Link>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-px bg-border sm:grid-cols-4 lg:grid-cols-2">
+        <div className="grid grid-cols-2 gap-px bg-ink-foreground/10 sm:grid-cols-4 lg:grid-cols-2">
           {[
-            { icon: BadgePercent, label: "Visible savings", text: "Sale prices upfront" },
-            { icon: Truck, label: "Free shipping", text: "Orders over $50" },
-            { icon: ShieldCheck, label: "Secure checkout", text: "Protected payment" },
-            { icon: PackageCheck, label: "Easy browsing", text: "Smart filters" },
+            { icon: Truck, label: t("home.trustShipping", { amount: freeShipAmount }), text: t("home.trustShippingSub") },
+            { icon: ShieldCheck, label: t("home.trustSecure"), text: t("home.trustSecureSub") },
+            { icon: PackageCheck, label: t("home.trustReturns"), text: t("home.trustReturnsSub") },
+            { icon: BadgePercent, label: t("home.featuredDeal"), text: t("checkout.vatNote") },
           ].map(({ icon: Icon, label, text }) => (
-            <div key={label} className="bg-card p-5">
-              <Icon className="mb-4 h-5 w-5 text-emerald" />
-              <p className="text-sm font-extrabold text-foreground">{label}</p>
-              <p className="mt-1 text-xs text-muted-foreground">{text}</p>
+            <div key={label} className="bg-ink p-5">
+              <Icon className="mb-4 h-5 w-5 text-signal" />
+              <p className="text-sm font-bold text-ink-foreground">{label}</p>
+              <p className="mt-1 text-xs text-ink-foreground/60">{text}</p>
             </div>
           ))}
         </div>
       </div>
 
       {featured.length > 0 && (
-        <div className="flex gap-2 overflow-x-auto border-t border-border p-4 scrollbar-none">
+        <div className="flex gap-2 overflow-x-auto border-t border-ink-foreground/10 p-4 scrollbar-none">
           {featured.map((category) => (
             <Link
               key={category.id}
               href={`/products?category=${category.slug}`}
-              className="inline-flex flex-none items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-bold text-foreground transition-colors hover:border-emerald/30 hover:bg-emerald/10 hover:text-emerald"
+              className="inline-flex flex-none items-center gap-2 rounded-[3px] border border-ink-foreground/15 bg-ink-foreground/5 px-4 py-2 text-sm font-bold text-ink-foreground transition-colors hover:border-signal/50 hover:bg-signal/15 hover:text-signal"
             >
               {category.name}
-              <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">
+              <span className="tnum rounded-[2px] bg-ink-foreground/10 px-2 py-0.5 text-[11px] text-ink-foreground/70">
                 {category._count.products}
               </span>
             </Link>
@@ -306,40 +310,38 @@ function ProductGridSkeleton() {
 export default async function ProductsPage({ searchParams }: PageProps) {
   const params = await searchParams;
 
-  const [{ products, total, page, totalPages }, categories] = await Promise.all([
+  const [{ products, total, page, totalPages }, categories, { t, locale }] = await Promise.all([
     fetchProducts(params),
     fetchCategories(),
+    getT(),
   ]);
 
   const currentParamsRecord: Record<string, string> = Object.fromEntries(
     Object.entries(params).filter(([, v]) => v !== undefined) as [string, string][]
   );
+  const freeShipAmount = formatPrice(FREE_SHIPPING_THRESHOLD, undefined, locale === "el" ? "el-GR" : "en-IE");
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-      <CatalogHero categories={categories} />
+      <CatalogHero t={t} categories={categories} freeShipAmount={freeShipAmount} />
 
       <div className="mb-8 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2
-            className="text-2xl font-extrabold tracking-tight sm:text-3xl"
-            style={{ fontFamily: "var(--font-heading), Georgia, serif" }}
-          >
-            {params.search ? `Results for "${params.search}"` : "Shop the catalog"}
+          <h2 className="font-board text-2xl font-bold uppercase tracking-tight sm:text-3xl">
+            {params.search ? t("products.titleSearch", { query: params.search }) : t("products.title")}
           </h2>
           {params.category && (
             <p className="mt-1 text-muted-foreground capitalize">
-              Browsing: <span className="font-medium text-foreground">{params.category.replace(/-/g, " ")}</span>
+              {t("products.category")}: <span className="font-medium text-foreground">{params.category.replace(/-/g, " ")}</span>
             </p>
           )}
         </div>
-        <p className="text-sm text-muted-foreground">Free shipping over $50 · Secure checkout</p>
       </div>
 
       <div className="flex gap-8">
         {/* ── Desktop sidebar ───────────────────────────────────────────── */}
         <aside className="hidden lg:block w-60 flex-shrink-0">
-          <Suspense fallback={<div className="h-96 rounded-xl bg-muted animate-pulse" />}>
+          <Suspense fallback={<div className="h-96 rounded-[4px] bg-muted animate-pulse" />}>
             <ProductFilters
               categories={categories}
               currentCategory={params.category}
@@ -367,6 +369,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
 
             {/* Search */}
             <SearchBar
+              t={t}
               currentSearch={params.search}
               currentParams={currentParamsRecord}
             />
@@ -380,13 +383,13 @@ export default async function ProductsPage({ searchParams }: PageProps) {
 
           {/* Results count */}
           <div className="mb-5">
-            <ResultsCount total={total} page={page} pageSize={PAGE_SIZE} />
+            <ResultsCount t={t} total={total} page={page} pageSize={PAGE_SIZE} />
           </div>
 
           {/* Grid */}
           <Suspense fallback={<ProductGridSkeleton />}>
             {products.length === 0 ? (
-              <EmptyState />
+              <EmptyState t={t} />
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
                 {products.map((product) => (

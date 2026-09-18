@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ShoppingCart, Check, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCartStore } from "@/store/cart-store";
+import { useI18n } from "@/lib/i18n/client";
 
 interface AddToCartButtonProps {
   product: {
@@ -23,6 +24,7 @@ export function AddToCartButton({
   className,
 }: AddToCartButtonProps) {
   const { addItem, openCart } = useCartStore();
+  const { t } = useI18n();
   const [state, setState] = useState<"idle" | "loading" | "success">("idle");
 
   async function handleClick() {
@@ -50,15 +52,15 @@ export function AddToCartButton({
       onClick={handleClick}
       disabled={state === "loading"}
       aria-label={
-        state === "success" ? "Added to cart!" : "Add to cart"
+        state === "success" ? t("product.addedToCart") : t("product.addToCart")
       }
       className={cn(
-        "flex flex-1 items-center justify-center gap-2 rounded-xl px-6 h-11 text-sm font-semibold transition-all duration-300",
+        "flex flex-1 items-center justify-center gap-2 rounded-[3px] px-6 h-11 text-sm font-bold transition-all duration-300",
         state === "success"
-          ? "bg-[var(--emerald)] text-white scale-[1.02]"
+          ? "bg-go text-white scale-[1.02]"
           : state === "loading"
-          ? "bg-[var(--emerald)]/70 text-white cursor-wait"
-          : "bg-[var(--emerald)] text-white hover:opacity-90 shadow-lg shadow-[var(--emerald)]/25",
+          ? "bg-signal/70 text-signal-foreground cursor-wait"
+          : "bg-signal text-signal-foreground hover:bg-signal-deep",
         className
       )}
     >
@@ -66,10 +68,10 @@ export function AddToCartButton({
       {state === "success" && <Check className="h-4 w-4" />}
       {state === "idle" && <ShoppingCart className="h-4 w-4" />}
       {state === "loading"
-        ? "Adding…"
+        ? t("product.adding")
         : state === "success"
-        ? "Added to Cart!"
-        : "Add to Cart"}
+        ? t("product.addedToCart")
+        : t("product.addToCart")}
     </button>
   );
 }

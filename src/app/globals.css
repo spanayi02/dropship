@@ -4,12 +4,20 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ──────────────────────────────────────────────────────────────────────────
+   WishlistAZ — "Departure board" world
+   Signal-yellow signage, black split-flap boards, white thermal tags.
+   Faces: Fira Sans (Meta lineage — the Deutsche Bundespost brief) for UI,
+   Fira Sans Condensed / Extra Condensed for boards and display.
+   ────────────────────────────────────────────────────────────────────────── */
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-outfit);
-  --font-heading: var(--font-fraunces);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-ui);
+  --font-heading: var(--font-display);
+  --font-board: var(--font-board);
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, monospace;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -39,91 +47,155 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  /* World tokens */
+  --color-signal: var(--signal);
+  --color-signal-foreground: var(--signal-foreground);
+  --color-signal-deep: var(--signal-deep);
+  --color-ink: var(--ink);
+  --color-ink-foreground: var(--ink-foreground);
+  --color-board: var(--board);
+  --color-board-cell: var(--board-cell);
+  --color-board-line: var(--board-line);
+  --color-board-text: var(--board-text);
+  --color-board-dim: var(--board-dim);
+  --color-led: var(--led);
+  --color-go: var(--go);
+  --color-stop: var(--stop);
+  --color-field: var(--field);
+  --color-line: var(--line);
+  /* Legacy alias used by admin screens */
   --color-emerald: var(--emerald);
   --color-emerald-foreground: var(--emerald-foreground);
-  --radius-sm: calc(var(--radius) * 0.55);
-  --radius-md: calc(var(--radius) * 0.75);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.3);
-  --radius-2xl: calc(var(--radius) * 1.6);
-  --radius-3xl: calc(var(--radius) * 2);
-  --radius-4xl: calc(var(--radius) * 2.3);
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --radius-lg: 4px;
+  --radius-xl: 6px;
+  --radius-2xl: 8px;
+  --radius-3xl: 12px;
+  --radius-4xl: 16px;
 }
 
 :root {
-  /* Warm paper base — no pure white, no cool AI-gray */
-  --background: oklch(0.975 0.009 75);
-  --foreground: oklch(0.21 0.021 55);
-  --card: oklch(0.995 0.006 75);
-  --card-foreground: oklch(0.21 0.021 55);
-  --popover: oklch(0.995 0.006 75);
-  --popover-foreground: oklch(0.21 0.021 55);
-  --primary: oklch(0.21 0.021 55);
-  --primary-foreground: oklch(0.98 0.006 80);
-  --secondary: oklch(0.94 0.018 68);
-  --secondary-foreground: oklch(0.21 0.021 55);
-  --muted: oklch(0.94 0.014 70);
-  --muted-foreground: oklch(0.47 0.022 55);
-  --accent: oklch(0.91 0.032 55);
-  --accent-foreground: oklch(0.21 0.021 55);
-  --destructive: oklch(0.577 0.21 27.325);
-  --border: oklch(0.875 0.018 65);
-  --input: oklch(0.875 0.018 65);
-  --ring: oklch(0.55 0.14 48);
-  /* Brand accent — burnt amber/clay, one hue only (kept var name --emerald
-     for backwards compat with the ~130 existing call sites; it is not green) */
-  --emerald: oklch(0.56 0.15 50);
-  --emerald-foreground: oklch(0.99 0.008 90);
-  --chart-1: oklch(0.56 0.15 50);
-  --chart-2: oklch(0.40 0.06 50);
-  --chart-3: oklch(0.70 0.09 70);
-  --chart-4: oklch(0.50 0.05 100);
-  --chart-5: oklch(0.42 0.13 30);
-  --radius: 0.4rem;
-  --sidebar: oklch(0.975 0.009 75);
-  --sidebar-foreground: oklch(0.21 0.021 55);
-  --sidebar-primary: oklch(0.21 0.021 55);
-  --sidebar-primary-foreground: oklch(0.98 0.006 80);
-  --sidebar-accent: oklch(0.91 0.032 55);
-  --sidebar-accent-foreground: oklch(0.21 0.021 55);
-  --sidebar-border: oklch(0.875 0.018 65);
-  --sidebar-ring: oklch(0.55 0.14 48);
+  --font-ui: "Fira Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Fira Sans Condensed", "Arial Narrow", "Fira Sans", sans-serif;
+  --font-board: "Fira Sans Extra Condensed", "Fira Sans Condensed", "Arial Narrow", sans-serif;
+
+  /* Paper: cool white, never cream */
+  --background: oklch(0.99 0.002 250);
+  --foreground: oklch(0.17 0.012 262);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.17 0.012 262);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.17 0.012 262);
+  --primary: oklch(0.17 0.012 262);
+  --primary-foreground: oklch(0.99 0.002 250);
+  --secondary: oklch(0.955 0.004 250);
+  --secondary-foreground: oklch(0.17 0.012 262);
+  --muted: oklch(0.955 0.004 250);
+  --muted-foreground: oklch(0.45 0.014 262);
+  --accent: oklch(0.93 0.09 96);
+  --accent-foreground: oklch(0.17 0.012 262);
+  --destructive: oklch(0.56 0.21 27);
+  --border: oklch(0.87 0.006 250);
+  --input: oklch(0.87 0.006 250);
+  --ring: oklch(0.17 0.012 262);
+
+  /* Signage yellow — one hue, committed */
+  --signal: oklch(0.9 0.185 96);
+  --signal-foreground: oklch(0.15 0.012 262);
+  --signal-deep: oklch(0.78 0.17 88);
+  /* Ink / board */
+  --ink: oklch(0.17 0.012 262);
+  --ink-foreground: oklch(0.99 0.002 250);
+  --board: oklch(0.14 0.01 262);
+  --board-cell: oklch(0.2 0.012 262);
+  --board-line: oklch(0.28 0.012 262);
+  --board-text: oklch(0.97 0.004 250);
+  --board-dim: oklch(0.66 0.012 262);
+  --led: oklch(0.85 0.17 84);
+  /* Status LEDs */
+  --go: oklch(0.72 0.18 148);
+  --stop: oklch(0.62 0.22 27);
+  /* Fields */
+  --field: oklch(0.955 0.004 250);
+  --line: oklch(0.87 0.006 250);
+
+  --emerald: oklch(0.5 0.12 82);
+  --emerald-foreground: oklch(0.99 0.002 250);
+
+  --chart-1: oklch(0.85 0.17 90);
+  --chart-2: oklch(0.17 0.012 262);
+  --chart-3: oklch(0.6 0.012 262);
+  --chart-4: oklch(0.72 0.18 148);
+  --chart-5: oklch(0.62 0.22 27);
+  --radius: 0.2rem;
+
+  --sidebar: oklch(0.99 0.002 250);
+  --sidebar-foreground: oklch(0.17 0.012 262);
+  --sidebar-primary: oklch(0.17 0.012 262);
+  --sidebar-primary-foreground: oklch(0.99 0.002 250);
+  --sidebar-accent: oklch(0.955 0.004 250);
+  --sidebar-accent-foreground: oklch(0.17 0.012 262);
+  --sidebar-border: oklch(0.87 0.006 250);
+  --sidebar-ring: oklch(0.17 0.012 262);
+
+  --selection-bg: oklch(0.9 0.185 96);
+  --selection-fg: oklch(0.15 0.012 262);
 }
 
 .dark {
-  --background: oklch(0.17 0.014 55);
-  --foreground: oklch(0.95 0.009 75);
-  --card: oklch(0.21 0.016 55);
-  --card-foreground: oklch(0.95 0.009 75);
-  --popover: oklch(0.21 0.016 55);
-  --popover-foreground: oklch(0.95 0.009 75);
-  --primary: oklch(0.95 0.009 75);
-  --primary-foreground: oklch(0.17 0.014 55);
-  --secondary: oklch(0.27 0.018 55);
-  --secondary-foreground: oklch(0.95 0.009 75);
-  --muted: oklch(0.25 0.016 55);
-  --muted-foreground: oklch(0.66 0.02 60);
-  --accent: oklch(0.29 0.032 50);
-  --accent-foreground: oklch(0.95 0.009 75);
-  --destructive: oklch(0.704 0.17 22.216);
-  --border: oklch(0.95 0.01 75 / 10%);
-  --input: oklch(0.95 0.01 75 / 12%);
-  --ring: oklch(0.63 0.15 50);
-  --emerald: oklch(0.66 0.15 50);
-  --emerald-foreground: oklch(0.17 0.014 55);
-  --chart-1: oklch(0.66 0.15 50);
-  --chart-2: oklch(0.78 0.07 70);
-  --chart-3: oklch(0.55 0.09 50);
-  --chart-4: oklch(0.62 0.05 100);
-  --chart-5: oklch(0.58 0.14 30);
-  --sidebar: oklch(0.21 0.016 55);
-  --sidebar-foreground: oklch(0.95 0.009 75);
-  --sidebar-primary: oklch(0.66 0.15 50);
-  --sidebar-primary-foreground: oklch(0.17 0.014 55);
-  --sidebar-accent: oklch(0.29 0.032 50);
-  --sidebar-accent-foreground: oklch(0.95 0.009 75);
-  --sidebar-border: oklch(0.95 0.01 75 / 10%);
-  --sidebar-ring: oklch(0.63 0.15 50);
+  --background: oklch(0.15 0.01 262);
+  --foreground: oklch(0.96 0.004 250);
+  --card: oklch(0.19 0.012 262);
+  --card-foreground: oklch(0.96 0.004 250);
+  --popover: oklch(0.19 0.012 262);
+  --popover-foreground: oklch(0.96 0.004 250);
+  --primary: oklch(0.96 0.004 250);
+  --primary-foreground: oklch(0.15 0.01 262);
+  --secondary: oklch(0.24 0.012 262);
+  --secondary-foreground: oklch(0.96 0.004 250);
+  --muted: oklch(0.23 0.012 262);
+  --muted-foreground: oklch(0.7 0.012 262);
+  --accent: oklch(0.3 0.06 92);
+  --accent-foreground: oklch(0.96 0.004 250);
+  --destructive: oklch(0.68 0.19 25);
+  --border: oklch(0.96 0.004 250 / 12%);
+  --input: oklch(0.96 0.004 250 / 14%);
+  --ring: oklch(0.9 0.185 96);
+
+  --signal: oklch(0.9 0.185 96);
+  --signal-foreground: oklch(0.15 0.012 262);
+  --signal-deep: oklch(0.78 0.17 88);
+  --ink: oklch(0.96 0.004 250);
+  --ink-foreground: oklch(0.15 0.01 262);
+  --board: oklch(0.11 0.008 262);
+  --board-cell: oklch(0.17 0.01 262);
+  --board-line: oklch(0.26 0.012 262);
+  --board-text: oklch(0.97 0.004 250);
+  --board-dim: oklch(0.62 0.012 262);
+  --led: oklch(0.85 0.17 84);
+  --go: oklch(0.76 0.18 148);
+  --stop: oklch(0.68 0.2 25);
+  --field: oklch(0.21 0.012 262);
+  --line: oklch(0.96 0.004 250 / 12%);
+
+  --emerald: oklch(0.85 0.17 90);
+  --emerald-foreground: oklch(0.15 0.01 262);
+
+  --chart-1: oklch(0.85 0.17 90);
+  --chart-2: oklch(0.96 0.004 250);
+  --chart-3: oklch(0.6 0.012 262);
+  --chart-4: oklch(0.76 0.18 148);
+  --chart-5: oklch(0.68 0.2 25);
+
+  --sidebar: oklch(0.19 0.012 262);
+  --sidebar-foreground: oklch(0.96 0.004 250);
+  --sidebar-primary: oklch(0.9 0.185 96);
+  --sidebar-primary-foreground: oklch(0.15 0.01 262);
+  --sidebar-accent: oklch(0.24 0.012 262);
+  --sidebar-accent-foreground: oklch(0.96 0.004 250);
+  --sidebar-border: oklch(0.96 0.004 250 / 12%);
+  --sidebar-ring: oklch(0.9 0.185 96);
 }
 
 @layer base {
@@ -132,40 +204,181 @@
   }
   html {
     scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
   }
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: var(--font-outfit), system-ui, sans-serif;
+    font-family: var(--font-ui);
+    font-feature-settings: "tnum" 1, "kern" 1;
   }
-  h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-fraunces), Georgia, serif;
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
     text-wrap: balance;
   }
   p {
     text-wrap: pretty;
   }
+  ::selection {
+    background: var(--selection-bg);
+    color: var(--selection-fg);
+  }
+  input, textarea {
+    caret-color: var(--signal-deep);
+  }
+  :focus-visible {
+    outline: 2px solid var(--signal-deep);
+    outline-offset: 2px;
+  }
+  a, button {
+    -webkit-tap-highlight-color: transparent;
+  }
   @media (prefers-reduced-motion: reduce) {
-    html {
-      scroll-behavior: auto;
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
     }
   }
 }
 
-/* Custom scrollbar — tinted to the warm palette instead of neutral gray */
-::-webkit-scrollbar { width: 6px; }
+/* Scrollbar tinted to the world */
+::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: oklch(0.7 0.02 60); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: oklch(0.5 0.03 55); }
+::-webkit-scrollbar-thumb { background: oklch(0.75 0.008 250); border-radius: 4px; border: 2px solid var(--background); }
+::-webkit-scrollbar-thumb:hover { background: oklch(0.55 0.012 262); }
+.dark ::-webkit-scrollbar-thumb { background: oklch(0.35 0.012 262); }
 
-/* Fixed, pointer-events-none film-grain layer — breaks the flat-vector,
-   zero-texture look that reads as AI-generated. Applied once in the root
-   layout so every page gets it without touching individual sections. */
-.grain-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  pointer-events: none;
-  opacity: 0.03;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+/* ── Utilities ─────────────────────────────────────────────────────────── */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+@utility font-display {
+  font-family: var(--font-display);
+}
+@utility font-board {
+  font-family: var(--font-board);
+}
+@utility tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Signage label: uppercase, tracked, condensed. Used inside tags/boards as data,
+   never as an eyebrow above a heading. */
+@utility label-sign {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+/* Split-flap board surface: horizontal hairlines like the mechanical rows */
+@utility board-surface {
+  background-color: var(--board);
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 47px,
+    var(--board-line) 47px,
+    var(--board-line) 48px
+  );
+  color: var(--board-text);
+}
+
+/* A single flap cell: the horizontal hinge line through the middle */
+@utility flap {
+  position: relative;
+  background: var(--board-cell);
+  border-radius: 3px;
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; top: 50%;
+    height: 1px;
+    background: oklch(0 0 0 / 0.55);
+    pointer-events: none;
+  }
+}
+
+/* Luggage tag: white card with a punched eyelet */
+@utility tag-punch {
+  position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    top: 10px; left: 50%;
+    width: 10px; height: 10px;
+    margin-left: -5px;
+    border-radius: 50%;
+    background: var(--background);
+    box-shadow: inset 0 0 0 1.5px var(--line);
+  }
+}
+
+/* Barcode stripe (pure CSS) */
+@utility barcode {
+  background-image: repeating-linear-gradient(
+    to right,
+    currentColor 0 2px, transparent 2px 4px,
+    currentColor 4px 5px, transparent 5px 8px,
+    currentColor 8px 11px, transparent 11px 12px,
+    currentColor 12px 13px, transparent 13px 16px,
+    currentColor 16px 18px, transparent 18px 21px
+  );
+}
+
+/* Yellow/black chevron hazard stripe — used sparingly as a divider */
+@utility chevron-stripe {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--signal) 0 14px,
+    var(--ink) 14px 28px
+  );
+}
+
+/* ── Keyframes ─────────────────────────────────────────────────────────── */
+@keyframes flap-in {
+  0%   { transform: rotateX(-90deg); opacity: 0; }
+  60%  { transform: rotateX(12deg); opacity: 1; }
+  100% { transform: rotateX(0deg); opacity: 1; }
+}
+@keyframes led-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes tag-drop {
+  0%   { transform: translateY(-6px) rotate(-2deg); opacity: 0; }
+  100% { transform: translateY(0) rotate(0deg); opacity: 1; }
+}
+
+@utility animate-flap-in {
+  animation: flap-in 0.55s cubic-bezier(0.2, 0.9, 0.25, 1) both;
+  transform-origin: 50% 0%;
+  backface-visibility: hidden;
+}
+@utility animate-led {
+  animation: led-blink 1.6s ease-in-out infinite;
+}
+@utility animate-marquee {
+  animation: marquee 40s linear infinite;
+}
+@utility animate-tag-drop {
+  animation: tag-drop 0.35s cubic-bezier(0.2, 0.9, 0.25, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-flap-in, .animate-led, .animate-marquee, .animate-tag-drop {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
 }
