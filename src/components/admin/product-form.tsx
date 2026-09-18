@@ -126,14 +126,14 @@ export function ProductForm({ product }: ProductFormProps) {
   return (
     <form onSubmit={onSubmit} className="space-y-8 max-w-2xl">
       {/* Basic Info */}
-      <section className="space-y-4 rounded-xl border bg-card p-5">
+      <section className="space-y-4 rounded-[4px] border bg-card p-5">
         <h2 className="text-sm font-semibold">Basic Information</h2>
 
         <div className="space-y-1">
           <label className="text-sm font-medium">Title *</label>
           <input
             {...register("title")}
-            className="w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50"
+            className="w-full rounded-[3px] border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50"
             placeholder="Product title"
           />
           {errors.title && (
@@ -146,7 +146,7 @@ export function ProductForm({ product }: ProductFormProps) {
           <input
             {...register("slug")}
             onInput={() => setSlugManual(true)}
-            className="w-full rounded-lg border bg-background px-3 py-2 font-mono text-sm outline-none focus:ring-2 focus:ring-ring/50"
+            className="w-full rounded-[3px] border bg-background px-3 py-2 font-mono text-sm outline-none focus:ring-2 focus:ring-ring/50"
             placeholder="product-slug"
           />
           {errors.slug && (
@@ -159,7 +159,7 @@ export function ProductForm({ product }: ProductFormProps) {
           <textarea
             {...register("description")}
             rows={4}
-            className="w-full resize-y rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50"
+            className="w-full resize-y rounded-[3px] border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50"
             placeholder="Describe the product..."
           />
           {errors.description && (
@@ -171,7 +171,7 @@ export function ProductForm({ product }: ProductFormProps) {
           <label className="text-sm font-medium">Category *</label>
           <select
             {...register("categoryId")}
-            className="w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50"
+            className="w-full rounded-[3px] border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50"
           >
             <option value="">Select a category</option>
             {categories.map((c) => (
@@ -191,7 +191,7 @@ export function ProductForm({ product }: ProductFormProps) {
       </section>
 
       {/* Images */}
-      <section className="space-y-4 rounded-xl border bg-card p-5">
+      <section className="space-y-4 rounded-[4px] border bg-card p-5">
         <h2 className="text-sm font-semibold">Images</h2>
         <div className="space-y-2">
           {imageUrls.map((url, index) => (
@@ -200,7 +200,7 @@ export function ProductForm({ product }: ProductFormProps) {
                 type="url"
                 value={url}
                 onChange={(e) => updateImage(index, e.target.value)}
-                className="flex-1 rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50"
+                className="flex-1 rounded-[3px] border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50"
                 placeholder="https://example.com/image.jpg"
               />
               {imageUrls.length > 1 && (
@@ -237,15 +237,15 @@ export function ProductForm({ product }: ProductFormProps) {
       </section>
 
       {/* Pricing */}
-      <section className="space-y-4 rounded-xl border bg-card p-5">
+      <section className="space-y-4 rounded-[4px] border bg-card p-5">
         <h2 className="text-sm font-semibold">Pricing</h2>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1">
-            <label className="text-sm font-medium">Selling Price (USD) *</label>
+            <label className="text-sm font-medium">Selling Price (EUR) *</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
-                $
+                €
               </span>
               <input
                 type="number"
@@ -253,7 +253,7 @@ export function ProductForm({ product }: ProductFormProps) {
                 min="0"
                 defaultValue={centsToDollars(product?.sellingPrice)}
                 onChange={(e) => setValue("sellingPrice", dollarsToCents(e.target.value))}
-                className="w-full rounded-lg border bg-background pl-7 pr-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50"
+                className="w-full rounded-[3px] border bg-background pl-7 pr-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50"
                 placeholder="0.00"
               />
             </div>
@@ -263,10 +263,10 @@ export function ProductForm({ product }: ProductFormProps) {
           </div>
 
           <div className="space-y-1">
-            <label className="text-sm font-medium">Compare At Price (USD)</label>
+            <label className="text-sm font-medium">Compare At Price (EUR)</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
-                $
+                €
               </span>
               <input
                 type="number"
@@ -277,7 +277,7 @@ export function ProductForm({ product }: ProductFormProps) {
                   const val = e.target.value ? dollarsToCents(e.target.value) : null;
                   setValue("compareAtPrice", val);
                 }}
-                className="w-full rounded-lg border bg-background pl-7 pr-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50"
+                className="w-full rounded-[3px] border bg-background pl-7 pr-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50"
                 placeholder="0.00"
               />
             </div>
@@ -286,7 +286,7 @@ export function ProductForm({ product }: ProductFormProps) {
       </section>
 
       {/* Markup */}
-      <section className="space-y-4 rounded-xl border bg-card p-5">
+      <section className="space-y-4 rounded-[4px] border bg-card p-5">
         <h2 className="text-sm font-semibold">Markup &amp; Auto Pricing</h2>
 
         <div className="flex items-center gap-3">
@@ -306,7 +306,7 @@ export function ProductForm({ product }: ProductFormProps) {
             <label className="text-sm font-medium">Markup Type</label>
             <select
               {...register("markupType")}
-              className="w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50"
+              className="w-full rounded-[3px] border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50"
             >
               <option value="MANUAL">Manual</option>
               <option value="MULTIPLIER">Multiplier (e.g. 2.5x)</option>
@@ -317,14 +317,14 @@ export function ProductForm({ product }: ProductFormProps) {
           {markupType !== "MANUAL" && (
             <div className="space-y-1">
               <label className="text-sm font-medium">
-                {markupType === "MULTIPLIER" ? "Multiplier" : "Fixed Amount (USD)"}
+                {markupType === "MULTIPLIER" ? "Multiplier" : "Fixed Amount (EUR)"}
               </label>
               <input
                 type="number"
                 step="0.01"
                 min="0"
                 {...register("markupValue", { valueAsNumber: true })}
-                className="w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50"
+                className="w-full rounded-[3px] border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50"
                 placeholder={markupType === "MULTIPLIER" ? "2.5" : "10.00"}
               />
             </div>
@@ -333,10 +333,10 @@ export function ProductForm({ product }: ProductFormProps) {
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1">
-            <label className="text-sm font-medium">Floor Price (USD)</label>
+            <label className="text-sm font-medium">Floor Price (EUR)</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
-                $
+                €
               </span>
               <input
                 type="number"
@@ -347,17 +347,17 @@ export function ProductForm({ product }: ProductFormProps) {
                   const val = e.target.value ? dollarsToCents(e.target.value) : null;
                   setValue("markupFloor", val);
                 }}
-                className="w-full rounded-lg border bg-background pl-7 pr-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50"
+                className="w-full rounded-[3px] border bg-background pl-7 pr-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50"
                 placeholder="0.00"
               />
             </div>
           </div>
 
           <div className="space-y-1">
-            <label className="text-sm font-medium">Ceiling Price (USD)</label>
+            <label className="text-sm font-medium">Ceiling Price (EUR)</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
-                $
+                €
               </span>
               <input
                 type="number"
@@ -368,7 +368,7 @@ export function ProductForm({ product }: ProductFormProps) {
                   const val = e.target.value ? dollarsToCents(e.target.value) : null;
                   setValue("markupCeiling", val);
                 }}
-                className="w-full rounded-lg border bg-background pl-7 pr-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50"
+                className="w-full rounded-[3px] border bg-background pl-7 pr-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50"
                 placeholder="0.00"
               />
             </div>
@@ -377,7 +377,7 @@ export function ProductForm({ product }: ProductFormProps) {
       </section>
 
       {/* Visibility */}
-      <section className="rounded-xl border bg-card p-5">
+      <section className="rounded-[4px] border bg-card p-5">
         <div className="flex items-center gap-3">
           <input
             type="checkbox"

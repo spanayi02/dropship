@@ -3,8 +3,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/utils";
-import { OrderStatus } from "@prisma/client";
 import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/components/admin/badges";
 import { ChevronLeft } from "lucide-react";
 import { OrderStatusForm } from "./order-status-form";
 
@@ -21,18 +21,6 @@ export async function generateMetadata({
   return { title: order ? `Order ${order.orderNumber}` : "Order Not Found" };
 }
 
-const STATUS_STYLES: Record<OrderStatus, string> = {
-  PENDING:
-    "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
-  PROCESSING:
-    "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
-  SHIPPED:
-    "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
-  DELIVERED:
-    "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-  CANCELLED:
-    "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
-};
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -114,18 +102,14 @@ export default async function OrderDetailPage({ params }: PageProps) {
             </p>
           </div>
         </div>
-        <span
-          className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-medium ${STATUS_STYLES[order.status]}`}
-        >
-          {order.status.charAt(0) + order.status.slice(1).toLowerCase()}
-        </span>
+        <StatusBadge status={order.status} className="text-xs" />
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Left column — items + breakdown */}
         <div className="lg:col-span-2 space-y-6">
           {/* Items table */}
-          <div className="rounded-xl border">
+          <div className="rounded-[4px] border">
             <div className="px-4 py-3 border-b">
               <h2 className="font-semibold text-sm">
                 Order Items ({order.orderItems.length})
@@ -168,7 +152,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-3">
                             {item.product.images[0] ? (
-                              <div className="relative size-10 rounded-md overflow-hidden border shrink-0">
+                              <div className="relative size-10 rounded-[3px] overflow-hidden border shrink-0">
                                 <Image
                                   src={item.product.images[0]}
                                   alt={item.product.title}
@@ -178,7 +162,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
                                 />
                               </div>
                             ) : (
-                              <div className="size-10 rounded-md border bg-muted shrink-0" />
+                              <div className="size-10 rounded-[3px] border bg-muted shrink-0" />
                             )}
                             <span className="font-medium leading-tight line-clamp-2">
                               {item.product.title}
@@ -199,8 +183,8 @@ export default async function OrderDetailPage({ params }: PageProps) {
                         <td
                           className={`px-4 py-3 text-right tabular-nums font-medium ${
                             itemProfit >= 0
-                              ? "text-green-600 dark:text-green-400"
-                              : "text-red-600 dark:text-red-400"
+                              ? "text-go"
+                              : "text-stop"
                           }`}
                         >
                           {formatPrice(itemProfit)}
@@ -217,7 +201,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
           </div>
 
           {/* Financial breakdown */}
-          <div className="rounded-xl border">
+          <div className="rounded-[4px] border">
             <div className="px-4 py-3 border-b">
               <h2 className="font-semibold text-sm">Financial Breakdown</h2>
             </div>
@@ -241,8 +225,8 @@ export default async function OrderDetailPage({ params }: PageProps) {
               <div
                 className={`flex justify-between font-semibold text-base border-t pt-2.5 ${
                   profit >= 0
-                    ? "text-green-600 dark:text-green-400"
-                    : "text-red-600 dark:text-red-400"
+                    ? "text-go"
+                    : "text-stop"
                 }`}
               >
                 <span>Profit</span>
@@ -255,7 +239,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
         {/* Right column — customer, address, status change */}
         <div className="space-y-6">
           {/* Customer info */}
-          <div className="rounded-xl border">
+          <div className="rounded-[4px] border">
             <div className="px-4 py-3 border-b">
               <h2 className="font-semibold text-sm">Customer</h2>
             </div>
@@ -266,7 +250,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
                   <p className="text-muted-foreground">{order.user.email}</p>
                   <Link
                     href={`/admin/users/${order.user.id}`}
-                    className="text-primary text-xs hover:underline"
+                    className="text-xs hover:underline underline-offset-4"
                   >
                     View customer profile →
                   </Link>
@@ -283,7 +267,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
           </div>
 
           {/* Shipping address */}
-          <div className="rounded-xl border">
+          <div className="rounded-[4px] border">
             <div className="px-4 py-3 border-b">
               <h2 className="font-semibold text-sm">Shipping Address</h2>
             </div>
@@ -317,7 +301,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
           </div>
 
           {/* Status change */}
-          <div className="rounded-xl border">
+          <div className="rounded-[4px] border">
             <div className="px-4 py-3 border-b">
               <h2 className="font-semibold text-sm">Update Status</h2>
             </div>
@@ -328,7 +312,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
 
           {/* Stripe info */}
           {(order.stripePaymentIntentId || order.stripeCheckoutSessionId) && (
-            <div className="rounded-xl border">
+            <div className="rounded-[4px] border">
               <div className="px-4 py-3 border-b">
                 <h2 className="font-semibold text-sm">Payment</h2>
               </div>

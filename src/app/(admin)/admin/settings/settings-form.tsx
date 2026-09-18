@@ -9,7 +9,7 @@ import { toast } from "sonner";
 const CURRENCIES = ["USD", "EUR", "GBP", "CAD", "AUD", "JPY"];
 const MARKUP_TYPES = [
   { value: "MULTIPLIER", label: "Multiplier (e.g. 2.5×)" },
-  { value: "FIXED", label: "Fixed Amount (e.g. +$10)" },
+  { value: "FIXED", label: "Fixed Amount (e.g. +€10)" },
   { value: "MANUAL", label: "Manual (no auto-pricing)" },
 ] as const;
 
@@ -100,7 +100,7 @@ export function SettingsForm({ settings }: Props) {
               onChange={(e) => setStoreName(e.target.value)}
               required
               disabled={isPending}
-              className="w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50 disabled:opacity-50"
+              className="w-full rounded-[3px] border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50 disabled:opacity-50"
               placeholder="My Store"
             />
           </div>
@@ -115,7 +115,7 @@ export function SettingsForm({ settings }: Props) {
               onChange={(e) => setContactEmail(e.target.value)}
               required
               disabled={isPending}
-              className="w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50 disabled:opacity-50"
+              className="w-full rounded-[3px] border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50 disabled:opacity-50"
               placeholder="support@example.com"
             />
           </div>
@@ -128,7 +128,7 @@ export function SettingsForm({ settings }: Props) {
             value={logoUrl}
             onChange={(e) => setLogoUrl(e.target.value)}
             disabled={isPending}
-            className="w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50 disabled:opacity-50"
+            className="w-full rounded-[3px] border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50 disabled:opacity-50"
             placeholder="https://example.com/logo.png"
           />
         </div>
@@ -139,7 +139,7 @@ export function SettingsForm({ settings }: Props) {
             value={currency}
             onChange={(e) => setCurrency(e.target.value)}
             disabled={isPending}
-            className="w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50 disabled:opacity-50"
+            className="w-full rounded-[3px] border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50 disabled:opacity-50"
           >
             {CURRENCIES.map((c) => (
               <option key={c} value={c}>
@@ -169,7 +169,7 @@ export function SettingsForm({ settings }: Props) {
                 )
               }
               disabled={isPending}
-              className="w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50 disabled:opacity-50"
+              className="w-full rounded-[3px] border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50 disabled:opacity-50"
             >
               {MARKUP_TYPES.map((t) => (
                 <option key={t.value} value={t.value}>
@@ -197,7 +197,7 @@ export function SettingsForm({ settings }: Props) {
               step="0.01"
               min="0"
               disabled={isPending || markupType === "MANUAL"}
-              className="w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50 disabled:opacity-50"
+              className="w-full rounded-[3px] border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50 disabled:opacity-50"
             />
           </div>
         </div>
@@ -225,7 +225,7 @@ export function SettingsForm({ settings }: Props) {
                 step="0.01"
                 min="0"
                 disabled={isPending}
-                className="w-full rounded-lg border bg-background pl-7 pr-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50 disabled:opacity-50 tabular-nums"
+                className="w-full rounded-[3px] border bg-background pl-7 pr-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50 disabled:opacity-50 tabular-nums"
               />
             </div>
             <p className="text-xs text-muted-foreground mt-1">
@@ -248,7 +248,7 @@ export function SettingsForm({ settings }: Props) {
                 step="0.01"
                 min="0"
                 disabled={isPending}
-                className="w-full rounded-lg border bg-background pl-7 pr-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50 disabled:opacity-50 tabular-nums"
+                className="w-full rounded-[3px] border bg-background pl-7 pr-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/50 disabled:opacity-50 tabular-nums"
               />
             </div>
             <p className="text-xs text-muted-foreground mt-1">

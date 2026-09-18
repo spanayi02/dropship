@@ -12,8 +12,8 @@ interface ErrorBoundaryProps {
 export default function ErrorBoundary({ error, reset }: ErrorBoundaryProps) {
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center gap-6 px-4 py-16 text-center">
-      <div className="flex h-20 w-20 items-center justify-center rounded-full bg-rose-100 dark:bg-rose-900/20">
-        <ShieldAlert className="h-10 w-10 text-rose-500" />
+      <div className="flex h-20 w-20 items-center justify-center rounded-[4px] bg-stop/10">
+        <ShieldAlert className="h-10 w-10 text-stop" />
       </div>
 
       <div className="space-y-2">
@@ -24,11 +24,11 @@ export default function ErrorBoundary({ error, reset }: ErrorBoundaryProps) {
       </div>
 
       {process.env.NODE_ENV === "development" && error.message && (
-        <div className="w-full max-w-lg rounded-lg border border-rose-200 bg-rose-50 p-4 text-left dark:border-rose-800 dark:bg-rose-900/10">
-          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-rose-600 dark:text-rose-400">
+        <div className="w-full max-w-lg rounded-[3px] border border-stop/40 bg-stop/5 p-4 text-left">
+          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-stop">
             Error details
           </p>
-          <code className="block whitespace-pre-wrap break-all text-xs text-rose-700 dark:text-rose-300">
+          <code className="block whitespace-pre-wrap break-all text-xs text-stop">
             {error.message}
           </code>
         </div>

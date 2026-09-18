@@ -49,7 +49,7 @@ export default async function AdminProductsPage({ searchParams }: PageProps) {
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Products</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Products</h1>
           <p className="text-sm text-muted-foreground">{products.length} product{products.length !== 1 ? "s" : ""} found</p>
         </div>
         <div className="flex items-center gap-2">
@@ -72,13 +72,13 @@ export default async function AdminProductsPage({ searchParams }: PageProps) {
               name="search"
               defaultValue={search ?? ""}
               placeholder="Search products…"
-              className="h-8 rounded-lg border bg-background pl-9 pr-3 text-sm outline-none focus:ring-2 focus:ring-ring/50 w-56"
+              className="h-8 rounded-[3px] border bg-background pl-9 pr-3 text-sm outline-none focus:ring-2 focus:ring-ring/50 w-56"
             />
           </div>
           <select
             name="category"
             defaultValue={category ?? ""}
-            className="h-8 rounded-lg border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring/50"
+            className="h-8 rounded-[3px] border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring/50"
           >
             <option value="">All Categories</option>
             {categories.map((c) => (
@@ -101,7 +101,7 @@ export default async function AdminProductsPage({ searchParams }: PageProps) {
       </div>
 
       {/* Table */}
-      <div className="rounded-xl border bg-card shadow-sm overflow-x-auto">
+      <div className="rounded-[4px] border bg-card shadow-sm overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b bg-muted/40 text-xs text-muted-foreground">
@@ -133,7 +133,7 @@ export default async function AdminProductsPage({ searchParams }: PageProps) {
                   {/* Image */}
                   <td className="px-4 py-3">
                     {product.images[0] ? (
-                      <div className="relative size-8 overflow-hidden rounded-md border">
+                      <div className="relative size-8 overflow-hidden rounded-[3px] border">
                         <Image
                           src={product.images[0]}
                           alt={product.title}
@@ -144,7 +144,7 @@ export default async function AdminProductsPage({ searchParams }: PageProps) {
                         />
                       </div>
                     ) : (
-                      <div className="size-8 rounded-md border bg-muted" />
+                      <div className="size-8 rounded-[3px] border bg-muted" />
                     )}
                   </td>
 
@@ -175,9 +175,9 @@ export default async function AdminProductsPage({ searchParams }: PageProps) {
                       <span
                         className={
                           margin >= 30
-                            ? "text-emerald-600"
+                            ? "text-go"
                             : margin >= 10
-                            ? "text-yellow-600"
+                            ? "text-signal-deep"
                             : "text-destructive"
                         }
                       >
@@ -192,7 +192,7 @@ export default async function AdminProductsPage({ searchParams }: PageProps) {
                   <td className="px-4 py-3 text-center">
                     <span
                       className={`inline-block size-2 rounded-full ${
-                        product.isActive ? "bg-emerald-500" : "bg-muted-foreground/40"
+                        product.isActive ? "bg-go" : "bg-muted-foreground/40"
                       }`}
                     />
                   </td>

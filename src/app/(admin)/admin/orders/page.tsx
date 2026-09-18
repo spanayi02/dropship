@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/utils";
 import { OrderStatus } from "@prisma/client";
 import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/components/admin/badges";
 import {
   Search,
   Download,
@@ -27,18 +28,6 @@ const ORDER_STATUSES: OrderStatus[] = [
   "CANCELLED",
 ];
 
-const STATUS_STYLES: Record<OrderStatus, string> = {
-  PENDING:
-    "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
-  PROCESSING:
-    "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
-  SHIPPED:
-    "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
-  DELIVERED:
-    "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-  CANCELLED:
-    "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
-};
 
 const PAGE_SIZE = 25;
 
@@ -143,7 +132,7 @@ export default async function OrdersPage({ searchParams }: PageProps) {
             name="q"
             defaultValue={query}
             placeholder="Search order # or email…"
-            className="w-full rounded-lg border bg-background pl-8 pr-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-ring/50"
+            className="w-full rounded-[3px] border bg-background pl-8 pr-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-ring/50"
           />
           {statusFilter && (
             <input type="hidden" name="status" value={statusFilter} />
@@ -154,7 +143,7 @@ export default async function OrdersPage({ searchParams }: PageProps) {
         <div className="flex items-center gap-1 flex-wrap">
           <Link
             href={buildUrl({ status: undefined, page: undefined })}
-            className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+            className={`rounded-[3px] px-3 py-1.5 text-xs font-medium transition-colors ${
               !statusFilter
                 ? "bg-primary text-primary-foreground"
                 : "bg-muted text-muted-foreground hover:text-foreground"
@@ -166,7 +155,7 @@ export default async function OrdersPage({ searchParams }: PageProps) {
             <Link
               key={s}
               href={buildUrl({ status: s, page: undefined })}
-              className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+              className={`rounded-[3px] px-3 py-1.5 text-xs font-medium transition-colors ${
                 statusFilter === s
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground hover:text-foreground"
@@ -184,7 +173,7 @@ export default async function OrdersPage({ searchParams }: PageProps) {
       </Suspense>
 
       {/* Table */}
-      <div className="rounded-xl border overflow-hidden">
+      <div className="rounded-[4px] border overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -253,7 +242,7 @@ export default async function OrdersPage({ searchParams }: PageProps) {
                       <td className="px-4 py-3">
                         <Link
                           href={`/admin/orders/${order.id}`}
-                          className="font-mono text-xs font-medium text-primary hover:underline"
+                          className="font-mono text-xs font-medium hover:underline underline-offset-4"
                         >
                           {order.orderNumber}
                         </Link>
@@ -283,18 +272,13 @@ export default async function OrdersPage({ searchParams }: PageProps) {
                       </td>
                       <td
                         className={`px-4 py-3 text-right tabular-nums font-medium ${
-                          profit >= 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"
+                          profit >= 0 ? "text-go" : "text-stop"
                         }`}
                       >
                         {formatPrice(profit)}
                       </td>
                       <td className="px-4 py-3 text-center">
-                        <span
-                          className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[order.status]}`}
-                        >
-                          {order.status.charAt(0) +
-                            order.status.slice(1).toLowerCase()}
-                        </span>
+                        <StatusBadge status={order.status} />
                       </td>
                     </tr>
                   );

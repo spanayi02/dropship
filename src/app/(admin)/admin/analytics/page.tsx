@@ -197,7 +197,7 @@ export default async function AnalyticsPage({ searchParams }: PageProps) {
             <Link
               key={r.key}
               href={`/admin/analytics?range=${r.key}`}
-              className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+              className={`rounded-[3px] px-3 py-1.5 text-xs font-medium transition-colors ${
                 rangeKey === r.key
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground hover:text-foreground"
@@ -215,8 +215,8 @@ export default async function AnalyticsPage({ searchParams }: PageProps) {
           label="Total Revenue"
           value={formatPrice(totalRevenue)}
           icon={<DollarSign className="size-4" />}
-          color="text-emerald-600 dark:text-emerald-400"
-          bgColor="bg-emerald-50 dark:bg-emerald-950/30"
+          color="text-go"
+          bgColor="bg-signal/20"
         />
         <MetricCard
           label="Total Profit"
@@ -230,41 +230,41 @@ export default async function AnalyticsPage({ searchParams }: PageProps) {
           }
           color={
             totalProfit >= 0
-              ? "text-indigo-600 dark:text-indigo-400"
-              : "text-red-600 dark:text-red-400"
+              ? "text-foreground"
+              : "text-stop"
           }
           bgColor={
             totalProfit >= 0
-              ? "bg-indigo-50 dark:bg-indigo-950/30"
-              : "bg-red-50 dark:bg-red-950/30"
+              ? "bg-ink/10"
+              : "bg-stop/10"
           }
         />
         <MetricCard
           label="Orders"
           value={orderCount.toString()}
           icon={<ShoppingBag className="size-4" />}
-          color="text-blue-600 dark:text-blue-400"
-          bgColor="bg-blue-50 dark:bg-blue-950/30"
+          color="text-foreground"
+          bgColor="bg-ink/10"
         />
         <MetricCard
           label="Avg Order Value"
           value={formatPrice(avgOrderValue)}
           icon={<DollarSign className="size-4" />}
-          color="text-amber-600 dark:text-amber-400"
-          bgColor="bg-amber-50 dark:bg-amber-950/30"
+          color="text-foreground"
+          bgColor="bg-signal/20"
         />
       </div>
 
       {/* Charts */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Revenue vs Profit */}
-        <div className="rounded-xl border p-4 lg:col-span-2">
+        <div className="rounded-[4px] border p-4 lg:col-span-2">
           <h2 className="font-semibold text-sm mb-4">Revenue vs Profit</h2>
           <AnalyticsChart data={chartData} />
         </div>
 
         {/* Category pie */}
-        <div className="rounded-xl border p-4">
+        <div className="rounded-[4px] border p-4">
           <h2 className="font-semibold text-sm mb-4">Sales by Category</h2>
           <CategoryPieChart data={categoryData} />
         </div>
@@ -303,10 +303,10 @@ function MetricCard({
   bgColor: string;
 }) {
   return (
-    <div className="rounded-xl border p-4 space-y-3">
+    <div className="rounded-[4px] border p-4 space-y-3">
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">{label}</p>
-        <div className={`rounded-lg p-1.5 ${bgColor} ${color}`}>{icon}</div>
+        <div className={`rounded-[3px] p-1.5 ${bgColor} ${color}`}>{icon}</div>
       </div>
       <p className={`text-2xl font-semibold tabular-nums ${color}`}>{value}</p>
     </div>
@@ -331,7 +331,7 @@ function TopProductsTable({
   valueLabel: string;
 }) {
   return (
-    <div className="rounded-xl border overflow-hidden">
+    <div className="rounded-[4px] border overflow-hidden">
       <div className="px-4 py-3 border-b">
         <h2 className="font-semibold text-sm">{title}</h2>
       </div>
@@ -369,7 +369,7 @@ function TopProductsTable({
                 <td className="px-4 py-2.5">
                   <Link
                     href={`/admin/products/${p.id}`}
-                    className="hover:text-primary hover:underline line-clamp-1"
+                    className="hover:hover:underline underline-offset-4 line-clamp-1"
                   >
                     {p.title}
                   </Link>
@@ -380,8 +380,8 @@ function TopProductsTable({
                 <td
                   className={`px-4 py-2.5 text-right tabular-nums font-medium ${
                     p[valueKey] >= 0
-                      ? "text-emerald-600 dark:text-emerald-400"
-                      : "text-red-600 dark:text-red-400"
+                      ? "text-go"
+                      : "text-stop"
                   }`}
                 >
                   {formatPrice(p[valueKey])}

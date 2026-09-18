@@ -46,7 +46,7 @@ export function OrderStatusForm({ orderId, currentStatus }: Props) {
         value={selected}
         onChange={(e) => setSelected(e.target.value as OrderStatus)}
         disabled={isPending}
-        className="w-full rounded-lg border bg-background px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-ring/50 disabled:opacity-50"
+        className="w-full rounded-[3px] border bg-background px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-ring/50 disabled:opacity-50"
       >
         {ORDER_STATUSES.map((s) => (
           <option key={s} value={s}>

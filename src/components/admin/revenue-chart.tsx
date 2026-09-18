@@ -9,16 +9,18 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, splitPrice } from "@/lib/utils";
 
 interface RevenueChartProps {
   data: { date: string; revenue: number }[];
 }
 
+const { symbol } = splitPrice(0);
+
 function formatTick(value: number) {
-  if (value === 0) return "$0";
-  if (value >= 100000) return `$${(value / 100000).toFixed(1)}k`;
-  return `$${(value / 100).toFixed(0)}`;
+  if (value === 0) return `${symbol}0`;
+  if (value >= 100000) return `${symbol}${(value / 100000).toFixed(1)}k`;
+  return `${symbol}${(value / 100).toFixed(0)}`;
 }
 
 export function RevenueChart({ data }: RevenueChartProps) {
@@ -46,19 +48,20 @@ export function RevenueChart({ data }: RevenueChartProps) {
           formatter={(value) => [formatPrice(Number(value)), "Revenue"]}
           labelStyle={{ fontSize: 12 }}
           contentStyle={{
-            borderRadius: "8px",
-            border: "1px solid hsl(var(--border))",
-            backgroundColor: "hsl(var(--popover))",
-            color: "hsl(var(--popover-foreground))",
+            borderRadius: "3px",
+            border: "1px solid var(--border)",
+            backgroundColor: "var(--popover)",
+            color: "var(--popover-foreground)",
+            fontSize: 12,
           }}
         />
         <Line
           type="monotone"
           dataKey="revenue"
-          stroke="#10b981"
+          stroke="var(--signal-deep)"
           strokeWidth={2}
           dot={false}
-          activeDot={{ r: 4, fill: "#10b981" }}
+          activeDot={{ r: 4, fill: "var(--signal-deep)" }}
         />
       </LineChart>
     </ResponsiveContainer>

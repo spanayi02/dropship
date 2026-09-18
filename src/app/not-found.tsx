@@ -6,7 +6,7 @@ export default function NotFound() {
     <div className="flex min-h-screen flex-col items-center justify-center gap-6 px-4 py-16 text-center">
       <div className="space-y-2">
         <p
-          className="text-8xl font-extrabold text-[var(--emerald)] leading-none"
+          className="text-8xl font-extrabold text-signal-deep leading-none"
           aria-hidden="true"
         >
           404

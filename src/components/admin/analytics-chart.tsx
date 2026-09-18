@@ -10,6 +10,9 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { formatPrice, splitPrice } from "@/lib/utils";
+
+const { symbol } = splitPrice(0);
 
 export interface AnalyticsDataPoint {
   date: string;
@@ -22,8 +25,8 @@ interface Props {
 }
 
 function formatDollar(cents: number) {
-  if (cents >= 100000) return `$${(cents / 100000).toFixed(1)}k`;
-  return `$${(cents / 100).toFixed(0)}`;
+  if (cents >= 100000) return `${symbol}${(cents / 100000).toFixed(1)}k`;
+  return `${symbol}${(cents / 100).toFixed(0)}`;
 }
 
 interface TooltipPayload {
@@ -44,7 +47,7 @@ function CustomTooltip({
   if (!active || !payload?.length) return null;
 
   return (
-    <div className="rounded-lg border bg-background px-3 py-2.5 shadow-md text-sm space-y-1">
+    <div className="rounded-[3px] border bg-background px-3 py-2.5 shadow-md text-sm space-y-1">
       <p className="font-medium text-xs text-muted-foreground mb-1.5">{label}</p>
       {payload.map((entry) => (
         <div key={entry.name} className="flex items-center gap-2">
@@ -54,7 +57,7 @@ function CustomTooltip({
           />
           <span className="capitalize text-muted-foreground">{entry.name}:</span>
           <span className="font-medium tabular-nums">
-            ${(entry.value / 100).toFixed(2)}
+            {formatPrice(entry.value)}
           </span>
         </div>
       ))}
@@ -91,7 +94,7 @@ export function AnalyticsChart({ data }: Props) {
         <Line
           type="monotone"
           dataKey="revenue"
-          stroke="#10b981"
+          stroke="var(--ink)"
           strokeWidth={2}
           dot={false}
           activeDot={{ r: 4 }}
@@ -99,7 +102,7 @@ export function AnalyticsChart({ data }: Props) {
         <Line
           type="monotone"
           dataKey="profit"
-          stroke="#6366f1"
+          stroke="var(--signal-deep)"
           strokeWidth={2}
           dot={false}
           activeDot={{ r: 4 }}

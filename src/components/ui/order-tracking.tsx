@@ -19,7 +19,7 @@ function OrderTracking({ steps = [], className, ...props }: OrderTrackingProps) 
           <div key={step.name} className="flex">
             <div className="flex flex-col items-center">
               {step.isCompleted ? (
-                <CheckCircle2 className="h-5 w-5 shrink-0 text-[var(--emerald)]" />
+                <CheckCircle2 className="h-5 w-5 shrink-0 text-go" />
               ) : (
                 <Circle className="h-5 w-5 shrink-0 text-muted-foreground/40" />
               )}
@@ -27,7 +27,7 @@ function OrderTracking({ steps = [], className, ...props }: OrderTrackingProps) 
                 <div
                   className={cn(
                     "w-px grow",
-                    steps[index + 1].isCompleted ? "bg-[var(--emerald)]" : "bg-border"
+                    steps[index + 1].isCompleted ? "bg-go" : "bg-border"
                   )}
                 />
               )}

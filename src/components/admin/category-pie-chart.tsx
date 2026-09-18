@@ -9,6 +9,7 @@ import {
   ResponsiveContainer,
   type PieLabelRenderProps,
 } from "recharts";
+import { formatPrice } from "@/lib/utils";
 
 export interface CategoryDataPoint {
   name: string;
@@ -19,17 +20,18 @@ interface Props {
   data: CategoryDataPoint[];
 }
 
+// Signal → ink → greys: one hue family, so the pie reads as one board, not a rainbow.
 const COLORS = [
-  "#10b981",
-  "#6366f1",
-  "#f59e0b",
-  "#ef4444",
-  "#3b82f6",
-  "#8b5cf6",
-  "#ec4899",
-  "#14b8a6",
-  "#f97316",
-  "#84cc16",
+  "var(--signal-deep)",
+  "var(--ink)",
+  "oklch(0.6 0.012 262)",
+  "var(--signal)",
+  "oklch(0.45 0.014 262)",
+  "var(--go)",
+  "oklch(0.75 0.008 250)",
+  "var(--stop)",
+  "oklch(0.35 0.012 262)",
+  "var(--led)",
 ];
 
 interface TooltipPayload {
@@ -49,10 +51,10 @@ function CustomTooltip({
   const item = payload[0];
 
   return (
-    <div className="rounded-lg border bg-background px-3 py-2 shadow-md text-sm">
+    <div className="rounded-[3px] border bg-background px-3 py-2 shadow-md text-sm">
       <p className="font-medium">{item.name}</p>
       <p className="text-muted-foreground">
-        ${(item.value / 100).toFixed(2)} revenue
+        {formatPrice(item.value)} revenue
       </p>
     </div>
   );
@@ -82,7 +84,7 @@ function renderCustomLabel({
     <text
       x={x}
       y={y}
-      fill="white"
+      fill="var(--background)"
       textAnchor="middle"
       dominantBaseline="central"
       fontSize={11}

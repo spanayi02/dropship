@@ -14,11 +14,11 @@ export default function AdminDashboardLoading() {
         {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-xl border bg-card p-5 space-y-3"
+            className="rounded-[4px] border bg-card p-5 space-y-3"
           >
             <div className="flex items-center justify-between">
               <Skeleton className="h-4 w-24" />
-              <Skeleton className="h-8 w-8 rounded-lg" />
+              <Skeleton className="h-8 w-8 rounded-[3px]" />
             </div>
             <Skeleton className="h-8 w-28" />
             <Skeleton className="h-3 w-20" />
@@ -27,12 +27,12 @@ export default function AdminDashboardLoading() {
       </div>
 
       {/* Chart skeleton */}
-      <div className="rounded-xl border bg-card p-6 space-y-4">
+      <div className="rounded-[4px] border bg-card p-6 space-y-4">
         <div className="flex items-center justify-between">
           <Skeleton className="h-5 w-32" />
-          <Skeleton className="h-8 w-28 rounded-lg" />
+          <Skeleton className="h-8 w-28 rounded-[3px]" />
         </div>
-        <Skeleton className="h-64 w-full rounded-lg" />
+        <Skeleton className="h-64 w-full rounded-[3px]" />
       </div>
     </div>
   );

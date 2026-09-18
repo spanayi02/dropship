@@ -57,7 +57,7 @@ export function ProductRowActions({ productId, isActive }: ProductRowActionsProp
         disabled={isPending}
       >
         {isActive ? (
-          <ToggleRight className="size-3.5 text-emerald-600" />
+          <ToggleRight className="size-3.5 text-go" />
         ) : (
           <ToggleLeft className="size-3.5 text-muted-foreground" />
         )}

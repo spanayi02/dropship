@@ -45,7 +45,7 @@ export function BulkActionsBar() {
   }
 
   return (
-    <div className="flex items-center gap-3 rounded-lg border bg-muted/30 px-4 py-2 text-sm">
+    <div className="flex items-center gap-3 rounded-[3px] border bg-muted/30 px-4 py-2 text-sm">
       <span className="text-muted-foreground">Bulk actions:</span>
       <Button
         variant="outline"

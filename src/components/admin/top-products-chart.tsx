@@ -9,17 +9,19 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, splitPrice } from "@/lib/utils";
 import { truncate } from "@/lib/utils";
 
 interface TopProductsChartProps {
   data: { name: string; revenue: number }[];
 }
 
+const { symbol } = splitPrice(0);
+
 function formatTick(value: number) {
-  if (value === 0) return "$0";
-  if (value >= 100000) return `$${(value / 100000).toFixed(1)}k`;
-  return `$${(value / 100).toFixed(0)}`;
+  if (value === 0) return `${symbol}0`;
+  if (value >= 100000) return `${symbol}${(value / 100000).toFixed(1)}k`;
+  return `${symbol}${(value / 100).toFixed(0)}`;
 }
 
 export function TopProductsChart({ data }: TopProductsChartProps) {
@@ -55,13 +57,14 @@ export function TopProductsChart({ data }: TopProductsChartProps) {
           formatter={(value) => [formatPrice(Number(value)), "Revenue"]}
           labelStyle={{ fontSize: 12 }}
           contentStyle={{
-            borderRadius: "8px",
-            border: "1px solid hsl(var(--border))",
-            backgroundColor: "hsl(var(--popover))",
-            color: "hsl(var(--popover-foreground))",
+            borderRadius: "3px",
+            border: "1px solid var(--border)",
+            backgroundColor: "var(--popover)",
+            color: "var(--popover-foreground)",
+            fontSize: 12,
           }}
         />
-        <Bar dataKey="revenue" fill="#10b981" radius={[0, 4, 4, 0]} />
+        <Bar dataKey="revenue" fill="var(--ink)" radius={[0, 2, 2, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );

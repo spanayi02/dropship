@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/utils";
 import { RevenueChart } from "@/components/admin/revenue-chart";
 import { TopProductsChart } from "@/components/admin/top-products-chart";
+import { StatusBadge } from "@/components/admin/badges";
 import {
   TrendingUp,
   ShoppingCart,
@@ -213,26 +214,6 @@ async function fetchDashboardData() {
   };
 }
 
-// ─── status badge ─────────────────────────────────────────────────────────────
-
-const STATUS_COLORS: Record<string, string> = {
-  PENDING: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
-  PROCESSING: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
-  SHIPPED: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
-  DELIVERED: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-  CANCELLED: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
-};
-
-function StatusBadge({ status }: { status: string }) {
-  return (
-    <span
-      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[status] ?? "bg-muted text-muted-foreground"}`}
-    >
-      {status.charAt(0) + status.slice(1).toLowerCase()}
-    </span>
-  );
-}
-
 // ─── metric card ──────────────────────────────────────────────────────────────
 
 function MetricCard({
@@ -247,11 +228,11 @@ function MetricCard({
   icon: React.ComponentType<{ className?: string }>;
 }) {
   return (
-    <div className="rounded-xl border bg-card p-5 shadow-sm">
+    <div className="rounded-[4px] border bg-card p-5 shadow-sm">
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium text-muted-foreground">{label}</p>
-        <div className="rounded-lg bg-emerald-500/10 p-2">
-          <Icon className="size-4 text-emerald-600 dark:text-emerald-400" />
+        <div className="rounded-[3px] bg-go/10 p-2">
+          <Icon className="size-4 text-go" />
         </div>
       </div>
       <p className="mt-2 text-2xl font-bold tracking-tight">{value}</p>
@@ -280,8 +261,8 @@ export default async function AdminDashboardPage() {
   return (
     <div className="p-6 space-y-8">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-sm text-muted-foreground">Welcome back. Here&apos;s what&apos;s happening.</p>
+        <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
+        <p className="text-sm text-muted-foreground">What left the board today, what is still waiting on a supplier.</p>
       </div>
 
       {/* Metric Cards */}
@@ -323,11 +304,11 @@ export default async function AdminDashboardPage() {
 
       {/* Charts */}
       <div className="grid gap-6 lg:grid-cols-3">
-        <div className="col-span-2 rounded-xl border bg-card p-5 shadow-sm">
+        <div className="col-span-2 rounded-[4px] border bg-card p-5 shadow-sm">
           <h2 className="mb-4 text-sm font-semibold">Revenue — Last 30 Days</h2>
           <RevenueChart data={chartData} />
         </div>
-        <div className="rounded-xl border bg-card p-5 shadow-sm">
+        <div className="rounded-[4px] border bg-card p-5 shadow-sm">
           <h2 className="mb-4 text-sm font-semibold">Top 5 Products by Revenue</h2>
           <TopProductsChart data={topProducts} />
         </div>
@@ -335,10 +316,10 @@ export default async function AdminDashboardPage() {
 
       {/* Low Stock Alert */}
       {lowStockProducts.length > 0 && (
-        <div className="rounded-xl border border-yellow-200 bg-yellow-50 p-5 dark:border-yellow-900/40 dark:bg-yellow-900/10">
+        <div className="rounded-[4px] border border-signal-deep/60 bg-signal/15 p-5">
           <div className="flex items-center gap-2 mb-3">
-            <AlertTriangle className="size-4 text-yellow-600 dark:text-yellow-400" />
-            <h2 className="text-sm font-semibold text-yellow-800 dark:text-yellow-300">
+            <AlertTriangle className="size-4 text-signal-deep" />
+            <h2 className="text-sm font-semibold text-foreground">
               Low Stock / Out of Stock ({lowStockProducts.length})
             </h2>
           </div>
@@ -346,7 +327,7 @@ export default async function AdminDashboardPage() {
             {lowStockProducts.map((s) => (
               <span
                 key={s.productId}
-                className="inline-flex items-center gap-1.5 rounded-full bg-yellow-100 px-2.5 py-1 text-xs font-medium text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
+                className="inline-flex items-center gap-1.5 rounded-[2px] bg-background/70 px-2.5 py-1 text-xs font-medium text-foreground"
               >
                 <Package className="size-3" />
                 {s.product.title}
@@ -357,7 +338,7 @@ export default async function AdminDashboardPage() {
       )}
 
       {/* Recent Orders */}
-      <div className="rounded-xl border bg-card shadow-sm">
+      <div className="rounded-[4px] border bg-card shadow-sm">
         <div className="flex items-center justify-between border-b px-5 py-4">
           <h2 className="text-sm font-semibold">Recent Orders</h2>
         </div>

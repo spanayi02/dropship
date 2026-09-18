@@ -9,11 +9,11 @@ export default function AdminOrdersLoading() {
           <Skeleton className="h-7 w-24" />
           <Skeleton className="h-4 w-32" />
         </div>
-        <Skeleton className="h-8 w-28 rounded-lg" />
+        <Skeleton className="h-8 w-28 rounded-[3px]" />
       </div>
 
       {/* Table */}
-      <div className="rounded-xl border overflow-hidden">
+      <div className="rounded-[4px] border overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -38,15 +38,15 @@ export default function AdminOrdersLoading() {
                     <Skeleton className="h-4 w-24" />
                   </td>
                   <td className="px-4 py-4">
-                    <Skeleton className="h-5 w-20 rounded-full" />
+                    <Skeleton className="h-5 w-20 rounded-[2px]" />
                   </td>
                   <td className="px-4 py-4">
                     <Skeleton className="h-4 w-16" />
                   </td>
                   <td className="px-4 py-4">
                     <div className="flex gap-1 justify-end">
-                      <Skeleton className="h-7 w-7 rounded-md" />
-                      <Skeleton className="h-7 w-7 rounded-md" />
+                      <Skeleton className="h-7 w-7 rounded-[3px]" />
+                      <Skeleton className="h-7 w-7 rounded-[3px]" />
                     </div>
                   </td>
                 </tr>
