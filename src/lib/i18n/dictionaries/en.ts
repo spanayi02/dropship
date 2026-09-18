@@ -311,6 +311,6 @@ export const en = {
     notFoundText: "The page you're looking for was moved or never existed.",
     goHome: "Back to the board",
   },
-} as const;
+};
 
 export type Dictionary = typeof en;

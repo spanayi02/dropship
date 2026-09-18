@@ -1,34 +1,7 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { Logo } from "@/components/store/logo";
-
-const SHOP_LINKS = [
-  { label: "Products", href: "/products" },
-  { label: "New Arrivals", href: "/products?sort=newest" },
-  { label: "Best Sellers", href: "/products?sort=best-sellers" },
-  { label: "Sale", href: "/products?sale=true" },
-];
-
-const ACCOUNT_LINKS = [
-  { label: "My Account", href: "/account", prefetch: false },
-  { label: "Orders", href: "/account/orders", prefetch: false },
-  { label: "Wishlist", href: "/account/wishlist", prefetch: false },
-  { label: "Login", href: "/login" },
-];
-
-const SUPPORT_LINKS = [
-  { label: "FAQ", href: "/faq" },
-  { label: "Shipping Info", href: "/shipping" },
-  { label: "Returns", href: "/returns" },
-  { label: "Contact Us", href: "/contact" },
-];
-
-const COMPANY_LINKS = [
-  { label: "About Us", href: "/about" },
-  { label: "Blog", href: "/blog" },
-  { label: "Careers", href: "/careers" },
-  { label: "Privacy Policy", href: "/privacy" },
-];
+import { getT } from "@/lib/i18n/server";
+import type { TFunction } from "@/lib/i18n";
 
 const PAYMENT_METHODS = ["Visa", "Mastercard", "PayPal", "Stripe", "Amex"];
 
@@ -86,6 +59,47 @@ const SOCIAL_LINKS = [
   },
 ];
 
+function buildColumns(t: TFunction) {
+  return [
+    {
+      title: t("nav.shop"),
+      links: [
+        { label: t("products.title"), href: "/products" },
+        { label: t("nav.newArrivals"), href: "/products?sort=newest" },
+        { label: t("nav.bestSellers"), href: "/products?sort=best-sellers" },
+        { label: t("common.sale"), href: "/products?sale=true" },
+      ],
+    },
+    {
+      title: t("account.title"),
+      links: [
+        { label: t("nav.myAccount"), href: "/account", prefetch: false },
+        { label: t("nav.orders"), href: "/account/orders", prefetch: false },
+        { label: t("common.wishlist"), href: "/account/wishlist", prefetch: false },
+        { label: t("common.signIn"), href: "/login" },
+      ],
+    },
+    {
+      title: t("footer.help"),
+      links: [
+        { label: t("footer.faq"), href: "/faq" },
+        { label: t("footer.shippingInfo"), href: "/shipping" },
+        { label: t("footer.returns"), href: "/returns" },
+        { label: t("footer.contact"), href: "/contact" },
+      ],
+    },
+    {
+      title: t("footer.company"),
+      links: [
+        { label: t("footer.aboutUs"), href: "/about" },
+        { label: t("footer.privacy"), href: "/privacy" },
+        { label: t("footer.terms"), href: "/terms" },
+        { label: t("footer.cookies"), href: "/cookies" },
+      ],
+    },
+  ];
+}
+
 interface FooterColumnProps {
   title: string;
   links: { label: string; href: string; prefetch?: boolean }[];
@@ -94,10 +108,7 @@ interface FooterColumnProps {
 function FooterColumn({ title, links }: FooterColumnProps) {
   return (
     <div>
-      <h3
-        className="text-sm font-semibold text-foreground mb-4"
-        style={{ fontFamily: "var(--font-heading), Georgia, serif" }}
-      >
+      <h3 className="font-board text-xs font-bold uppercase tracking-[0.08em] text-foreground mb-4">
         {title}
       </h3>
       <ul className="space-y-2.5">
@@ -117,61 +128,22 @@ function FooterColumn({ title, links }: FooterColumnProps) {
   );
 }
 
-export function StoreFooter() {
+export async function StoreFooter() {
+  const { t } = await getT();
   const currentYear = new Date().getFullYear();
+  const columns = buildColumns(t);
 
   return (
     <footer className="border-t border-border bg-muted/30 mt-auto">
-      {/* Newsletter banner */}
-      <div className="bg-[var(--emerald)]/10 border-b border-[var(--emerald)]/20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div>
-              <h2
-                className="text-xl font-bold text-foreground"
-                style={{ fontFamily: "var(--font-heading), Georgia, serif" }}
-              >
-                Stay in the loop
-              </h2>
-              <p className="text-sm text-muted-foreground mt-1">
-                Get exclusive deals, new arrivals, and updates delivered to your inbox.
-              </p>
-            </div>
-            <form
-              action="#"
-              className="flex w-full md:w-auto gap-2"
-              aria-label="Newsletter signup"
-            >
-              <input
-                type="email"
-                name="email"
-                placeholder="Enter your email"
-                required
-                className="flex-1 md:w-64 rounded-lg border border-border bg-background px-4 py-2.5 text-sm outline-none placeholder:text-muted-foreground focus:border-[var(--emerald)] focus:ring-2 focus:ring-[var(--emerald)]/20 transition-all"
-                aria-label="Email address for newsletter"
-              />
-              <button
-                type="submit"
-                className="flex items-center gap-2 rounded-lg bg-[var(--emerald)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90 transition-opacity flex-shrink-0"
-              >
-                Subscribe
-                <ArrowRight className="h-4 w-4" aria-hidden="true" />
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
-
       {/* Main footer content */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-10 lg:gap-8">
           {/* Brand column */}
           <div className="lg:col-span-2">
             <Logo className="mb-4" />
-            <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
-              We test suppliers before we list them, price everything by hand,
-              and answer support email ourselves. No warehouse of 50,000 SKUs —
-              just the picks we&apos;d actually buy.
+            <p className="text-sm font-semibold text-foreground">{t("footer.tagline")}</p>
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-xs mt-2">
+              {t("footer.about")}
             </p>
 
             {/* Social links */}
@@ -183,7 +155,7 @@ export function StoreFooter() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.label}
-                  className="flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground hover:text-foreground hover:border-[var(--emerald)] hover:text-[var(--emerald)] transition-all duration-200"
+                  className="flex h-9 w-9 items-center justify-center rounded-[3px] border border-border text-muted-foreground hover:border-ink hover:text-ink dark:hover:border-signal dark:hover:text-signal transition-all duration-200"
                 >
                   {social.svg}
                 </a>
@@ -192,10 +164,9 @@ export function StoreFooter() {
           </div>
 
           {/* Link columns */}
-          <FooterColumn title="Shop" links={SHOP_LINKS} />
-          <FooterColumn title="Account" links={ACCOUNT_LINKS} />
-          <FooterColumn title="Support" links={SUPPORT_LINKS} />
-          <FooterColumn title="Company" links={COMPANY_LINKS} />
+          {columns.map((col) => (
+            <FooterColumn key={col.title} title={col.title} links={col.links} />
+          ))}
         </div>
       </div>
 
@@ -203,19 +174,22 @@ export function StoreFooter() {
       <div className="border-t border-border">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-xs text-muted-foreground">
-              &copy; {currentYear} WishlistAZ. All rights reserved.
-            </p>
+            <div className="flex flex-col items-center sm:items-start gap-0.5">
+              <p className="text-xs text-muted-foreground">
+                {t("footer.rights", { year: currentYear })}
+              </p>
+              <p className="text-xs text-muted-foreground">{t("footer.basedIn")}</p>
+            </div>
 
             {/* Payment method badges */}
             <div
               className="flex items-center gap-2 flex-wrap justify-center"
-              aria-label="Accepted payment methods"
+              aria-label={t("footer.payments")}
             >
               {PAYMENT_METHODS.map((method) => (
                 <span
                   key={method}
-                  className="inline-flex items-center rounded-md border border-border bg-background px-2.5 py-1 text-[11px] font-medium text-muted-foreground"
+                  className="inline-flex items-center rounded-[3px] border border-border bg-background px-2.5 py-1 text-[11px] font-medium tabular-nums text-muted-foreground"
                 >
                   {method}
                 </span>
