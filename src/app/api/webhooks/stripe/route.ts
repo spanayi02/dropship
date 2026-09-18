@@ -72,7 +72,7 @@ async function handleCheckoutSessionCompleted(
       : session.payment_intent?.id;
 
   // Find the order by stripe checkout session ID
-  let order = await db.order.findFirst({
+  const order = await db.order.findFirst({
     where: { stripeCheckoutSessionId: sessionId },
     include: {
       orderItems: { include: { product: true } },

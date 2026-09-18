@@ -80,12 +80,21 @@ export async function recalculateProductPrice(productId: string) {
   return newPrice;
 }
 
+export interface SupplierPriceExtras {
+  stockQty?: number;
+  estimatedDeliveryDays?: number;
+  warehouseCountry?: string;
+  sourceCurrency?: string;
+  sourceCostPrice?: number;
+}
+
 export async function updateSupplierPrice(
   productId: string,
   supplierId: string,
   costPrice: number,
   shippingCost: number,
-  inStock: boolean
+  inStock: boolean,
+  extras: SupplierPriceExtras = {}
 ) {
   const existing = await db.productSupplier.findUnique({
     where: { productId_supplierId: { productId, supplierId } },
@@ -107,6 +116,13 @@ export async function updateSupplierPrice(
       totalCost,
       inStock,
       lastChecked: new Date(),
+      ...(extras.stockQty !== undefined ? { stockQty: extras.stockQty } : {}),
+      ...(extras.estimatedDeliveryDays !== undefined
+        ? { estimatedDeliveryDays: extras.estimatedDeliveryDays }
+        : {}),
+      ...(extras.warehouseCountry ? { warehouseCountry: extras.warehouseCountry } : {}),
+      ...(extras.sourceCurrency ? { sourceCurrency: extras.sourceCurrency } : {}),
+      ...(extras.sourceCostPrice !== undefined ? { sourceCostPrice: extras.sourceCostPrice } : {}),
     },
   });
 

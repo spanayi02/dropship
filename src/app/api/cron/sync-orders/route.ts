@@ -1,17 +1,18 @@
 /**
- * Order status sync cron — runs every 2 hours
+ * Supplier order status sync cron
  *
- * Polls CJ Dropshipping for the current status of all ORDERED supplier orders.
- * This is a backup to the CJ webhook: if the webhook misses an event, this cron
- * will catch it and update tracking + notify the customer.
+ * Polls API suppliers (CJ) for every ORDERED supplier order and moves it to
+ * SHIPPED / DELIVERED, notifying the customer on the SHIPPED transition. This
+ * is the safety net behind the CJ webhook: if a push is missed, the next run
+ * catches up.
  *
- * Vercel cron schedule: "0 * /2 * * *" (every 2 hours — remove the space before /2)
+ * Vercel cron: path /api/cron/sync-orders, schedule every 2 hours.
  */
 
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { CJDropshippingAdapter, type CJCredentials } from "@/lib/suppliers/cj";
-import { sendShippingNotificationEmail } from "@/lib/email/send";
+import { adapterForSupplier, API_SUPPLIER_TYPES } from "@/lib/suppliers/factory";
+import { applySupplierOrderStatus } from "@/lib/suppliers/order-status";
 
 export const dynamic = "force-dynamic";
 
@@ -21,106 +22,29 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Find all CJ supplier orders that are ORDERED (placed but not yet shipped)
-  const orderedItems = await db.supplierOrder.findMany({
+  const open = await db.supplierOrder.findMany({
     where: {
       status: "ORDERED",
       supplierOrderRef: { not: null },
-      supplier: { apiType: "CJ" },
+      supplier: { apiType: { in: API_SUPPLIER_TYPES } },
     },
-    include: {
-      supplier: true,
-      orderItem: {
-        include: {
-          order: {
-            include: {
-              user: true,
-              orderItems: { include: { product: true } },
-            },
-          },
-        },
-      },
-    },
-    // Limit per run to stay within cron timeout
-    take: 100,
+    include: { supplier: true },
+    orderBy: { orderedAt: "asc" },
+    take: 100, // stay inside the function timeout at 1 req/s
   });
 
   let shipped = 0;
   let delivered = 0;
   let errors = 0;
 
-  for (const so of orderedItems) {
+  for (const so of open) {
     try {
-      const credentials = so.supplier.apiCredentials as unknown as CJCredentials;
-      const adapter = new CJDropshippingAdapter(credentials);
-      const result = await adapter.getOrderStatus(so.supplierOrderRef!);
-
-      const statusLower = result.status.toLowerCase();
-      const isShipped =
-        statusLower.includes("ship") ||
-        statusLower === "transit" ||
-        statusLower === "in_transit";
-      const isDelivered =
-        statusLower === "delivered" || statusLower === "completed";
-
-      if (isDelivered && so.status !== "DELIVERED") {
-        await db.supplierOrder.update({
-          where: { id: so.id },
-          data: {
-            status: "DELIVERED",
-            deliveredAt: new Date(),
-            ...(result.trackingNumber ? { trackingNumber: result.trackingNumber } : {}),
-            ...(result.trackingUrl ? { trackingUrl: result.trackingUrl } : {}),
-          },
-        });
-        await db.order.update({
-          where: { id: so.orderItem.order.id },
-          data: { status: "DELIVERED" },
-        });
-        delivered++;
-      } else if (isShipped && result.trackingNumber && so.status !== "SHIPPED") {
-        await db.supplierOrder.update({
-          where: { id: so.id },
-          data: {
-            status: "SHIPPED",
-            trackingNumber: result.trackingNumber,
-            trackingUrl: result.trackingUrl ?? null,
-            shippedAt: result.shippedAt ? new Date(result.shippedAt) : new Date(),
-          },
-        });
-
-        const order = so.orderItem.order;
-        await db.order.update({
-          where: { id: order.id },
-          data: { status: "SHIPPED" },
-        });
-
-        const toEmail = order.user?.email ?? order.guestEmail;
-        if (toEmail) {
-          const customerName =
-            order.user?.name ??
-            (order.shippingAddress as { firstName?: string })?.firstName ??
-            toEmail;
-
-          void sendShippingNotificationEmail({
-            to: toEmail,
-            orderNumber: order.orderNumber,
-            customerName,
-            trackingNumber: result.trackingNumber,
-            trackingUrl: result.trackingUrl,
-            items: order.orderItems.map((i) => ({
-              title: i.product.title,
-              quantity: i.quantity,
-            })),
-            orderId: order.id,
-          });
-        }
-
-        shipped++;
-        console.log(
-          `[sync-orders] Order ${order.orderNumber} marked SHIPPED. Tracking: ${result.trackingNumber}`
-        );
-      }
+      const adapter = adapterForSupplier(so.supplier);
+      if (!adapter.getOrderStatus) continue;
+      const status = await adapter.getOrderStatus(so.supplierOrderRef!);
+      const outcome = await applySupplierOrderStatus(so.id, status, "sync-orders");
+      if (outcome === "shipped") shipped++;
+      if (outcome === "delivered") delivered++;
     } catch (err) {
       console.error(`[sync-orders] Failed for supplier order ${so.id}:`, err);
       errors++;
@@ -128,7 +52,7 @@ export async function GET(req: NextRequest) {
   }
 
   console.log(
-    `[sync-orders] Done. Checked: ${orderedItems.length}, Shipped: ${shipped}, Delivered: ${delivered}, Errors: ${errors}`
+    `[sync-orders] Done. Checked: ${open.length}, Shipped: ${shipped}, Delivered: ${delivered}, Errors: ${errors}`
   );
-  return NextResponse.json({ ok: true, checked: orderedItems.length, shipped, delivered, errors });
+  return NextResponse.json({ ok: true, checked: open.length, shipped, delivered, errors });
 }

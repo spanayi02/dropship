@@ -7,9 +7,7 @@ import { generateOrderNumber } from "@/lib/utils";
 import { autoSelectSupplierForOrder } from "@/lib/pricing/engine";
 import { auth } from "@/lib/auth";
 import type { CartItem } from "@/store/cart-store";
-
-const FLAT_SHIPPING_RATE = 499; // cents
-const FREE_SHIPPING_THRESHOLD = 5000; // cents
+import { FLAT_SHIPPING_RATE, FREE_SHIPPING_THRESHOLD, STORE_CURRENCY } from "@/lib/store-config";
 
 // Stripe requires product_data.images to be fully-qualified http(s) URLs —
 // reject anything else instead of letting a bad image string fail checkout.
@@ -112,7 +110,7 @@ export async function createCheckoutSession(
     // Create Stripe Checkout Session
     const lineItems = verifiedItems.map(({ cartItem, dbPrice }) => ({
       price_data: {
-        currency: "usd",
+        currency: STORE_CURRENCY.toLowerCase(),
         product_data: {
           name: cartItem.title,
           images: (() => {
@@ -128,7 +126,7 @@ export async function createCheckoutSession(
     if (shippingCost > 0) {
       lineItems.push({
         price_data: {
-          currency: "usd",
+          currency: STORE_CURRENCY.toLowerCase(),
           product_data: {
             name: "Shipping",
             images: undefined,

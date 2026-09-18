@@ -19,12 +19,12 @@ export async function getStoreSettings(): Promise<StoreSettings> {
     settings = await db.storeSettings.create({
       data: {
         storeName: "WishlistAZ",
-        contactEmail: "support@wishlistaz.com",
-        currency: "USD",
+        contactEmail: "hello@wishlistaz.com",
+        currency: "EUR",
         globalMarkupType: "MULTIPLIER",
         globalMarkupValue: 2.5,
         freeShippingThreshold: 5000,
-        flatShippingRate: 499,
+        flatShippingRate: 490,
       },
     });
   }

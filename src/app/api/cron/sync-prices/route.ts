@@ -1,28 +1,21 @@
 /**
  * Price & stock sync cron
  *
- * Fetches current cost prices and stock levels from CJ Dropshipping for all
- * active CJ product listings, updates the database, and recalculates selling
- * prices for products with autoPrice = true.
+ * Refreshes cost, shipping and stock for every listing of an API supplier
+ * (CJ), records price history and re-prices auto-priced products through the
+ * pricing engine (markup, floor/ceiling, cheapest-supplier selection).
+ * Manual / B2B listings are skipped: their prices change when the owner edits
+ * them or posts to /api/suppliers/update-prices.
  *
- * Protect with CRON_SECRET. On Vercel, add to vercel.json:
- *   { "crons": [{ "path": "/api/cron/sync-prices", "schedule": "0 6 * * *" }] }
- * Then set Authorization header via Vercel's built-in cron auth, or use
- * the Authorization: Bearer CRON_SECRET header from your cron service.
+ * Vercel cron: { "path": "/api/cron/sync-prices", "schedule": "0 6 * * *" }
  */
 
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { getSupplierAdapter } from "@/lib/suppliers/factory";
+import { adapterForSupplier, API_SUPPLIER_TYPES } from "@/lib/suppliers/factory";
+import { updateSupplierPrice } from "@/lib/pricing/engine";
 
 export const dynamic = "force-dynamic";
-
-function applyMarkup(costCents: number, markupType: string, markupValue: number | null): number {
-  if (!markupValue) return costCents;
-  if (markupType === "MULTIPLIER") return Math.round(costCents * markupValue);
-  if (markupType === "FIXED") return costCents + Math.round(markupValue * 100);
-  return costCents;
-}
 
 export async function GET(req: NextRequest) {
   const auth = req.headers.get("authorization");
@@ -30,106 +23,72 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Load all CJ product-supplier links with their supplier credentials
+  const limit = Math.min(Number(req.nextUrl.searchParams.get("limit") ?? 150), 500);
+
+  // Oldest-checked first so a partial run still rotates through the catalog.
   const listings = await db.productSupplier.findMany({
     where: {
-      supplier: { apiType: "CJ" },
+      supplier: { apiType: { in: API_SUPPLIER_TYPES }, isActive: true },
       supplierSku: { not: null },
-      isLocked: false, // respect manually locked prices
+      isLocked: false,
     },
-    include: {
-      supplier: true,
-      product: true,
-    },
+    include: { supplier: true, product: { select: { id: true, title: true, isActive: true } } },
+    orderBy: { lastChecked: "asc" },
+    take: limit,
   });
 
   let updated = 0;
   let errors = 0;
+  const adapters = new Map<string, ReturnType<typeof adapterForSupplier>>();
 
   for (const listing of listings) {
     try {
-      const adapter = getSupplierAdapter(
-        listing.supplier.apiType.toLowerCase(),
-        listing.supplier.apiCredentials
-      );
-
-      const { costPrice, shippingCost, inStock } = await adapter.getPrice(
-        listing.supplierSku!
-      );
-
-      const newTotalCost = costPrice + shippingCost;
-      const priceChanged = listing.costPrice !== costPrice;
-
-      // Update ProductSupplier
-      await db.productSupplier.update({
-        where: { id: listing.id },
-        data: {
-          costPrice,
-          shippingCost,
-          totalCost: newTotalCost,
-          inStock,
-          lastChecked: new Date(),
-        },
-      });
-
-      // Record price history if cost changed
-      if (priceChanged) {
-        let newSellingPrice: number | undefined;
-
-        if (listing.product.autoPrice) {
-          newSellingPrice = applyMarkup(
-            costPrice,
-            listing.product.markupType,
-            listing.product.markupValue
-          );
-
-          // Clamp to floor/ceiling if set
-          if (listing.product.markupFloor && newSellingPrice < listing.product.markupFloor) {
-            newSellingPrice = listing.product.markupFloor;
-          }
-          if (listing.product.markupCeiling && newSellingPrice > listing.product.markupCeiling) {
-            newSellingPrice = listing.product.markupCeiling;
-          }
-
-          await db.product.update({
-            where: { id: listing.productId },
-            data: { sellingPrice: newSellingPrice },
-          });
-        }
-
-        await db.priceHistory.create({
-          data: {
-            productId: listing.productId,
-            supplierId: listing.supplierId,
-            oldCostPrice: listing.costPrice,
-            newCostPrice: costPrice,
-            oldSellingPrice: listing.product.sellingPrice,
-            newSellingPrice: newSellingPrice ?? listing.product.sellingPrice,
-          },
-        });
+      let adapter = adapters.get(listing.supplierId);
+      if (!adapter) {
+        adapter = adapterForSupplier(listing.supplier);
+        adapters.set(listing.supplierId, adapter);
       }
 
-      // Mark product inactive if out of stock (optional — remove if too aggressive)
-      if (!inStock && listing.product.isActive) {
-        await db.product.update({
-          where: { id: listing.productId },
-          data: { isActive: false },
-        });
-        console.log(`[sync-prices] Marked ${listing.product.title} inactive (out of stock)`);
-      } else if (inStock && !listing.product.isActive) {
-        await db.product.update({
-          where: { id: listing.productId },
-          data: { isActive: true },
-        });
+      const quote = await adapter.getPrice({
+        sku: listing.supplierSku!,
+        variantId: listing.variantId,
+        fromCountry: listing.warehouseCountry ?? listing.supplier.warehouseCountry,
+      });
+
+      await updateSupplierPrice(
+        listing.productId,
+        listing.supplierId,
+        quote.costPrice,
+        quote.shippingCost,
+        quote.inStock,
+        {
+          stockQty: quote.stockQty,
+          estimatedDeliveryDays: quote.estimatedDeliveryDays,
+          warehouseCountry: quote.warehouseCountry,
+          sourceCurrency: quote.sourceCurrency,
+          sourceCostPrice: quote.sourceCostPrice,
+        }
+      );
+
+      // A product with no in-stock supplier at all goes off the board; it
+      // comes back automatically when any supplier has stock again.
+      const inStockCount = await db.productSupplier.count({
+        where: { productId: listing.productId, inStock: true },
+      });
+      if (inStockCount === 0 && listing.product.isActive) {
+        await db.product.update({ where: { id: listing.productId }, data: { isActive: false } });
+        console.log(`[sync-prices] ${listing.product.title}: no supplier in stock, deactivated`);
+      } else if (inStockCount > 0 && !listing.product.isActive) {
+        await db.product.update({ where: { id: listing.productId }, data: { isActive: true } });
       }
 
       updated++;
     } catch (err) {
-      console.error(`[sync-prices] Failed for listing ${listing.id}:`, err);
+      console.error(`[sync-prices] Failed for listing ${listing.id} (${listing.product.title}):`, err);
       errors++;
     }
   }
 
   console.log(`[sync-prices] Done. Updated: ${updated}, Errors: ${errors}`);
-  return NextResponse.json({ ok: true, updated, errors });
+  return NextResponse.json({ ok: true, checked: listings.length, updated, errors });
 }
