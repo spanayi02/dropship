@@ -18,30 +18,36 @@ import {
   Home,
   Grid3X3,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/store/cart-store";
 import { ThemeToggle } from "@/components/store/theme-toggle";
 import { Logo } from "@/components/store/logo";
+import { LocaleSwitcher } from "@/components/store/locale-switcher";
+import { useI18n } from "@/lib/i18n/client";
+import { FREE_SHIPPING_THRESHOLD } from "@/lib/store-config";
 
-const NAV_LINKS = [
-  { label: "Home", href: "/" },
-  { label: "Products", href: "/products" },
-];
+const CATEGORY_SLUGS = [
+  "electronics",
+  "fashion-apparel",
+  "home-living",
+  "sports-outdoors",
+  "beauty-health",
+] as const;
 
-const CATEGORIES = [
-  { label: "Electronics", href: "/products?category=electronics" },
-  { label: "Clothing", href: "/products?category=clothing" },
-  { label: "Home & Garden", href: "/products?category=home-garden" },
-  { label: "Sports", href: "/products?category=sports" },
-  { label: "Beauty", href: "/products?category=beauty" },
-  { label: "Toys", href: "/products?category=toys" },
-];
+const CATEGORY_LABELS: Record<string, string> = {
+  electronics: "Electronics",
+  "fashion-apparel": "Fashion & Apparel",
+  "home-living": "Home & Living",
+  "sports-outdoors": "Sports & Outdoors",
+  "beauty-health": "Beauty & Health",
+};
 
 export function StoreHeader() {
   const router = useRouter();
   const pathname = usePathname();
   const { data: session } = useSession();
   const { getTotalItems, toggleCart } = useCartStore();
+  const { t, intl } = useI18n();
 
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -70,7 +76,6 @@ export function StoreHeader() {
       setCategoryOpen(false);
       setUserMenuOpen(false);
     });
-
     return () => window.cancelAnimationFrame(id);
   }, [pathname]);
 
@@ -99,27 +104,35 @@ export function StoreHeader() {
     [router, searchQuery]
   );
 
+  const freeShipAmount = formatPrice(FREE_SHIPPING_THRESHOLD, undefined, intl);
+
   return (
     <>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[100] focus:rounded-[3px] focus:bg-ink focus:px-3 focus:py-2 focus:text-sm focus:font-semibold focus:text-ink-foreground"
+      >
+        {t("common.skipToContent")}
+      </a>
       <header
         className={cn(
-          "fixed top-0 left-0 right-0 z-40",
-          "transition-all duration-300",
-          scrolled
-            ? "bg-background/80 backdrop-blur-xl border-b border-border shadow-sm"
-            : "bg-background border-b border-transparent"
+          "fixed top-0 left-0 right-0 z-40 border-b border-border",
+          "transition-shadow duration-300",
+          scrolled ? "bg-background/95 backdrop-blur-md shadow-sm" : "bg-background"
         )}
       >
-        {/* Announcement bar — one accent, no rainbow gradient */}
+        {/* Announcement bar — signal-yellow signage, black board text */}
         {announcementVisible && (
-          <div className="relative flex items-center justify-center gap-2 bg-[var(--emerald)] px-10 py-2 text-[13px] font-medium text-[var(--emerald-foreground)]">
-            Orders over $50 ship free — through Sunday.{" "}
-            <Link href="/products?sale=true" className="font-semibold underline underline-offset-2 hover:no-underline">
-              See what&apos;s on sale
+          <div className="relative flex items-center justify-center gap-2 overflow-hidden bg-signal px-10 py-2 text-[13px] font-semibold text-signal-foreground">
+            <span className="label-sign tracking-[0.06em]">
+              {t("announcement.text", { amount: freeShipAmount })}
+            </span>
+            <Link href="/products?sale=true" className="font-bold underline underline-offset-2 hover:no-underline">
+              {t("announcement.cta")}
             </Link>
             <button
               onClick={() => setAnnouncementVisible(false)}
-              aria-label="Dismiss announcement"
+              aria-label={t("common.close")}
               className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-0.5 opacity-70 hover:opacity-100 transition-opacity"
             >
               <X className="h-3.5 w-3.5" />
@@ -133,54 +146,46 @@ export function StoreHeader() {
 
             {/* Desktop Nav */}
             <nav className="hidden md:flex items-center gap-1 ml-4" aria-label="Main navigation">
-              {NAV_LINKS.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={cn(
-                    "px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200",
-                    pathname === link.href
-                      ? "text-[var(--emerald)] bg-[var(--emerald)]/10"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                  )}
-                >
-                  {link.label}
-                </Link>
-              ))}
+              <Link
+                href="/products"
+                className={cn(
+                  "px-3 py-2 text-sm font-semibold rounded-[3px] transition-colors duration-150",
+                  pathname === "/products"
+                    ? "text-ink bg-signal"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                )}
+              >
+                {t("nav.shop")}
+              </Link>
 
               {/* Categories dropdown */}
               <div ref={categoryRef} className="relative">
                 <button
                   onClick={() => setCategoryOpen((v) => !v)}
                   className={cn(
-                    "flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200",
+                    "flex items-center gap-1 px-3 py-2 text-sm font-semibold rounded-[3px] transition-colors duration-150",
                     categoryOpen
-                      ? "text-[var(--emerald)] bg-[var(--emerald)]/10"
+                      ? "text-ink bg-signal"
                       : "text-muted-foreground hover:text-foreground hover:bg-muted"
                   )}
                   aria-expanded={categoryOpen}
                   aria-haspopup="true"
                 >
-                  Categories
-                  <ChevronDown
-                    className={cn(
-                      "h-3.5 w-3.5 transition-transform duration-200",
-                      categoryOpen && "rotate-180"
-                    )}
-                  />
+                  {t("nav.categories")}
+                  <ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-200", categoryOpen && "rotate-180")} />
                 </button>
 
                 {categoryOpen && (
-                  <div className="absolute top-full left-0 mt-1.5 w-52 rounded-xl border border-border bg-popover shadow-xl ring-1 ring-black/5 dark:ring-white/5 animate-in fade-in-0 slide-in-from-top-2 duration-150 z-50">
+                  <div className="absolute top-full left-0 mt-1.5 w-56 rounded-[3px] border border-border bg-popover shadow-xl animate-in fade-in-0 slide-in-from-top-1 duration-150 z-50">
                     <div className="p-1.5">
-                      {CATEGORIES.map((cat) => (
+                      {CATEGORY_SLUGS.map((catSlug) => (
                         <Link
-                          key={cat.href}
-                          href={cat.href}
-                          className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                          key={catSlug}
+                          href={`/products?category=${catSlug}`}
+                          className="flex items-center gap-2 px-3 py-2 text-sm rounded-[3px] text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                         >
                           <Grid3X3 className="h-3.5 w-3.5 flex-shrink-0" />
-                          {cat.label}
+                          {CATEGORY_LABELS[catSlug]}
                         </Link>
                       ))}
                     </div>
@@ -190,65 +195,55 @@ export function StoreHeader() {
             </nav>
 
             {/* Search — center */}
-            <form
-              ref={searchRef}
-              onSubmit={handleSearch}
-              className={cn(
-                "hidden md:flex flex-1 max-w-sm mx-auto",
-                "relative items-center"
-              )}
-            >
+            <form ref={searchRef} onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-sm mx-auto relative items-center">
               <div
                 className={cn(
-                  "flex w-full items-center gap-2 rounded-lg border bg-muted/50 px-3 py-2",
-                  "transition-all duration-200",
-                  searchFocused
-                    ? "border-[var(--emerald)] bg-background ring-2 ring-[var(--emerald)]/20"
-                    : "border-border hover:border-muted-foreground/40"
+                  "flex w-full items-center gap-2 rounded-[3px] border bg-field px-3 py-2",
+                  "transition-colors duration-150",
+                  searchFocused ? "border-ink ring-1 ring-ink/15 bg-background" : "border-border hover:border-muted-foreground/40"
                 )}
               >
                 <Search className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                 <input
                   type="search"
-                  placeholder="Search products..."
+                  placeholder={t("common.searchPlaceholder")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onFocus={() => setSearchFocused(true)}
                   onBlur={() => setSearchFocused(false)}
                   className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
-                  aria-label="Search products"
+                  aria-label={t("common.search")}
                 />
               </div>
             </form>
 
             {/* Right Actions */}
             <div className="flex items-center gap-1 ml-auto">
+              <LocaleSwitcher className="hidden sm:inline-flex mr-1" />
               <ThemeToggle />
 
-              {/* Wishlist */}
               <Link
                 href="/account/wishlist"
                 prefetch={false}
-                className="relative flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-                aria-label={`Wishlist${wishlistCount > 0 ? `, ${wishlistCount} items` : ""}`}
+                className="relative flex h-9 w-9 items-center justify-center rounded-[3px] text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                aria-label={`${t("common.wishlist")}${wishlistCount > 0 ? `, ${wishlistCount}` : ""}`}
               >
-                <Heart className="h-4.5 w-4.5 h-[18px] w-[18px]" />
+                <Heart className="h-[18px] w-[18px]" />
                 {wishlistCount > 0 && (
-                  <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[var(--emerald)] text-[10px] font-bold text-white">
+                  <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-signal text-[10px] font-bold text-signal-foreground tnum">
                     {wishlistCount > 9 ? "9+" : wishlistCount}
                   </span>
                 )}
               </Link>
 
-              {/* Cart */}
               <button
                 onClick={toggleCart}
-                className="relative flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-                aria-label={`Cart${cartCount > 0 ? `, ${cartCount} items` : ""}`}
+                className="relative flex h-9 w-9 items-center justify-center rounded-[3px] text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                aria-label={`${t("common.cart")}${cartCount > 0 ? `, ${cartCount}` : ""}`}
               >
                 <ShoppingBag className="h-[18px] w-[18px]" />
                 {cartCount > 0 && (
-                  <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[var(--emerald)] text-[10px] font-bold text-white">
+                  <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-signal text-[10px] font-bold text-signal-foreground tnum">
                     {cartCount > 9 ? "9+" : cartCount}
                   </span>
                 )}
@@ -258,84 +253,61 @@ export function StoreHeader() {
               <div ref={userMenuRef} className="relative hidden md:block">
                 <button
                   onClick={() => setUserMenuOpen((v) => !v)}
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors overflow-hidden"
-                  aria-label="User menu"
+                  className="flex h-9 w-9 items-center justify-center rounded-[3px] text-muted-foreground hover:text-foreground hover:bg-muted transition-colors overflow-hidden"
+                  aria-label={t("common.account")}
                   aria-expanded={userMenuOpen}
                   aria-haspopup="true"
                 >
                   {session?.user?.image ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={session.user.image}
-                      alt={session.user.name ?? "User avatar"}
-                      className="h-full w-full object-cover rounded-lg"
-                    />
+                    <img src={session.user.image} alt="" className="h-full w-full object-cover rounded-[3px]" />
                   ) : (
                     <User className="h-[18px] w-[18px]" />
                   )}
                 </button>
 
                 {userMenuOpen && (
-                  <div className="absolute right-0 top-full mt-1.5 w-52 rounded-xl border border-border bg-popover shadow-xl ring-1 ring-black/5 dark:ring-white/5 animate-in fade-in-0 slide-in-from-top-2 duration-150 z-50">
+                  <div className="absolute right-0 top-full mt-1.5 w-56 rounded-[3px] border border-border bg-popover shadow-xl animate-in fade-in-0 slide-in-from-top-1 duration-150 z-50">
                     {session ? (
                       <>
                         <div className="px-3 py-3 border-b border-border">
-                          <p className="text-sm font-semibold truncate">
-                            {session.user?.name ?? "User"}
-                          </p>
-                          <p className="text-xs text-muted-foreground truncate mt-0.5">
-                            {session.user?.email}
-                          </p>
+                          <p className="text-sm font-semibold truncate">{session.user?.name ?? "User"}</p>
+                          <p className="text-xs text-muted-foreground truncate mt-0.5">{session.user?.email}</p>
                         </div>
                         <div className="p-1.5">
-                          <Link
-                            href="/account"
-                            className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-                          >
+                          <Link href="/account" className="flex items-center gap-2 px-3 py-2 text-sm rounded-[3px] text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
                             <Settings className="h-3.5 w-3.5" />
-                            My Account
+                            {t("nav.myAccount")}
                           </Link>
-                          <Link
-                            href="/account/orders"
-                            className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-                          >
+                          <Link href="/account/orders" className="flex items-center gap-2 px-3 py-2 text-sm rounded-[3px] text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
                             <Package className="h-3.5 w-3.5" />
-                            Orders
+                            {t("nav.orders")}
                           </Link>
                           {session.user?.role === "ADMIN" && (
-                            <Link
-                              href="/admin"
-                              className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg text-[var(--emerald)] hover:bg-[var(--emerald)]/10 transition-colors font-medium"
-                            >
+                            <Link href="/admin" className="flex items-center gap-2 px-3 py-2 text-sm rounded-[3px] text-ink bg-signal/40 hover:bg-signal/60 transition-colors font-semibold">
                               <Grid3X3 className="h-3.5 w-3.5" />
-                              Admin Dashboard
+                              {t("nav.admin")}
                             </Link>
                           )}
                         </div>
                         <div className="p-1.5 border-t border-border">
                           <button
                             onClick={() => signOut({ callbackUrl: "/" })}
-                            className="flex w-full items-center gap-2 px-3 py-2 text-sm rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                            className="flex w-full items-center gap-2 px-3 py-2 text-sm rounded-[3px] text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
                           >
                             <LogOut className="h-3.5 w-3.5" />
-                            Sign Out
+                            {t("common.signOut")}
                           </button>
                         </div>
                       </>
                     ) : (
                       <div className="p-1.5">
-                        <Link
-                          href="/login"
-                          className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-                        >
+                        <Link href="/login" className="flex items-center gap-2 px-3 py-2 text-sm rounded-[3px] text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
                           <User className="h-3.5 w-3.5" />
-                          Sign In
+                          {t("common.signIn")}
                         </Link>
-                        <Link
-                          href="/register"
-                          className="flex items-center justify-center gap-2 px-3 py-2 mt-1 text-sm rounded-lg font-medium bg-[var(--emerald)] text-white hover:opacity-90 transition-opacity"
-                        >
-                          Create Account
+                        <Link href="/register" className="flex items-center justify-center gap-2 px-3 py-2 mt-1 text-sm rounded-[3px] font-semibold bg-signal text-signal-foreground hover:bg-signal-deep transition-colors">
+                          {t("common.createAccount")}
                         </Link>
                       </div>
                     )}
@@ -343,18 +315,13 @@ export function StoreHeader() {
                 )}
               </div>
 
-              {/* Mobile hamburger */}
               <button
                 onClick={() => setMobileOpen((v) => !v)}
-                className="flex md:hidden h-9 w-9 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-                aria-label={mobileOpen ? "Close menu" : "Open menu"}
+                className="flex md:hidden h-9 w-9 items-center justify-center rounded-[3px] text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                aria-label={mobileOpen ? t("common.close") : t("common.menu")}
                 aria-expanded={mobileOpen}
               >
-                {mobileOpen ? (
-                  <X className="h-5 w-5" />
-                ) : (
-                  <Menu className="h-5 w-5" />
-                )}
+                {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </button>
             </div>
           </div>
@@ -363,74 +330,71 @@ export function StoreHeader() {
         {/* Mobile menu */}
         <div
           className={cn(
-            "md:hidden border-t border-border bg-background/95 backdrop-blur-xl overflow-hidden",
+            "md:hidden border-t border-border bg-background overflow-hidden",
             "transition-all duration-300 ease-in-out",
             mobileOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
           )}
           aria-hidden={!mobileOpen}
         >
           <div className="mx-auto max-w-7xl px-4 pb-4 pt-3 space-y-4">
-            {/* Mobile search */}
             <form onSubmit={handleSearch} className="relative">
-              <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/50 px-3 py-2.5">
+              <div className="flex items-center gap-2 rounded-[3px] border border-border bg-field px-3 py-2.5">
                 <Search className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                 <input
                   type="search"
-                  placeholder="Search products..."
+                  placeholder={t("common.searchPlaceholder")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
-                  aria-label="Search products"
+                  aria-label={t("common.search")}
                 />
               </div>
             </form>
 
-            {/* Mobile nav links */}
             <nav className="space-y-1" aria-label="Mobile navigation">
               <Link
                 href="/"
                 className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                  pathname === "/"
-                    ? "text-[var(--emerald)] bg-[var(--emerald)]/10"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                  "flex items-center gap-3 rounded-[3px] px-3 py-2.5 text-sm font-medium transition-colors",
+                  pathname === "/" ? "text-ink bg-signal" : "text-muted-foreground hover:text-foreground hover:bg-muted"
                 )}
               >
                 <Home className="h-4 w-4" />
-                Home
+                {t("nav.home")}
               </Link>
               <Link
                 href="/products"
                 className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                  pathname === "/products"
-                    ? "text-[var(--emerald)] bg-[var(--emerald)]/10"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                  "flex items-center gap-3 rounded-[3px] px-3 py-2.5 text-sm font-medium transition-colors",
+                  pathname === "/products" ? "text-ink bg-signal" : "text-muted-foreground hover:text-foreground hover:bg-muted"
                 )}
               >
                 <Grid3X3 className="h-4 w-4" />
-                Products
+                {t("nav.shop")}
               </Link>
 
-              {/* Categories in mobile */}
               <div>
                 <p className="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Categories
+                  {t("nav.categories")}
                 </p>
-                {CATEGORIES.map((cat) => (
+                {CATEGORY_SLUGS.map((catSlug) => (
                   <Link
-                    key={cat.href}
-                    href={cat.href}
-                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                    key={catSlug}
+                    href={`/products?category=${catSlug}`}
+                    className="flex items-center gap-3 rounded-[3px] px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                   >
-                    <span className="h-1.5 w-1.5 rounded-full bg-[var(--emerald)] flex-shrink-0" />
-                    {cat.label}
+                    <span className="h-1.5 w-1.5 rounded-full bg-signal-deep flex-shrink-0" />
+                    {CATEGORY_LABELS[catSlug]}
                   </Link>
                 ))}
               </div>
             </nav>
 
-            {/* Mobile user actions */}
+            <div className="flex items-center justify-between border-t border-border pt-3">
+              <span className="text-xs font-semibold text-muted-foreground">{t("common.language")}</span>
+              <LocaleSwitcher />
+            </div>
+
             <div className="border-t border-border pt-3 space-y-1">
               {session ? (
                 <>
@@ -438,50 +402,35 @@ export function StoreHeader() {
                     <p className="text-sm font-semibold">{session.user?.name}</p>
                     <p className="text-xs text-muted-foreground">{session.user?.email}</p>
                   </div>
-                  <Link
-                    href="/account"
-                    className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-                  >
+                  <Link href="/account" className="flex items-center gap-3 rounded-[3px] px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
                     <Settings className="h-4 w-4" />
-                    My Account
+                    {t("nav.myAccount")}
                   </Link>
-                  <Link
-                    href="/account/orders"
-                    className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-                  >
+                  <Link href="/account/orders" className="flex items-center gap-3 rounded-[3px] px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
                     <Package className="h-4 w-4" />
-                    Orders
+                    {t("nav.orders")}
                   </Link>
                   {session.user?.role === "ADMIN" && (
-                    <Link
-                      href="/admin"
-                      className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[var(--emerald)] hover:bg-[var(--emerald)]/10 transition-colors font-medium"
-                    >
+                    <Link href="/admin" className="flex items-center gap-3 rounded-[3px] px-3 py-2.5 text-sm text-ink bg-signal/40 transition-colors font-semibold">
                       <Grid3X3 className="h-4 w-4" />
-                      Admin Dashboard
+                      {t("nav.admin")}
                     </Link>
                   )}
                   <button
                     onClick={() => signOut({ callbackUrl: "/" })}
-                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                    className="flex w-full items-center gap-3 rounded-[3px] px-3 py-2.5 text-sm text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
                   >
                     <LogOut className="h-4 w-4" />
-                    Sign Out
+                    {t("common.signOut")}
                   </button>
                 </>
               ) : (
                 <div className="flex gap-2">
-                  <Link
-                    href="/login"
-                    className="flex-1 text-center rounded-lg border border-border px-4 py-2.5 text-sm font-medium hover:bg-muted transition-colors"
-                  >
-                    Sign In
+                  <Link href="/login" className="flex-1 text-center rounded-[3px] border border-border px-4 py-2.5 text-sm font-medium hover:bg-muted transition-colors">
+                    {t("common.signIn")}
                   </Link>
-                  <Link
-                    href="/register"
-                    className="flex-1 text-center rounded-lg bg-[var(--emerald)] text-white px-4 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity"
-                  >
-                    Sign Up
+                  <Link href="/register" className="flex-1 text-center rounded-[3px] bg-signal text-signal-foreground px-4 py-2.5 text-sm font-semibold hover:bg-signal-deep transition-colors">
+                    {t("common.createAccount")}
                   </Link>
                 </div>
               )}
@@ -490,7 +439,7 @@ export function StoreHeader() {
         </div>
       </header>
 
-      {/* Spacer to offset fixed header (nav 64px + announcement bar ~36px) */}
+      {/* Spacer to offset fixed header */}
       <div className={cn("transition-all duration-300", announcementVisible ? "h-[100px]" : "h-16")} aria-hidden="true" />
     </>
   );
