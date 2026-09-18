@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/lib/i18n/client";
 
 interface DescriptionToggleProps {
   text: string;
@@ -10,6 +11,7 @@ interface DescriptionToggleProps {
 
 export function DescriptionToggle({ text, clampLines = 3 }: DescriptionToggleProps) {
   const [expanded, setExpanded] = useState(false);
+  const { t } = useI18n();
 
   // Heuristic: check if text is long enough to need clamping
   const needsClamping = text.length > 200;
@@ -32,9 +34,9 @@ export function DescriptionToggle({ text, clampLines = 3 }: DescriptionTogglePro
         <button
           type="button"
           onClick={() => setExpanded((v) => !v)}
-          className="mt-1.5 text-sm font-medium text-[var(--emerald)] hover:underline transition-colors"
+          className="mt-1.5 text-sm font-semibold text-ink dark:text-signal hover:underline transition-colors"
         >
-          {expanded ? "Show less" : "Read more"}
+          {expanded ? t("product.readLess") : t("product.readMore")}
         </button>
       )}
     </div>
