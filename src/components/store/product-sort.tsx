@@ -2,15 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { ChevronDown } from "lucide-react";
-
-const SORT_OPTIONS = [
-  { value: "", label: "Default" },
-  { value: "newest", label: "Newest" },
-  { value: "price_asc", label: "Price: Low → High" },
-  { value: "price_desc", label: "Price: High → Low" },
-  { value: "best_selling", label: "Best Selling" },
-  { value: "rating", label: "Top Rated" },
-];
+import { useI18n } from "@/lib/i18n/client";
 
 interface ProductSortProps {
   currentSort?: string;
@@ -19,6 +11,16 @@ interface ProductSortProps {
 
 export function ProductSort({ currentSort, currentParams }: ProductSortProps) {
   const router = useRouter();
+  const { t } = useI18n();
+
+  const SORT_OPTIONS = [
+    { value: "", label: t("products.sortDefault") },
+    { value: "newest", label: t("products.sortNewest") },
+    { value: "price_asc", label: t("products.sortPriceAsc") },
+    { value: "price_desc", label: t("products.sortPriceDesc") },
+    { value: "best_selling", label: t("products.sortBestSelling") },
+    { value: "rating", label: t("products.sortRating") },
+  ];
 
   function handleChange(value: string) {
     const next: Record<string, string | undefined> = { ...currentParams, sort: value || undefined };
@@ -37,8 +39,8 @@ export function ProductSort({ currentSort, currentParams }: ProductSortProps) {
       <select
         value={currentSort ?? ""}
         onChange={(e) => handleChange(e.target.value)}
-        aria-label="Sort products"
-        className="appearance-none rounded-xl border border-border bg-background pr-8 pl-4 py-2.5 text-sm font-medium outline-none focus:border-[var(--emerald)] focus:ring-2 focus:ring-[var(--emerald)]/20 transition-all cursor-pointer hover:bg-muted"
+        aria-label={t("products.sort")}
+        className="appearance-none rounded-[3px] border border-border bg-background pr-8 pl-4 py-2.5 text-sm font-medium outline-none focus:border-ink focus:ring-1 focus:ring-ink/15 dark:focus:border-signal dark:focus:ring-signal/20 transition-all cursor-pointer hover:bg-muted"
       >
         {SORT_OPTIONS.map((opt) => (
           <option key={opt.value} value={opt.value}>

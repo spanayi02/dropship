@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/lib/i18n/client";
 
 interface PaginationProps {
   currentPage: number;
@@ -38,27 +39,28 @@ function getPageRange(current: number, total: number): (number | "ellipsis")[] {
 }
 
 export function Pagination({ currentPage, totalPages, currentParams }: PaginationProps) {
+  const { t } = useI18n();
   const pages = getPageRange(currentPage, totalPages);
 
   const prevHref = currentPage > 1 ? buildPageUrl(currentPage - 1, currentParams) : null;
   const nextHref = currentPage < totalPages ? buildPageUrl(currentPage + 1, currentParams) : null;
 
   return (
-    <nav aria-label="Pagination" className="flex items-center justify-center gap-1.5 flex-wrap">
+    <nav aria-label="Pagination" className="flex items-center justify-center gap-1.5 flex-wrap tnum">
       {/* Prev */}
       {prevHref ? (
         <Link
           href={prevHref}
-          className="flex items-center gap-1.5 rounded-xl border border-border bg-background px-4 py-2 text-sm font-medium hover:bg-muted transition-colors"
+          className="flex items-center gap-1.5 rounded-[3px] border border-border bg-background px-4 py-2 text-sm font-medium hover:bg-muted transition-colors"
           aria-label="Previous page"
         >
           <ChevronLeft className="h-4 w-4" />
-          Prev
+          {t("products.prev")}
         </Link>
       ) : (
-        <span className="flex items-center gap-1.5 rounded-xl border border-border bg-background px-4 py-2 text-sm font-medium opacity-40 cursor-not-allowed">
+        <span className="flex items-center gap-1.5 rounded-[3px] border border-border bg-background px-4 py-2 text-sm font-medium opacity-40 cursor-not-allowed">
           <ChevronLeft className="h-4 w-4" />
-          Prev
+          {t("products.prev")}
         </span>
       )}
 
@@ -75,12 +77,12 @@ export function Pagination({ currentPage, totalPages, currentParams }: Paginatio
           <Link
             key={page}
             href={buildPageUrl(page, currentParams)}
-            aria-label={`Page ${page}`}
+            aria-label={`${t("products.page")} ${page}`}
             aria-current={page === currentPage ? "page" : undefined}
             className={cn(
-              "flex h-9 w-9 items-center justify-center rounded-xl border text-sm font-medium transition-colors",
+              "flex h-9 w-9 items-center justify-center rounded-[3px] border text-sm font-medium transition-colors",
               page === currentPage
-                ? "bg-[var(--emerald)] border-[var(--emerald)] text-white shadow-sm shadow-[var(--emerald)]/30"
+                ? "bg-signal border-signal text-signal-foreground"
                 : "border-border bg-background hover:bg-muted"
             )}
           >
@@ -93,15 +95,15 @@ export function Pagination({ currentPage, totalPages, currentParams }: Paginatio
       {nextHref ? (
         <Link
           href={nextHref}
-          className="flex items-center gap-1.5 rounded-xl border border-border bg-background px-4 py-2 text-sm font-medium hover:bg-muted transition-colors"
+          className="flex items-center gap-1.5 rounded-[3px] border border-border bg-background px-4 py-2 text-sm font-medium hover:bg-muted transition-colors"
           aria-label="Next page"
         >
-          Next
+          {t("products.next")}
           <ChevronRight className="h-4 w-4" />
         </Link>
       ) : (
-        <span className="flex items-center gap-1.5 rounded-xl border border-border bg-background px-4 py-2 text-sm font-medium opacity-40 cursor-not-allowed">
-          Next
+        <span className="flex items-center gap-1.5 rounded-[3px] border border-border bg-background px-4 py-2 text-sm font-medium opacity-40 cursor-not-allowed">
+          {t("products.next")}
           <ChevronRight className="h-4 w-4" />
         </span>
       )}
