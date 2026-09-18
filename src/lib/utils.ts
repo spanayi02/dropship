@@ -1,19 +1,47 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { STORE_CURRENCY } from "@/lib/store-config";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+/**
+ * Format minor units as a currency string.
+ * Defaults to the store currency and an EUR-friendly locale ("€24.99").
+ * Pass "el-GR" for Greek formatting ("24,99 €").
+ */
 export function formatPrice(
   cents: number,
-  currency = "USD",
-  locale = "en-US"
+  currency: string = STORE_CURRENCY,
+  locale = "en-IE"
 ): string {
   return new Intl.NumberFormat(locale, {
     style: "currency",
     currency,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   }).format(cents / 100);
+}
+
+/** Compact price for tight spaces: "€24.99" → "24.99" with the symbol separately. */
+export function splitPrice(
+  cents: number,
+  currency: string = STORE_CURRENCY,
+  locale = "en-IE"
+): { symbol: string; amount: string } {
+  const parts = new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).formatToParts(cents / 100);
+  const symbol = parts.find((p) => p.type === "currency")?.value ?? currency;
+  const amount = parts
+    .filter((p) => p.type !== "currency" && p.type !== "literal")
+    .map((p) => p.value)
+    .join("");
+  return { symbol, amount };
 }
 
 export function generateOrderNumber(): string {
