@@ -29,7 +29,7 @@ WishlistAZ is a curated dropshipping store: a short, hand-checked catalog where 
 ## Capabilities and Constraints
 
 - Stack: Next.js 16 (App Router), React 19, Tailwind v4, Prisma 7 + PostgreSQL, NextAuth v5, Stripe Checkout, Resend email, Zustand cart, framer-motion. Deployed on Vercel (crons in vercel.json).
-- Existing supplier abstraction: `SupplierAdapter` (search, details, price, stock, placeOrder, getOrderStatus) with CJ, AliExpress (stub) and Manual adapters.
+- Supplier abstraction: `SupplierAdapter` (capabilities, search, details, per-variant price/stock, placeOrder, getOrderStatus) with CJ (API 2.0, verified against the docs), Manual, Alibaba and Made-in-China (structured manual: MOQ, lead time, quoted cost) and AliExpress (manual until DS API approval). Configuration guide in README.
 - Pricing engine: per-product markup (multiplier/fixed/manual) with floor/ceiling; cheapest-supplier selection with lock override; price history.
 - Prices are stored in integer minor units (cents).
 - Confirmed: display currency EUR; UI bilingual English + Greek (English default); broad curated catalog across electronics, home, fashion, sports, beauty.
