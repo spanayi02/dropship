@@ -17,13 +17,13 @@ export default function NewSupplierPage() {
           <ChevronLeft className="size-4" />
           Back to suppliers
         </Link>
-        <h1 className="text-2xl font-semibold tracking-tight">Add Supplier</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Add supplier</h1>
         <p className="text-sm text-muted-foreground mt-0.5">
-          Create a new supplier for your products.
+          CJ Dropshipping orders itself. Everything else is a supplier you order from by hand.
         </p>
       </div>
 
-      <SupplierForm />
+      <SupplierForm envHasCjKey={!!process.env.CJ_API_KEY} />
     </div>
   );
 }

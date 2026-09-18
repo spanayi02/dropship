@@ -2,10 +2,12 @@
 
 import { useState, useTransition, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { toast } from "sonner";
 import { Search, Loader2, PackagePlus, ExternalLink, X, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { searchCJProducts, importCJProduct } from "@/app/actions/import";
+import { formatPrice } from "@/lib/utils";
 import type { SupplierProduct } from "@/lib/suppliers/types";
 
 interface Category {
@@ -15,10 +17,6 @@ interface Category {
 
 interface ImportClientProps {
   categories: Category[];
-}
-
-function formatPrice(cents: number) {
-  return `$${(cents / 100).toFixed(2)}`;
 }
 
 // ─── Import modal ─────────────────────────────────────────────────────────────
@@ -81,12 +79,12 @@ function ImportModal({
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
 
       {/* Dialog */}
-      <div className="relative z-10 w-full max-w-md rounded-xl border bg-background shadow-xl">
+      <div className="relative z-10 w-full max-w-md rounded-[4px] border bg-background shadow-xl">
         <div className="flex items-center justify-between border-b px-5 py-4">
           <h2 className="font-semibold">Import Product</h2>
           <button
             onClick={onClose}
-            className="rounded-lg p-1 text-muted-foreground hover:text-foreground transition-colors"
+            className="rounded-[3px] p-1 text-muted-foreground hover:text-foreground transition-colors"
           >
             <X className="size-4" />
           </button>
@@ -96,7 +94,7 @@ function ImportModal({
           {/* Product preview */}
           <div className="flex items-center gap-3">
             {product.images[0] && (
-              <div className="relative size-14 shrink-0 rounded-lg overflow-hidden border bg-muted">
+              <div className="relative size-14 shrink-0 rounded-[3px] overflow-hidden border bg-muted">
                 <Image
                   src={product.images[0]}
                   alt={product.title}
@@ -121,15 +119,15 @@ function ImportModal({
             {categories.length === 0 ? (
               <p className="text-xs text-destructive">
                 No categories yet.{" "}
-                <a href="/admin/products" className="underline">
+                <Link href="/admin/products" className="underline">
                   Create one first.
-                </a>
+                </Link>
               </p>
             ) : (
               <select
                 value={categoryId}
                 onChange={(e) => setCategoryId(e.target.value)}
-                className="flex h-9 w-full rounded-lg border border-input bg-background px-3 py-1 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 transition-all"
+                className="flex h-9 w-full rounded-[3px] border border-input bg-background px-3 py-1 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 transition-all"
               >
                 {categories.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -152,23 +150,30 @@ function ImportModal({
               min="1"
               max="20"
               step="0.1"
-              className="flex h-9 w-full rounded-lg border border-input bg-background px-3 py-1 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 transition-all"
+              className="flex h-9 w-full rounded-[3px] border border-input bg-background px-3 py-1 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 transition-all"
             />
             <p className="text-xs text-muted-foreground">
-              e.g. 2.5× means your selling price is 2.5× the supplier cost
+              e.g. 2.5× means your selling price is 2.5× the supplier cost. The variant, live stock and
+              EU shipping quote are fetched from CJ when you import.
             </p>
           </div>
 
           {/* Pricing summary */}
-          <div className="rounded-lg bg-muted/50 border p-3 space-y-1.5 text-sm">
+          <div className="rounded-[3px] bg-muted/50 border p-3 space-y-1.5 text-sm">
             <div className="flex justify-between text-muted-foreground">
               <span>Supplier cost</span>
               <span>{formatPrice(product.costPrice)}</span>
             </div>
             <div className="flex justify-between text-muted-foreground">
               <span>Shipping cost</span>
-              <span>{formatPrice(product.shippingCost)}</span>
+              <span>{product.shippingCost ? formatPrice(product.shippingCost) : "quoted on import"}</span>
             </div>
+            {product.sourceCostPrice != null && (
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>CJ quote</span>
+                <span>USD {product.sourceCostPrice.toFixed(2)} → {formatPrice(product.costPrice)}</span>
+              </div>
+            )}
             <div className="flex justify-between font-medium">
               <span>Your selling price</span>
               <span>{formatPrice(sellingPrice)}</span>
@@ -178,7 +183,7 @@ function ImportModal({
               <span
                 className={
                   profit > 0
-                    ? "font-bold text-emerald-600 dark:text-emerald-400"
+                    ? "font-bold text-go"
                     : "font-bold text-destructive"
                 }
               >
@@ -222,7 +227,7 @@ function ProductCard({
   imported: boolean;
 }) {
   return (
-    <div className="rounded-xl border bg-card flex flex-col overflow-hidden hover:shadow-md transition-shadow">
+    <div className="rounded-[4px] border bg-card flex flex-col overflow-hidden hover:shadow-md transition-shadow">
       {/* Image */}
       <div className="relative aspect-square bg-muted">
         {product.images[0] ? (
@@ -239,10 +244,10 @@ function ProductCard({
         )}
         {/* Stock badge */}
         <span
-          className={`absolute top-2 right-2 rounded-full px-2 py-0.5 text-xs font-medium ${
+          className={`label-sign absolute top-2 right-2 rounded-[2px] px-2 py-1 ${
             product.inStock
-              ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
-              : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+              ? "bg-go/15 text-foreground"
+              : "bg-stop/10 text-stop"
           }`}
         >
           {product.inStock ? "In Stock" : "Out of Stock"}
@@ -263,12 +268,12 @@ function ProductCard({
             </span>
           </div>
           <div className="flex justify-between">
-            <span>Shipping</span>
-            <span>{formatPrice(product.shippingCost)}</span>
+            <span>Stock</span>
+            <span>{product.stockQty ?? "—"}</span>
           </div>
           <div className="flex justify-between border-t pt-1">
             <span>Suggested (2.5×)</span>
-            <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+            <span className="font-semibold text-go">
               {formatPrice(Math.round(product.costPrice * 2.5))}
             </span>
           </div>
@@ -276,7 +281,7 @@ function ProductCard({
 
         <div className="flex gap-2 mt-1">
           {imported ? (
-            <div className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-emerald-100 dark:bg-emerald-900/20 px-3 py-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-400">
+            <div className="flex flex-1 items-center justify-center gap-1.5 rounded-[3px] bg-go/15 px-3 py-1.5 text-xs font-medium text-foreground">
               <Check className="size-3.5" />
               Imported
             </div>
@@ -295,7 +300,7 @@ function ProductCard({
             href={product.productUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center rounded-lg border px-2 text-muted-foreground hover:text-foreground transition-colors"
+            className="inline-flex items-center justify-center rounded-[3px] border px-2 text-muted-foreground hover:text-foreground transition-colors"
             title="View on CJ"
           >
             <ExternalLink className="size-3.5" />
@@ -350,7 +355,7 @@ export function ImportClient({ categories }: ImportClientProps) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search CJ catalog… e.g. wireless earbuds, phone case, yoga mat"
-            className="flex h-10 w-full rounded-lg border border-input bg-background pl-10 pr-4 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 transition-all"
+            className="flex h-10 w-full rounded-[3px] border border-input bg-background pl-10 pr-4 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 transition-all"
           />
         </div>
         <Button type="submit" disabled={isSearching || !query.trim()}>
@@ -365,7 +370,7 @@ export function ImportClient({ categories }: ImportClientProps) {
 
       {/* Error */}
       {error && (
-        <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
+        <div className="rounded-[3px] border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
           {error}
         </div>
       )}
@@ -375,7 +380,7 @@ export function ImportClient({ categories }: ImportClientProps) {
         <>
           <p className="text-sm text-muted-foreground">
             {results.length} products found for{" "}
-            <span className="font-medium text-foreground">"{query}"</span>
+            <span className="font-medium text-foreground">&ldquo;{query}&rdquo;</span>
           </p>
           <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {results.map((product) => (
@@ -392,7 +397,7 @@ export function ImportClient({ categories }: ImportClientProps) {
 
       {/* Empty state */}
       {results.length === 0 && !error && !isSearching && (
-        <div className="rounded-xl border border-dashed p-16 text-center text-muted-foreground">
+        <div className="rounded-[4px] border border-dashed p-16 text-center text-muted-foreground">
           <Search className="size-10 mx-auto mb-3 opacity-30" />
           <p className="font-medium">Search the CJ catalog</p>
           <p className="text-sm mt-1">

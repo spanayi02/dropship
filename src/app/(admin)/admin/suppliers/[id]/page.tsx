@@ -3,15 +3,11 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  ChevronLeft,
-  ExternalLink,
-  Star,
-  Lock,
-  Unlock,
-} from "lucide-react";
+import { ChevronLeft, ExternalLink, Star, Mail, MessageSquare } from "lucide-react";
 import { LockSupplierToggle } from "./lock-supplier-toggle";
 import { InlinePriceEditor } from "./inline-price-editor";
+import { FulfilmentBadge, SupplierTypeBadge } from "@/components/admin/badges";
+import { isEuCountry } from "@/lib/store-config";
 
 export async function generateMetadata({
   params,
@@ -46,6 +42,9 @@ export default async function SupplierDetailPage({
   });
 
   if (!supplier) notFound();
+
+  const isB2B = supplier.apiType === "ALIBABA" || supplier.apiType === "MADE_IN_CHINA";
+  const isLive = supplier.apiType === "CJ";
 
   const productSuppliers = await db.productSupplier.findMany({
     where: { supplierId: id },
@@ -83,9 +82,8 @@ export default async function SupplierDetailPage({
             <h1 className="text-xl font-semibold tracking-tight">
               {supplier.name}
             </h1>
-            <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium">
-              {supplier.apiType}
-            </span>
+            <SupplierTypeBadge type={supplier.apiType} />
+            <FulfilmentBadge apiType={supplier.apiType} />
           </div>
           <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground flex-wrap">
             {supplier.website && (
@@ -99,17 +97,59 @@ export default async function SupplierDetailPage({
                 {supplier.website}
               </a>
             )}
+            {supplier.contactEmail && (
+              <a href={`mailto:${supplier.contactEmail}`} className="inline-flex items-center gap-1 hover:text-foreground">
+                <Mail className="size-3.5" />
+                {supplier.contactEmail}
+              </a>
+            )}
+            {supplier.contactUrl && (
+              <a
+                href={supplier.contactUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 hover:text-foreground"
+              >
+                <MessageSquare className="size-3.5" />
+                Contact / inquiry
+              </a>
+            )}
             {supplier.rating != null && (
               <span className="inline-flex items-center gap-1">
-                <Star className="size-3.5 fill-amber-400 text-amber-400" />
+                <Star className="size-3.5 fill-signal-deep text-signal-deep" />
                 {supplier.rating.toFixed(1)} rating
               </span>
             )}
-            {supplier.avgShippingDays != null && (
-              <span>~{supplier.avgShippingDays} day shipping</span>
-            )}
-            <span>{supplier._count.products} products</span>
+            <span>{supplier._count.products} listings</span>
           </div>
+          <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground flex-wrap">
+            <span className="inline-flex items-center gap-1.5">
+              <span className="label-sign">Ships from</span>
+              {supplier.warehouseCountry ? (
+                <span className="font-mono text-foreground">
+                  {supplier.warehouseCountry}
+                  {isEuCountry(supplier.warehouseCountry) ? " · EU" : ""}
+                </span>
+              ) : (
+                "—"
+              )}
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="label-sign">{isB2B ? "Lead time" : "Dispatch"}</span>
+              <span className="text-foreground">{supplier.leadTimeDays != null ? `${supplier.leadTimeDays}d` : "—"}</span>
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="label-sign">Transit</span>
+              <span className="text-foreground">{supplier.avgShippingDays != null ? `${supplier.avgShippingDays}d` : "—"}</span>
+            </span>
+            {supplier.paymentTerms && (
+              <span className="inline-flex items-center gap-1.5">
+                <span className="label-sign">Terms</span>
+                <span className="text-foreground">{supplier.paymentTerms}</span>
+              </span>
+            )}
+          </div>
+          {supplier.notes && <p className="mt-2 text-xs text-muted-foreground whitespace-pre-line">{supplier.notes}</p>}
         </div>
         <Link href={`/admin/suppliers/${id}/edit`}>
           <Button variant="outline" size="sm">
@@ -123,7 +163,7 @@ export default async function SupplierDetailPage({
         <span className="text-sm text-muted-foreground">Sort by:</span>
         <Link
           href={`/admin/suppliers/${id}`}
-          className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+          className={`rounded-[3px] px-3 py-1.5 text-xs font-medium transition-colors ${
             !sort || sort === "cost"
               ? "bg-primary text-primary-foreground"
               : "bg-muted text-muted-foreground hover:text-foreground"
@@ -133,7 +173,7 @@ export default async function SupplierDetailPage({
         </Link>
         <Link
           href={`/admin/suppliers/${id}?sort=name`}
-          className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+          className={`rounded-[3px] px-3 py-1.5 text-xs font-medium transition-colors ${
             sort === "name"
               ? "bg-primary text-primary-foreground"
               : "bg-muted text-muted-foreground hover:text-foreground"
@@ -144,7 +184,7 @@ export default async function SupplierDetailPage({
       </div>
 
       {/* Products table */}
-      <div className="rounded-xl border overflow-hidden">
+      <div className="rounded-[4px] border overflow-hidden">
         <div className="px-4 py-3 border-b">
           <h2 className="font-semibold text-sm">
             Products ({productSuppliers.length})
@@ -171,6 +211,11 @@ export default async function SupplierDetailPage({
                   <th className="px-4 py-2.5 text-right font-medium text-muted-foreground">
                     Total
                   </th>
+                  {isB2B && (
+                    <th className="px-4 py-2.5 text-right font-medium text-muted-foreground">
+                      MOQ / quote
+                    </th>
+                  )}
                   <th className="px-4 py-2.5 text-right font-medium text-muted-foreground">
                     Cheapest
                   </th>
@@ -202,15 +247,18 @@ export default async function SupplierDetailPage({
                       <td className="px-4 py-3">
                         <Link
                           href={`/admin/products/${ps.productId}`}
-                          className="font-medium hover:text-primary hover:underline leading-tight"
+                          className="font-medium hover:hover:underline underline-offset-4 leading-tight"
                         >
                           {ps.product.title}
                         </Link>
-                        {ps.supplierSku && (
-                          <p className="text-xs text-muted-foreground font-mono mt-0.5">
-                            {ps.supplierSku}
-                          </p>
-                        )}
+                        <p className="text-xs text-muted-foreground font-mono mt-0.5 flex flex-wrap gap-x-2">
+                          {ps.supplierSku && <span>{ps.supplierSku}</span>}
+                          {ps.variantId && <span title="Supplier variant id">vid {ps.variantId}</span>}
+                          {(ps.warehouseCountry ?? supplier.warehouseCountry) && (
+                            <span>{ps.warehouseCountry ?? supplier.warehouseCountry}</span>
+                          )}
+                          {ps.estimatedDeliveryDays != null && <span>{ps.estimatedDeliveryDays}d</span>}
+                        </p>
                       </td>
                       <td className="px-4 py-3 text-right tabular-nums">
                         {formatPrice(ps.costPrice)}
@@ -220,13 +268,21 @@ export default async function SupplierDetailPage({
                       </td>
                       <td
                         className={`px-4 py-3 text-right tabular-nums font-medium ${
-                          isMoreExpensive
-                            ? "text-red-600 dark:text-red-400"
-                            : "text-green-600 dark:text-green-400"
+                          isMoreExpensive ? "text-stop" : "text-go"
                         }`}
                       >
                         {formatPrice(ps.totalCost)}
                       </td>
+                      {isB2B && (
+                        <td className="px-4 py-3 text-right tabular-nums text-xs">
+                          <div>MOQ {ps.moq}</div>
+                          {ps.sourceCostPrice != null && (
+                            <div className="text-muted-foreground">
+                              {ps.sourceCurrency ?? "USD"} {ps.sourceCostPrice.toFixed(2)}
+                            </div>
+                          )}
+                        </td>
+                      )}
                       <td className="px-4 py-3 text-right tabular-nums text-muted-foreground">
                         {cheapestCost != null ? formatPrice(cheapestCost) : "—"}
                       </td>
@@ -236,7 +292,7 @@ export default async function SupplierDetailPage({
                       <td className="px-4 py-3 text-center">
                         <span
                           className={`inline-block size-2 rounded-full ${
-                            ps.inStock ? "bg-green-500" : "bg-red-500"
+                            ps.inStock ? "bg-go" : "bg-stop"
                           }`}
                         />
                       </td>
@@ -254,6 +310,12 @@ export default async function SupplierDetailPage({
                           currentCost={ps.costPrice}
                           currentShipping={ps.shippingCost}
                           currentInStock={ps.inStock}
+                          currentMoq={ps.moq}
+                          currentLeadTimeDays={ps.estimatedDeliveryDays}
+                          currentSourceCurrency={ps.sourceCurrency}
+                          currentSourceCostPrice={ps.sourceCostPrice}
+                          b2b={isB2B}
+                          live={isLive}
                         />
                       </td>
                     </tr>

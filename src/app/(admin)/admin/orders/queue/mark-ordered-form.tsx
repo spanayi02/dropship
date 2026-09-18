@@ -77,7 +77,7 @@ export function MarkOrderedForm({ supplierOrderId }: Props) {
           placeholder="e.g. AE-123456789"
           required
           disabled={isPending}
-          className="w-full rounded-lg border bg-background px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-ring/50 disabled:opacity-50"
+          className="w-full rounded-[3px] border bg-background px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-ring/50 disabled:opacity-50"
         />
       </div>
       <div>
@@ -89,7 +89,7 @@ export function MarkOrderedForm({ supplierOrderId }: Props) {
           onChange={(e) => setTracking(e.target.value)}
           placeholder="e.g. LY123456789CN"
           disabled={isPending}
-          className="w-full rounded-lg border bg-background px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-ring/50 disabled:opacity-50"
+          className="w-full rounded-[3px] border bg-background px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-ring/50 disabled:opacity-50"
         />
       </div>
       <div className="flex gap-2">

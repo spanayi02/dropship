@@ -15,22 +15,12 @@ interface EditSupplierPageProps {
 export default async function EditSupplierPage({ params }: EditSupplierPageProps) {
   const { id } = await params;
 
-  const supplier = await db.supplier.findUnique({
-    where: { id },
-    select: {
-      id: true,
-      name: true,
-      website: true,
-      apiType: true,
-      apiCredentials: true,
-      rating: true,
-      avgShippingDays: true,
-    },
-  });
+  const supplier = await db.supplier.findUnique({ where: { id } });
+  if (!supplier) notFound();
 
-  if (!supplier) {
-    notFound();
-  }
+  const creds = supplier.apiCredentials as { apiKey?: string } | null;
+  const { apiCredentials: _omit, ...rest } = supplier;
+  void _omit;
 
   return (
     <div className="p-6 space-y-6">
@@ -42,16 +32,31 @@ export default async function EditSupplierPage({ params }: EditSupplierPageProps
           <ChevronLeft className="size-4" />
           Back to suppliers
         </Link>
-        <h1 className="text-2xl font-semibold tracking-tight">
-          Edit Supplier
-        </h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Edit supplier</h1>
         <p className="text-sm text-muted-foreground mt-0.5">
-          Update details for{" "}
-          <span className="font-medium text-foreground">{supplier.name}</span>.
+          Update details for <span className="font-medium text-foreground">{supplier.name}</span>.
         </p>
       </div>
 
-      <SupplierForm supplier={supplier} />
+      <SupplierForm
+        supplier={{
+          id: rest.id,
+          name: rest.name,
+          website: rest.website,
+          apiType: rest.apiType,
+          hasCjApiKey: typeof creds?.apiKey === "string" && creds.apiKey.length > 0,
+          rating: rest.rating,
+          avgShippingDays: rest.avgShippingDays,
+          warehouseCountry: rest.warehouseCountry,
+          leadTimeDays: rest.leadTimeDays,
+          contactEmail: rest.contactEmail,
+          contactUrl: rest.contactUrl,
+          paymentTerms: rest.paymentTerms,
+          notes: rest.notes,
+          isActive: rest.isActive,
+        }}
+        envHasCjKey={!!process.env.CJ_API_KEY}
+      />
     </div>
   );
 }

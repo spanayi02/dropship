@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { db } from "@/lib/db";
 import { ImportClient } from "./import-client";
 
@@ -26,42 +27,39 @@ export default async function ImportPage() {
           Import Products
         </h1>
         <p className="text-sm text-muted-foreground mt-0.5">
-          Search CJ Dropshipping&apos;s catalog and add products to your store
-          instantly.
+          Search CJ Dropshipping&apos;s catalog and add products to the board. B2B suppliers
+          (Alibaba, Made-in-China) are imported from CSV on the Products page.
         </p>
       </div>
 
       {/* No CJ supplier warning */}
       {(!cjSupplier || !cjSupplier.apiCredentials) && (
-        <div className="rounded-lg border border-yellow-200 bg-yellow-50 dark:border-yellow-900/40 dark:bg-yellow-900/10 p-4">
-          <p className="text-sm font-medium text-yellow-800 dark:text-yellow-300">
+        <div className="rounded-[3px] border border-signal-deep/60 bg-signal/15 p-4">
+          <p className="text-sm font-medium text-foreground">
             CJ Dropshipping not configured
           </p>
-          <p className="text-sm text-yellow-700 dark:text-yellow-400 mt-1">
+          <p className="text-sm text-foreground/80 mt-1">
             Go to{" "}
-            <a
-              href="/admin/suppliers/new"
-              className="underline font-medium"
-            >
+            <Link href="/admin/suppliers/new" className="underline font-medium">
               Suppliers → Add Supplier
-            </a>
-            , select <strong>CJ Dropshipping</strong> as the API type, then
-            enter your CJ account email and API key.
+            </Link>
+            , select <strong>CJ Dropshipping</strong> as the type and paste your CJ API key
+            (My CJ → Apps → API). Or set <span className="font-mono">CJ_API_KEY</span> in the environment.
           </p>
         </div>
       )}
 
       {/* No categories warning */}
       {categories.length === 0 && (
-        <div className="rounded-lg border border-yellow-200 bg-yellow-50 dark:border-yellow-900/40 dark:bg-yellow-900/10 p-4">
-          <p className="text-sm font-medium text-yellow-800 dark:text-yellow-300">
+        <div className="rounded-[3px] border border-signal-deep/60 bg-signal/15 p-4">
+          <p className="text-sm font-medium text-foreground">
             No categories yet
           </p>
-          <p className="text-sm text-yellow-700 dark:text-yellow-400 mt-1">
+          <p className="text-sm text-foreground/80 mt-1">
             You need at least one category before importing. Create one in{" "}
-            <a href="/admin/products/new" className="underline font-medium">
+            <Link href="/admin/products/new" className="underline font-medium">
               Products
-            </a>
+            </Link>
             .
           </p>
         </div>

@@ -118,11 +118,22 @@ export async function importProductsCSV(
         update: {},
       });
 
-      // Upsert supplier by name
+      // Upsert supplier by name. The id is derived from the name so re-importing
+      // the same CSV never creates duplicate suppliers.
+      const supplierId = `name-${generateSlug(row.supplier_name)}`;
       const supplier = await db.supplier.upsert({
-        where: { id: `name-${generateSlug(row.supplier_name)}` },
-        create: { id: `name-${generateSlug(row.supplier_name)}`, name: row.supplier_name },
-        update: {},
+        where: { id: supplierId },
+        create: {
+          id: supplierId,
+          name: row.supplier_name,
+          apiType: row.supplier_type ?? "MANUAL",
+          warehouseCountry: row.warehouse_country?.toUpperCase() ?? null,
+          leadTimeDays: row.lead_time_days ?? null,
+        },
+        update: {
+          ...(row.supplier_type ? { apiType: row.supplier_type } : {}),
+          ...(row.warehouse_country ? { warehouseCountry: row.warehouse_country.toUpperCase() } : {}),
+        },
       });
 
       // Build unique slug for product
@@ -137,7 +148,7 @@ export async function importProductsCSV(
         .map((u) => u.trim())
         .filter(Boolean);
 
-      const shippingCost = 0;
+      const shippingCost = row.shipping_cost ?? 0;
       const totalCost = row.cost_price + shippingCost;
 
       const product = await db.product.create({
@@ -155,10 +166,17 @@ export async function importProductsCSV(
               supplierId: supplier.id,
               supplierProductUrl: row.supplier_url,
               supplierSku: row.supplier_sku ?? null,
+              variantId: row.variant_id ?? null,
               costPrice: row.cost_price,
               shippingCost,
               totalCost,
-              inStock: true,
+              inStock: row.stock_qty === undefined ? true : row.stock_qty > 0,
+              stockQty: row.stock_qty ?? null,
+              moq: row.moq ?? 1,
+              estimatedDeliveryDays: row.lead_time_days ?? null,
+              warehouseCountry: row.warehouse_country?.toUpperCase() ?? null,
+              sourceCurrency: row.source_currency?.toUpperCase() ?? null,
+              sourceCostPrice: row.source_cost_price ?? null,
             },
           },
         },

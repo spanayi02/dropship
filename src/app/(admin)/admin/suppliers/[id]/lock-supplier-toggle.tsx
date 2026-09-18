@@ -35,7 +35,7 @@ export function LockSupplierToggle({ productId, supplierId, isLocked }: Props) {
       title={isLocked ? "Unlock supplier" : "Lock supplier"}
       className={
         isLocked
-          ? "text-amber-600 hover:text-amber-700"
+          ? "text-signal-deep hover:text-foreground"
           : "text-muted-foreground hover:text-foreground"
       }
     >

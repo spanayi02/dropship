@@ -1,24 +1,14 @@
+import Link from "next/link";
 import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/utils";
-import { SupplierOrderStatus } from "@prisma/client";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Mail, MessageSquare } from "lucide-react";
+import { FulfilmentBadge, StatusBadge, SupplierTypeBadge } from "@/components/admin/badges";
 import { MarkOrderedForm } from "./mark-ordered-form";
 
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: "Supplier Order Queue",
-};
-
-const STATUS_STYLES: Record<SupplierOrderStatus, string> = {
-  PENDING:
-    "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
-  ORDERED:
-    "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
-  SHIPPED:
-    "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
-  DELIVERED:
-    "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
 };
 
 interface PageProps {
@@ -69,6 +59,7 @@ export default async function SupplierQueuePage({ searchParams }: PageProps) {
     {
       supplierId: string;
       supplierName: string;
+      supplier: (typeof supplierOrders)[number]["supplier"];
       items: typeof supplierOrders;
     }
   >();
@@ -78,6 +69,7 @@ export default async function SupplierQueuePage({ searchParams }: PageProps) {
       grouped.set(so.supplierId, {
         supplierId: so.supplierId,
         supplierName: so.supplier.name,
+        supplier: so.supplier,
         items: [],
       });
     }
@@ -97,8 +89,8 @@ export default async function SupplierQueuePage({ searchParams }: PageProps) {
             Supplier Order Queue
           </h1>
           <p className="text-sm text-muted-foreground mt-0.5">
-            {supplierOrders.length} item{supplierOrders.length !== 1 ? "s" : ""}{" "}
-            pending action
+            {supplierOrders.length} line{supplierOrders.length !== 1 ? "s" : ""} waiting. PENDING = you place it with
+            the supplier; ORDERED = placed, waiting for tracking.
           </p>
         </div>
       </div>
@@ -106,47 +98,71 @@ export default async function SupplierQueuePage({ searchParams }: PageProps) {
       {/* Supplier filter */}
       {allSuppliers.length > 1 && (
         <div className="flex items-center gap-2 flex-wrap">
-          <a
+          <Link
             href="/admin/orders/queue"
-            className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+            className={`rounded-[3px] px-3 py-1.5 text-xs font-medium transition-colors ${
               !supplierFilter
                 ? "bg-primary text-primary-foreground"
                 : "bg-muted text-muted-foreground hover:text-foreground"
             }`}
           >
             All Suppliers
-          </a>
+          </Link>
           {allSuppliers.map((s) => (
-            <a
+            <Link
               key={s.id}
               href={`/admin/orders/queue?supplier=${s.id}`}
-              className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+              className={`rounded-[3px] px-3 py-1.5 text-xs font-medium transition-colors ${
                 supplierFilter === s.id
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground hover:text-foreground"
               }`}
             >
               {s.name}
-            </a>
+            </Link>
           ))}
         </div>
       )}
 
       {groups.length === 0 ? (
-        <div className="rounded-xl border p-12 text-center text-muted-foreground">
+        <div className="rounded-[4px] border p-12 text-center text-muted-foreground">
           <p className="text-lg font-medium">Queue is empty</p>
           <p className="text-sm mt-1">All supplier orders are up to date.</p>
         </div>
       ) : (
         groups.map((group) => (
-          <div key={group.supplierId} className="rounded-xl border overflow-hidden">
+          <div key={group.supplierId} className="rounded-[4px] border overflow-hidden">
             {/* Group header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b bg-muted/40">
+            <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b bg-muted/40">
               <div>
-                <h2 className="font-semibold">{group.supplierName}</h2>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h2 className="font-semibold">{group.supplierName}</h2>
+                  <SupplierTypeBadge type={group.supplier.apiType} />
+                  <FulfilmentBadge apiType={group.supplier.apiType} />
+                </div>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  {group.items.length} item{group.items.length !== 1 ? "s" : ""}
+                  {group.items.length} line{group.items.length !== 1 ? "s" : ""}
+                  {group.supplier.leadTimeDays != null && ` · lead ${group.supplier.leadTimeDays}d`}
+                  {group.supplier.avgShippingDays != null && ` · transit ${group.supplier.avgShippingDays}d`}
+                  {group.supplier.paymentTerms && ` · ${group.supplier.paymentTerms}`}
                 </p>
+              </div>
+              <div className="flex items-center gap-3 text-xs">
+                {group.supplier.website && (
+                  <a href={group.supplier.website} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 hover:underline underline-offset-4">
+                    <ExternalLink className="size-3" /> Storefront
+                  </a>
+                )}
+                {group.supplier.contactUrl && (
+                  <a href={group.supplier.contactUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 hover:underline underline-offset-4">
+                    <MessageSquare className="size-3" /> Contact
+                  </a>
+                )}
+                {group.supplier.contactEmail && (
+                  <a href={`mailto:${group.supplier.contactEmail}`} className="inline-flex items-center gap-1 hover:underline underline-offset-4">
+                    <Mail className="size-3" /> {group.supplier.contactEmail}
+                  </a>
+                )}
               </div>
             </div>
 
@@ -158,17 +174,13 @@ export default async function SupplierQueuePage({ searchParams }: PageProps) {
                     {/* Left: order info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <a
+                        <Link
                           href={`/admin/orders/${so.orderItem.order.id}`}
-                          className="font-mono text-xs font-medium text-primary hover:underline"
+                          className="font-mono text-xs font-medium hover:underline underline-offset-4"
                         >
                           {so.orderItem.order.orderNumber}
-                        </a>
-                        <span
-                          className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[so.status]}`}
-                        >
-                          {so.status.charAt(0) + so.status.slice(1).toLowerCase()}
-                        </span>
+                        </Link>
+                        <StatusBadge status={so.status} kind="supplierOrder" />
                         {so.orderedAt && (
                           <span className="text-xs text-muted-foreground">
                             Ordered{" "}
@@ -195,13 +207,12 @@ export default async function SupplierQueuePage({ searchParams }: PageProps) {
                         </div>
                       </div>
 
-                      {/* Supplier URL */}
-                      {so.orderItem.selectedSupplierId && (
-                        <SupplierProductLink
-                          productId={so.orderItem.productId}
-                          supplierId={so.orderItem.selectedSupplierId}
-                        />
-                      )}
+                      {/* Listing details: link, SKU, MOQ */}
+                      <SupplierListingInfo
+                        productId={so.orderItem.productId}
+                        supplierId={so.supplierId}
+                        quantity={so.orderItem.quantity}
+                      />
 
                       {/* Existing tracking info */}
                       {so.supplierOrderRef && (
@@ -234,30 +245,61 @@ export default async function SupplierQueuePage({ searchParams }: PageProps) {
   );
 }
 
-// Server sub-component to fetch supplier URL
-async function SupplierProductLink({
+// Server sub-component: the listing the owner needs to order from.
+async function SupplierListingInfo({
   productId,
   supplierId,
+  quantity,
 }: {
   productId: string;
   supplierId: string;
+  quantity: number;
 }) {
   const ps = await db.productSupplier.findUnique({
     where: { productId_supplierId: { productId, supplierId } },
-    select: { supplierProductUrl: true },
+    select: {
+      supplierProductUrl: true,
+      supplierSku: true,
+      variantId: true,
+      moq: true,
+      sourceCurrency: true,
+      sourceCostPrice: true,
+      warehouseCountry: true,
+      estimatedDeliveryDays: true,
+    },
   });
 
-  if (!ps?.supplierProductUrl) return null;
+  if (!ps) return null;
+  const belowMoq = ps.moq > 1 && quantity < ps.moq;
 
   return (
-    <a
-      href={ps.supplierProductUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="inline-flex items-center gap-1 mt-1.5 text-xs text-primary hover:underline"
-    >
-      <ExternalLink className="size-3" />
-      View on supplier site
-    </a>
+    <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+      {ps.supplierProductUrl && (
+        <a
+          href={ps.supplierProductUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 text-foreground hover:underline underline-offset-4"
+        >
+          <ExternalLink className="size-3" />
+          Open listing
+        </a>
+      )}
+      {ps.supplierSku && <span className="font-mono">SKU {ps.supplierSku}</span>}
+      {ps.variantId && <span className="font-mono">vid {ps.variantId}</span>}
+      {ps.warehouseCountry && <span>from {ps.warehouseCountry}</span>}
+      {ps.estimatedDeliveryDays != null && <span>{ps.estimatedDeliveryDays}d</span>}
+      {ps.moq > 1 && (
+        <span className={belowMoq ? "label-sign rounded-[2px] bg-signal px-1.5 py-0.5 text-signal-foreground" : ""}>
+          MOQ {ps.moq}
+          {belowMoq ? ` · order qty ${quantity} is below MOQ` : ""}
+        </span>
+      )}
+      {ps.sourceCostPrice != null && (
+        <span>
+          quote {ps.sourceCurrency ?? "USD"} {ps.sourceCostPrice.toFixed(2)}
+        </span>
+      )}
+    </div>
   );
 }

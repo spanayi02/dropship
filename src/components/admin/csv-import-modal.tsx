@@ -95,7 +95,7 @@ export function CSVImportModal() {
           />
 
           {/* Modal */}
-          <div className="relative z-10 w-full max-w-2xl rounded-xl border bg-background shadow-xl">
+          <div className="relative z-10 w-full max-w-2xl rounded-[4px] border bg-background shadow-xl">
             {/* Header */}
             <div className="flex items-center justify-between border-b px-5 py-4">
               <h2 className="text-sm font-semibold">Import Products via CSV</h2>
@@ -108,14 +108,16 @@ export function CSVImportModal() {
               {/* File upload */}
               {!result && (
                 <div>
-                  <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border p-8 text-center transition-colors hover:border-emerald-500 hover:bg-emerald-500/5">
+                  <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-[4px] border-2 border-dashed border-border p-8 text-center transition-colors hover:border-ink hover:bg-signal/10">
                     <Upload className="size-8 text-muted-foreground" />
                     <span className="text-sm font-medium">
                       {fileName ? fileName : "Click to upload CSV file"}
                     </span>
                     <span className="text-xs text-muted-foreground">
-                      Required columns: title, description, selling_price, cost_price, category,
-                      image_urls, supplier_name, supplier_url
+                      Required: title, description, selling_price, cost_price (cents), category,
+                      image_urls, supplier_name, supplier_url. Optional: supplier_type, supplier_sku,
+                      variant_id, shipping_cost, moq, lead_time_days, warehouse_country,
+                      source_currency, source_cost_price, stock_qty
                     </span>
                     <input
                       ref={fileRef}
@@ -132,7 +134,7 @@ export function CSVImportModal() {
               {parsedRows.length > 0 && !result && (
                 <div className="space-y-3">
                   <div className="flex items-center gap-4 text-sm">
-                    <span className="flex items-center gap-1.5 text-emerald-600">
+                    <span className="flex items-center gap-1.5 text-go">
                       <CheckCircle2 className="size-4" />
                       {validCount} valid
                     </span>
@@ -148,7 +150,7 @@ export function CSVImportModal() {
                   </div>
 
                   {/* Preview table */}
-                  <div className="overflow-x-auto rounded-lg border text-xs">
+                  <div className="overflow-x-auto rounded-[3px] border text-xs">
                     <table className="w-full">
                       <thead>
                         <tr className="border-b bg-muted/40 text-left text-muted-foreground">
@@ -173,7 +175,7 @@ export function CSVImportModal() {
                             <td className="px-3 py-2">{row.raw.selling_price ?? "—"}</td>
                             <td className="px-3 py-2">
                               {row.data ? (
-                                <span className="text-emerald-600">Valid</span>
+                                <span className="text-go">Valid</span>
                               ) : (
                                 <span
                                   className="text-destructive"
@@ -201,7 +203,7 @@ export function CSVImportModal() {
 
                   {/* Validation errors detail */}
                   {invalidCount > 0 && (
-                    <div className="max-h-32 overflow-y-auto rounded-lg border border-destructive/30 bg-destructive/5 p-3 space-y-1">
+                    <div className="max-h-32 overflow-y-auto rounded-[3px] border border-destructive/30 bg-destructive/5 p-3 space-y-1">
                       {parsedRows
                         .filter((r) => r.errors.length > 0)
                         .map((r) => (
@@ -216,8 +218,8 @@ export function CSVImportModal() {
 
               {/* Import result */}
               {result && (
-                <div className="rounded-xl border p-4 space-y-3">
-                  <div className="flex items-center gap-2 text-emerald-600">
+                <div className="rounded-[4px] border p-4 space-y-3">
+                  <div className="flex items-center gap-2 text-go">
                     <CheckCircle2 className="size-5" />
                     <span className="font-semibold">{result.created} product{result.created !== 1 ? "s" : ""} imported successfully</span>
                   </div>
