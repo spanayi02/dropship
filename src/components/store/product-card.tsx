@@ -7,6 +7,7 @@ import { ShoppingCart, Star, Check, ChevronLeft, ChevronRight, Zap } from "lucid
 import { cn, formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/store/cart-store";
 import { WishlistButton } from "@/components/store/wishlist-button";
+import { useI18n } from "@/lib/i18n/client";
 
 export interface ProductCardProduct {
   id: string;
@@ -25,7 +26,10 @@ interface ProductCardProps {
   className?: string;
 }
 
-function StarRating({ rating, count }: { rating: number; count: number }) {
+function StarRating({ rating, count, noReviewsLabel }: { rating: number; count: number; noReviewsLabel: string }) {
+  if (count === 0) {
+    return <span className="text-xs text-muted-foreground">{noReviewsLabel}</span>;
+  }
   return (
     <div className="flex items-center gap-1">
       <div className="flex items-center gap-0.5" aria-label={`${rating.toFixed(1)} out of 5 stars`}>
@@ -38,7 +42,7 @@ function StarRating({ rating, count }: { rating: number; count: number }) {
                 className={cn(
                   "h-3 w-3",
                   filled
-                    ? "fill-amber-400 text-amber-400"
+                    ? "fill-signal-deep text-signal-deep"
                     : "fill-muted text-muted-foreground/30"
                 )}
               />
@@ -47,20 +51,23 @@ function StarRating({ rating, count }: { rating: number; count: number }) {
                   className="absolute inset-0 overflow-hidden"
                   style={{ width: `${(rating - Math.floor(rating)) * 100}%` }}
                 >
-                  <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                  <Star className="h-3 w-3 fill-signal-deep text-signal-deep" />
                 </span>
               )}
             </span>
           );
         })}
       </div>
-      <span className="text-xs text-muted-foreground">({count})</span>
+      <span className="text-xs tnum text-muted-foreground">({count})</span>
     </div>
   );
 }
 
+const FALLBACK_IMAGE = "/demo/products/mechanical-keyboard-rgb-backlit-tkl-1.jpg";
+
 export function ProductCard({ product, className }: ProductCardProps) {
   const { addItem, openCart } = useCartStore();
+  const { t } = useI18n();
   const [added, setAdded] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
   const [imageHovered, setImageHovered] = useState(false);
@@ -71,10 +78,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
       ? product.reviews.reduce((sum, r) => sum + r.rating, 0) / product.reviews.length
       : 0;
 
-  const images =
-    product.images.length > 0
-      ? product.images
-      : [`https://picsum.photos/seed/${product.id}/400/400`];
+  const images = product.images.length > 0 ? product.images : [FALLBACK_IMAGE];
   const activeImage = images[imageIndex];
 
   function showPrevImage(e: React.MouseEvent) {
@@ -120,22 +124,22 @@ export function ProductCard({ product, className }: ProductCardProps) {
   return (
     <article
       className={cn(
-        "group relative flex flex-col overflow-hidden rounded-2xl bg-card",
-        "shadow-[0_1px_2px_oklch(0.3_0.02_55/0.08)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_-20px_oklch(0.3_0.05_50/0.35)]",
+        "group relative flex flex-col overflow-hidden rounded-[4px] border border-border bg-card",
+        "transition-all duration-300 hover:-translate-y-1 hover:border-ink/30 hover:shadow-[0_20px_40px_-22px_oklch(0_0_0/0.3)] dark:hover:border-signal/30",
         className
       )}
     >
       {/* Badges */}
       <div className="absolute top-2.5 left-2.5 z-10 flex flex-col gap-1.5">
         {isSale && (
-          <span className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-bold bg-rose-500 text-white shadow-sm shadow-rose-500/30">
+          <span className="label-sign inline-flex items-center gap-1 rounded-[2px] px-2 py-1 bg-stop text-white shadow-sm">
             <Zap className="h-2.5 w-2.5" />
-            Save {discount}%
+            {t("product.save", { percent: discount })}
           </span>
         )}
         {isNew && !isSale && (
-          <span className="inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-bold bg-[var(--emerald)] text-white shadow-sm shadow-[var(--emerald)]/30">
-            New
+          <span className="label-sign inline-flex items-center rounded-[2px] px-2 py-1 bg-signal text-signal-foreground shadow-sm">
+            {t("common.new")}
           </span>
         )}
       </div>
@@ -143,7 +147,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
       {/* Wishlist */}
       <WishlistButton
         productId={product.id}
-        className="absolute top-2 right-2 z-10 h-8 w-8 rounded-lg bg-background/90 backdrop-blur-sm border-transparent shadow-sm"
+        className="absolute top-2 right-2 z-10 h-8 w-8 rounded-[3px] bg-background/90 backdrop-blur-sm border-transparent shadow-sm"
       />
 
       {/* Image */}
@@ -197,24 +201,24 @@ export function ProductCard({ product, className }: ProductCardProps) {
         >
           <button
             onClick={handleAddToCart}
-            aria-label={`Add ${product.title} to cart`}
+            aria-label={`${t("product.addToCart")} — ${product.title}`}
             className={cn(
-              "flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold text-white shadow-lg transition-all duration-200",
+              "flex items-center gap-2 rounded-[3px] px-4 py-2 text-xs font-bold shadow-lg transition-all duration-200",
               "backdrop-blur-sm",
               added
-                ? "bg-[var(--emerald)] scale-105"
-                : "bg-foreground/90 hover:bg-[var(--emerald)]"
+                ? "bg-go text-white scale-105"
+                : "bg-signal text-signal-foreground hover:bg-signal-deep"
             )}
           >
             {added ? (
               <>
                 <Check className="h-3.5 w-3.5" />
-                Added!
+                {t("products.added")}
               </>
             ) : (
               <>
                 <ShoppingCart className="h-3.5 w-3.5" />
-                Quick Add
+                {t("products.quickAdd")}
               </>
             )}
           </button>
@@ -226,22 +230,18 @@ export function ProductCard({ product, className }: ProductCardProps) {
         {/* Title */}
         <Link
           href={`/products/${product.slug}`}
-          className="text-sm font-bold leading-snug line-clamp-2 hover:text-[var(--emerald)] transition-colors"
+          className="text-sm font-bold leading-snug line-clamp-2 hover:text-ink dark:hover:text-signal transition-colors"
         >
           {product.title}
         </Link>
 
         {/* Rating */}
-        {product.reviews.length > 0 ? (
-          <StarRating rating={avgRating} count={product.reviews.length} />
-        ) : (
-          <span className="text-xs text-muted-foreground">No reviews yet</span>
-        )}
+        <StarRating rating={avgRating} count={product.reviews.length} noReviewsLabel={t("products.noReviews")} />
 
         {/* Price row */}
-        <div className="mt-auto flex items-center justify-between gap-2 pt-1">
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-base font-bold tabular-nums text-foreground">
+        <div className="mt-auto flex items-center justify-between gap-2 pt-1 border-t border-dashed border-border/70">
+          <div className="flex items-baseline gap-1.5 pt-1.5 tnum">
+            <span className="text-base font-bold text-foreground">
               {formatPrice(product.sellingPrice)}
             </span>
             {isSale && product.compareAtPrice && (
@@ -254,12 +254,12 @@ export function ProductCard({ product, className }: ProductCardProps) {
           {/* Corner add-to-cart */}
           <button
             onClick={handleAddToCart}
-            aria-label={`Add ${product.title} to cart`}
+            aria-label={`${t("product.addToCart")} — ${product.title}`}
             className={cn(
-              "flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg transition-all duration-200",
+              "flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-[3px] transition-all duration-200",
               added
-                ? "bg-[var(--emerald)] text-white scale-110"
-                : "bg-[var(--emerald)]/10 text-[var(--emerald)] hover:bg-[var(--emerald)] hover:text-white"
+                ? "bg-go text-white scale-110"
+                : "bg-ink/8 text-ink hover:bg-ink hover:text-ink-foreground dark:bg-signal/15 dark:text-signal dark:hover:bg-signal dark:hover:text-signal-foreground"
             )}
           >
             {added ? (
@@ -278,7 +278,7 @@ export function ProductCardSkeleton({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "flex flex-col rounded-2xl bg-card shadow-[0_1px_2px_oklch(0.3_0.02_55/0.08)] overflow-hidden animate-pulse",
+        "flex flex-col rounded-[4px] border border-border bg-card overflow-hidden animate-pulse",
         className
       )}
     >
@@ -289,7 +289,7 @@ export function ProductCardSkeleton({ className }: { className?: string }) {
         <div className="h-3 w-1/2 rounded bg-muted" />
         <div className="flex items-center justify-between pt-1">
           <div className="h-5 w-16 rounded bg-muted" />
-          <div className="h-8 w-8 rounded-lg bg-muted" />
+          <div className="h-8 w-8 rounded-[3px] bg-muted" />
         </div>
       </div>
     </div>
