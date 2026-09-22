@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useI18n } from "@/lib/i18n/client";
 
@@ -11,13 +11,20 @@ import { useI18n } from "@/lib/i18n/client";
  * need no consent and are always set. Analytics is opt-in: nothing is loaded
  * until someone accepts, which is what the cookies page promises.
  *
- * The choice is stored in a first-party cookie rather than localStorage so the
+ * The choice lives in a first-party cookie rather than localStorage so the
  * server can read it too when analytics is wired up later.
+ *
+ * Visibility is exposed through useSyncExternalStore rather than an effect:
+ * the server snapshot is always "hidden", so the banner never causes a
+ * hydration mismatch and never needs a setState during mount.
  */
 export const CONSENT_COOKIE = "wl_consent";
 const ONE_YEAR_SECONDS = 60 * 60 * 24 * 365;
 
 export type ConsentValue = "all" | "essential";
+
+/** Lets the footer re-open the banner after a choice has been made. */
+export const OPEN_CONSENT_EVENT = "wl:open-cookie-settings";
 
 function readConsent(): ConsentValue | null {
   if (typeof document === "undefined") return null;
@@ -30,29 +37,72 @@ function writeConsent(value: ConsentValue) {
   document.cookie = `${CONSENT_COOKIE}=${value}; Path=/; Max-Age=${ONE_YEAR_SECONDS}; SameSite=Lax${secure}`;
 }
 
-/** Lets the footer re-open the banner after a choice has been made. */
-export const OPEN_CONSENT_EVENT = "wl:open-cookie-settings";
+// ── visibility store ─────────────────────────────────────────────────────────
+//
+// getSnapshot must return a cached value, not recompute on every call, so the
+// snapshot lives in a module variable and is refreshed explicitly. Starting at
+// "hidden" keeps the server and first client render identical.
+
+type Visibility = "shown" | "hidden";
+
+const listeners = new Set<() => void>();
+let snapshot: Visibility = "hidden";
+let reopened = false;
+
+function notify() {
+  for (const l of listeners) l();
+}
+
+function compute(): Visibility {
+  return reopened || readConsent() === null ? "shown" : "hidden";
+}
+
+function refresh() {
+  const next = compute();
+  if (next !== snapshot) {
+    snapshot = next;
+    notify();
+  }
+}
+
+function subscribe(onChange: () => void) {
+  listeners.add(onChange);
+  // Pick up the stored choice now that we are on the client.
+  refresh();
+
+  const reopen = () => {
+    reopened = true;
+    refresh();
+  };
+  window.addEventListener(OPEN_CONSENT_EVENT, reopen);
+
+  return () => {
+    listeners.delete(onChange);
+    window.removeEventListener(OPEN_CONSENT_EVENT, reopen);
+  };
+}
+
+function getSnapshot(): Visibility {
+  return snapshot;
+}
+
+function getServerSnapshot(): Visibility {
+  return "hidden";
+}
+
+// ── components ───────────────────────────────────────────────────────────────
 
 export function CookieConsent() {
   const { t } = useI18n();
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    // Read after mount: the server cannot know the cookie state for a
-    // statically rendered shell, and rendering nothing first avoids a flash.
-    if (readConsent() === null) setVisible(true);
-
-    const open = () => setVisible(true);
-    window.addEventListener(OPEN_CONSENT_EVENT, open);
-    return () => window.removeEventListener(OPEN_CONSENT_EVENT, open);
-  }, []);
+  const state = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   const choose = useCallback((value: ConsentValue) => {
     writeConsent(value);
-    setVisible(false);
+    reopened = false;
+    refresh();
   }, []);
 
-  if (!visible) return null;
+  if (state === "hidden") return null;
 
   return (
     <div
