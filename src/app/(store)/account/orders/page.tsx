@@ -2,27 +2,11 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { OrderStatusBadge } from "@/components/store/order-status-badge";
 import { formatPrice, cn } from "@/lib/utils";
 import { buttonVariants } from "@/lib/button-variants";
-import type { OrderStatus } from "@prisma/client";
 
 export const dynamic = 'force-dynamic';
-
-const STATUS_LABELS: Record<OrderStatus, string> = {
-  PENDING: "Pending",
-  PROCESSING: "Processing",
-  SHIPPED: "Shipped",
-  DELIVERED: "Delivered",
-  CANCELLED: "Cancelled",
-};
-
-const STATUS_STYLES: Record<OrderStatus, string> = {
-  PENDING: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
-  PROCESSING: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
-  SHIPPED: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
-  DELIVERED: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-  CANCELLED: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
-};
 
 export default async function OrdersPage() {
   const session = await auth();
@@ -100,14 +84,7 @@ export default async function OrdersPage() {
                   {formatPrice(order.total)}
                 </span>
                 <div className="flex sm:justify-end">
-                  <span
-                    className={[
-                      "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium",
-                      STATUS_STYLES[order.status],
-                    ].join(" ")}
-                  >
-                    {STATUS_LABELS[order.status]}
-                  </span>
+                  <OrderStatusBadge status={order.status} />
                 </div>
               </Link>
             ))}

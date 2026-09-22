@@ -330,6 +330,16 @@ export const en = {
     payments: "Payments",
     basedIn: "Based in Cyprus · Shipping across the EU",
   },
+  legal: {
+    lastUpdated: "Last updated {date}",
+    questions: "Questions about any of this? Email us and a person will answer.",
+    cookieTitle: "Cookies",
+    cookieText: "We use cookies that make the shop work, and analytics only if you accept. You can change this any time.",
+    cookieAccept: "Accept all",
+    cookieReject: "Only essential",
+    cookieSettings: "Cookie settings",
+    cookieMore: "Read more",
+  },
   errors: {
     title: "Something went wrong",
     text: "We couldn't load this page. Try again in a moment.",

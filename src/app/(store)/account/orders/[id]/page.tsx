@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { OrderStatusBadge } from "@/components/store/order-status-badge";
 import { formatPrice, cn } from "@/lib/utils";
 import { buttonVariants } from "@/lib/button-variants";
 import { OrderTracking } from "@/components/ui/order-tracking";
@@ -13,22 +14,6 @@ export const dynamic = 'force-dynamic';
 interface OrderDetailPageProps {
   params: Promise<{ id: string }>;
 }
-
-const STATUS_LABELS: Record<OrderStatus, string> = {
-  PENDING: "Pending",
-  PROCESSING: "Processing",
-  SHIPPED: "Shipped",
-  DELIVERED: "Delivered",
-  CANCELLED: "Cancelled",
-};
-
-const STATUS_STYLES: Record<OrderStatus, string> = {
-  PENDING: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
-  PROCESSING: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
-  SHIPPED: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
-  DELIVERED: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-  CANCELLED: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
-};
 
 const SUPPLIER_STATUS_LABELS: Record<SupplierOrderStatus, string> = {
   PENDING: "Pending supplier",
@@ -125,14 +110,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
             })}
           </p>
         </div>
-        <span
-          className={[
-            "inline-flex items-center rounded-full px-3 py-1 text-sm font-medium",
-            STATUS_STYLES[order.status],
-          ].join(" ")}
-        >
-          {STATUS_LABELS[order.status]}
-        </span>
+        <OrderStatusBadge status={order.status} />
       </div>
 
       {/* Timeline */}
@@ -249,7 +227,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
             <span className="text-muted-foreground">Shipping</span>
             <span className="tabular-nums">
               {order.shippingCost === 0 ? (
-                <span className="text-green-600 font-medium">Free</span>
+                <span className="text-success font-medium">Free</span>
               ) : (
                 formatPrice(order.shippingCost)
               )}

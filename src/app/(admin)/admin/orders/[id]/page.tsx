@@ -249,10 +249,10 @@ export default async function OrderDetailPage({ params }: PageProps) {
                   <p className="font-medium">{order.user.name ?? "—"}</p>
                   <p className="text-muted-foreground">{order.user.email}</p>
                   <Link
-                    href={`/admin/users/${order.user.id}`}
-                    className="text-xs hover:underline underline-offset-4"
+                    href={`/admin/orders?q=${encodeURIComponent(order.user.email)}`}
+                    className="text-xs underline-offset-4 hover:underline"
                   >
-                    View customer profile →
+                    All orders from this customer →
                   </Link>
                 </>
               ) : (

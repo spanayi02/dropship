@@ -76,7 +76,7 @@ const CATEGORIES = {
   "beauty-health": ["sparkle", "#EAECF0", "#2B2F36"],
 };
 
-function productSvg({ icon, field, label, sku, variant }) {
+function productSvg({ icon, field, sku, variant }) {
   const d = iconPath(icon);
   const rot = variant === 1 ? -8 : 0;
   const scale = variant === 1 ? 1.7 : 2.0;
@@ -140,8 +140,8 @@ const browser = await chromium.launch({
 let n = 0;
 for (const [slug, [icon, icon2, fieldIdx, label]] of Object.entries(PRODUCTS)) {
   const sku = `WL-${slug.slice(0, 3).toUpperCase()}${String(n + 1).padStart(3, "0")}`;
-  await render(browser, productSvg({ icon, field: FIELDS[fieldIdx], label, sku, variant: 0 }), path.join(outDir, "products", `${slug}-1.jpg`), 1200, 1200);
-  await render(browser, productSvg({ icon: icon2, field: FIELDS[(fieldIdx + 3) % FIELDS.length], label, sku, variant: 1 }), path.join(outDir, "products", `${slug}-2.jpg`), 1200, 1200);
+  await render(browser, productSvg({ icon, field: FIELDS[fieldIdx], sku, variant: 0 }), path.join(outDir, "products", `${slug}-1.jpg`), 1200, 1200);
+  await render(browser, productSvg({ icon: icon2, field: FIELDS[(fieldIdx + 3) % FIELDS.length], sku, variant: 1 }), path.join(outDir, "products", `${slug}-2.jpg`), 1200, 1200);
   n++;
 }
 for (const [slug, [icon, bg, ink]] of Object.entries(CATEGORIES)) {

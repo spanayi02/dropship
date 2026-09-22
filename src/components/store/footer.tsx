@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/store/logo";
+import { CookieSettingsButton } from "@/components/store/cookie-consent";
 import { getT } from "@/lib/i18n/server";
 import type { TFunction } from "@/lib/i18n";
 
@@ -177,6 +178,7 @@ export async function StoreFooter() {
                 {t("footer.rights", { year: currentYear })}
               </p>
               <p className="text-xs text-muted-foreground">{t("footer.basedIn")}</p>
+              <CookieSettingsButton className="mt-1 text-xs text-muted-foreground underline underline-offset-4 hover:text-foreground" />
             </div>
 
             {/* Payment method badges */}
