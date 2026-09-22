@@ -4,22 +4,30 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { registerSchema, type RegisterInput } from "@/lib/validations/auth";
+import { useI18n } from "@/lib/i18n/client";
+import { AuthField, authFieldClass } from "@/components/store/auth-shell";
 import { registerUser } from "./actions";
 
 export function RegisterForm() {
   const router = useRouter();
+  const { t } = useI18n();
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<RegisterInput>({
-    resolver: zodResolver(registerSchema),
-  });
+  } = useForm<RegisterInput>({ resolver: zodResolver(registerSchema) });
+
+  // "By creating an account you agree to our {terms} and {privacy}." — split the
+  // template so each placeholder becomes a real link without dangerous HTML.
+  const legalTemplate = t("auth.legalPrompt");
+  const [beforeTerms = "", afterTerms = ""] = legalTemplate.split("{terms}");
+  const [between = "", after = ""] = afterTerms.split("{privacy}");
+  const legalParts = { before: beforeTerms, between, after };
 
   async function onSubmit(data: RegisterInput) {
     const result = await registerUser(data);
@@ -29,7 +37,7 @@ export function RegisterForm() {
       return;
     }
 
-    // Auto-login after registration
+    // Sign the new account straight in, so nobody has to type the password twice.
     const signInResult = await signIn("credentials", {
       email: data.email,
       password: data.password,
@@ -37,118 +45,92 @@ export function RegisterForm() {
     });
 
     if (signInResult?.error) {
-      toast.success("Account created! Please sign in.");
+      toast.success(t("auth.accountCreatedSignIn"));
       router.push("/login");
       return;
     }
 
-    toast.success("Welcome! Your account has been created.");
+    toast.success(t("auth.accountCreated"));
     router.push("/account");
     router.refresh();
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
-      <div>
-        <label htmlFor="name" className="block text-sm font-medium text-foreground mb-1.5">
-          Full name
-        </label>
+      <AuthField id="name" label={t("auth.name")} error={errors.name?.message}>
         <input
           id="name"
           type="text"
           autoComplete="name"
-          {...register("name")}
-          className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent disabled:opacity-50 aria-invalid:border-destructive"
           aria-invalid={!!errors.name}
-          placeholder="Jane Smith"
           disabled={isSubmitting}
+          className={authFieldClass}
+          {...register("name")}
         />
-        {errors.name && (
-          <p className="mt-1 text-xs text-destructive">{errors.name.message}</p>
-        )}
-      </div>
+      </AuthField>
 
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium text-foreground mb-1.5">
-          Email address
-        </label>
+      <AuthField id="email" label={t("auth.email")} error={errors.email?.message}>
         <input
           id="email"
           type="email"
           autoComplete="email"
-          {...register("email")}
-          className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent disabled:opacity-50 aria-invalid:border-destructive"
-          aria-invalid={!!errors.email}
           placeholder="you@example.com"
+          aria-invalid={!!errors.email}
           disabled={isSubmitting}
+          className={authFieldClass}
+          {...register("email")}
         />
-        {errors.email && (
-          <p className="mt-1 text-xs text-destructive">{errors.email.message}</p>
-        )}
-      </div>
+      </AuthField>
 
-      <div>
-        <label htmlFor="password" className="block text-sm font-medium text-foreground mb-1.5">
-          Password
-        </label>
+      <AuthField id="password" label={t("auth.password")} error={errors.password?.message}>
         <input
           id="password"
           type="password"
           autoComplete="new-password"
-          {...register("password")}
-          className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent disabled:opacity-50 aria-invalid:border-destructive"
+          placeholder={t("auth.passwordHint")}
           aria-invalid={!!errors.password}
-          placeholder="Min. 8 characters"
           disabled={isSubmitting}
+          className={authFieldClass}
+          {...register("password")}
         />
-        {errors.password && (
-          <p className="mt-1 text-xs text-destructive">{errors.password.message}</p>
-        )}
-      </div>
+      </AuthField>
 
-      <div>
-        <label
-          htmlFor="confirmPassword"
-          className="block text-sm font-medium text-foreground mb-1.5"
-        >
-          Confirm password
-        </label>
+      <AuthField
+        id="confirmPassword"
+        label={t("auth.confirmPassword")}
+        error={errors.confirmPassword?.message}
+      >
         <input
           id="confirmPassword"
           type="password"
           autoComplete="new-password"
-          {...register("confirmPassword")}
-          className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent disabled:opacity-50 aria-invalid:border-destructive"
-          aria-invalid={!!errors.confirmPassword}
           placeholder="••••••••"
+          aria-invalid={!!errors.confirmPassword}
           disabled={isSubmitting}
+          className={authFieldClass}
+          {...register("confirmPassword")}
         />
-        {errors.confirmPassword && (
-          <p className="mt-1 text-xs text-destructive">{errors.confirmPassword.message}</p>
-        )}
-      </div>
+      </AuthField>
 
-      <Button type="submit" className="w-full h-10" disabled={isSubmitting}>
-        {isSubmitting ? (
-          <>
-            <Loader2 className="h-4 w-4 animate-spin" />
-            Creating account…
-          </>
-        ) : (
-          "Create account"
-        )}
-      </Button>
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-primary text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 active:translate-y-px disabled:opacity-50"
+      >
+        {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+        {isSubmitting ? t("auth.creating") : t("auth.submitRegister")}
+      </button>
 
-      <p className="text-center text-xs text-muted-foreground">
-        By creating an account you agree to our{" "}
-        <a href="/terms" className="underline underline-offset-4 hover:text-foreground">
-          Terms of Service
-        </a>{" "}
-        and{" "}
-        <a href="/privacy" className="underline underline-offset-4 hover:text-foreground">
-          Privacy Policy
-        </a>
-        .
+      <p className="text-xs leading-relaxed text-muted-foreground">
+        {legalParts.before}
+        <Link href="/terms" className="underline underline-offset-4 hover:text-foreground">
+          {t("auth.termsLink")}
+        </Link>
+        {legalParts.between}
+        <Link href="/privacy" className="underline underline-offset-4 hover:text-foreground">
+          {t("auth.privacyLink")}
+        </Link>
+        {legalParts.after}
       </p>
     </form>
   );
