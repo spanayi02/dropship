@@ -9,9 +9,8 @@ interface LogoProps {
 }
 
 /**
- * Wordmark built as a luggage tag: a squared ink chip carrying "WL" (the
- * departure-board initial), a punched eyelet, and the store name set in the
- * condensed board face. Reads at favicon size via the chip alone.
+ * Wordmark: a rounded ink chip carrying the initial, next to the store name
+ * set in the display face. The chip alone works at favicon size.
  */
 export function Logo({ className, markClassName, wordClassName, dark }: LogoProps) {
   return (
@@ -22,20 +21,16 @@ export function Logo({ className, markClassName, wordClassName, dark }: LogoProp
     >
       <span
         className={cn(
-          "relative flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-[3px] bg-ink text-[13px] font-bold tracking-tight text-ink-foreground transition-transform duration-200 group-hover:-rotate-2",
-          dark && "bg-signal text-signal-foreground",
+          "flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-ink text-sm font-bold text-ink-foreground",
+          dark && "bg-background text-foreground",
           markClassName
         )}
       >
-        <span
-          aria-hidden="true"
-          className="absolute left-1/2 top-[3px] h-[5px] w-[5px] -translate-x-1/2 rounded-full bg-background/90"
-        />
-        WL
+        W
       </span>
       <span
         className={cn(
-          "font-board text-[1.35rem] font-bold uppercase leading-none tracking-[0.02em] text-foreground",
+          "font-display text-xl font-bold leading-none tracking-tight text-foreground",
           wordClassName
         )}
       >

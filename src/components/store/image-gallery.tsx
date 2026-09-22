@@ -26,7 +26,7 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
   return (
     <div className="flex flex-col gap-3">
       {/* Main image */}
-      <div className="relative aspect-square w-full overflow-hidden rounded-[4px] bg-muted border border-border group">
+      <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-muted border border-border group">
         <Image
           key={activeImage}
           src={activeImage}
@@ -42,14 +42,14 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
           <>
             <button
               onClick={prev}
-              className="absolute left-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-[3px] bg-background/80 backdrop-blur-sm border border-border shadow-sm hover:bg-background transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
+              className="absolute left-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-lg bg-background/80 backdrop-blur-sm border border-border shadow-sm hover:bg-background transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
               aria-label="Previous image"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
             <button
               onClick={next}
-              className="absolute right-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-[3px] bg-background/80 backdrop-blur-sm border border-border shadow-sm hover:bg-background transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
+              className="absolute right-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-lg bg-background/80 backdrop-blur-sm border border-border shadow-sm hover:bg-background transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
               aria-label="Next image"
             >
               <ChevronRight className="h-4 w-4" />
@@ -59,7 +59,7 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
 
         {/* Image counter */}
         {images.length > 1 && (
-          <div className="label-sign absolute bottom-3 right-3 rounded-[2px] bg-ink/80 backdrop-blur-sm px-2 py-1 tnum text-ink-foreground">
+          <div className="label-sign absolute bottom-3 right-3 rounded-md bg-ink/80 backdrop-blur-sm px-2 py-1 tnum text-ink-foreground">
             {activeIndex + 1} / {images.length}
           </div>
         )}
@@ -73,9 +73,9 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
               key={i}
               onClick={() => setActiveIndex(i)}
               className={cn(
-                "relative flex-none h-16 w-16 sm:h-20 sm:w-20 overflow-hidden rounded-[3px] border-2 transition-all duration-200",
+                "relative flex-none h-16 w-16 sm:h-20 sm:w-20 overflow-hidden rounded-lg border-2 transition-all duration-200",
                 i === activeIndex
-                  ? "border-ink dark:border-signal"
+                  ? "border-primary"
                   : "border-border hover:border-muted-foreground/40"
               )}
               aria-label={`View image ${i + 1}`}

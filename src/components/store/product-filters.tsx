@@ -83,9 +83,9 @@ export function ProductFilters({
               navigate(buildUrl({ category: undefined }))
             }
             className={cn(
-              "flex w-full items-center justify-between rounded-[3px] px-3 py-2 text-sm transition-colors",
+              "flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors",
               !currentCategory
-                ? "bg-signal/20 text-ink dark:text-signal font-medium"
+                ? "bg-secondary text-foreground font-medium"
                 : "text-muted-foreground hover:bg-muted hover:text-foreground"
             )}
           >
@@ -98,9 +98,9 @@ export function ProductFilters({
                 navigate(buildUrl({ category: cat.slug }))
               }
               className={cn(
-                "flex w-full items-center justify-between rounded-[3px] px-3 py-2 text-sm transition-colors",
+                "flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors",
                 currentCategory === cat.slug
-                  ? "bg-signal/20 text-ink dark:text-signal font-medium"
+                  ? "bg-secondary text-foreground font-medium"
                   : "text-muted-foreground hover:bg-muted hover:text-foreground"
               )}
             >
@@ -133,7 +133,7 @@ export function ProductFilters({
               defaultValue={currentMinPrice ?? ""}
               placeholder={t("products.priceMin")}
               min={0}
-              className="w-full rounded-[3px] border border-border bg-background px-3 py-2 text-sm outline-none focus:border-ink focus:ring-1 focus:ring-ink/15 dark:focus:border-signal dark:focus:ring-signal/20 transition-all"
+              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-ink focus:ring-1 focus:ring-ink/15 dark:focus:border-brand dark:focus:ring-brand/25 transition-all"
             />
           </div>
           <span className="text-muted-foreground text-xs">–</span>
@@ -144,13 +144,13 @@ export function ProductFilters({
               defaultValue={currentMaxPrice ?? ""}
               placeholder={t("products.priceMax")}
               min={0}
-              className="w-full rounded-[3px] border border-border bg-background px-3 py-2 text-sm outline-none focus:border-ink focus:ring-1 focus:ring-ink/15 dark:focus:border-signal dark:focus:ring-signal/20 transition-all"
+              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-ink focus:ring-1 focus:ring-ink/15 dark:focus:border-brand dark:focus:ring-brand/25 transition-all"
             />
           </div>
         </div>
         <button
           type="submit"
-          className="mt-2.5 w-full rounded-[3px] border border-border py-2 text-xs font-semibold hover:bg-muted transition-colors"
+          className="mt-2.5 w-full rounded-lg border border-border py-2 text-xs font-semibold hover:bg-muted transition-colors"
         >
           {t("common.apply")}
         </button>
@@ -171,9 +171,9 @@ export function ProductFilters({
               }
               className="sr-only peer"
             />
-            <div className="h-5 w-5 rounded-[2px] border border-border bg-background peer-checked:bg-signal peer-checked:border-signal transition-colors flex items-center justify-center">
+            <div className="h-5 w-5 rounded-md border border-border bg-background peer-checked:bg-primary peer-checked:border-primary transition-colors flex items-center justify-center">
               <svg
-                className="h-3 w-3 text-signal-foreground opacity-0 peer-checked:opacity-100 scale-0 peer-checked:scale-100 transition-all"
+                className="h-3 w-3 text-primary-foreground opacity-0 peer-checked:opacity-100 scale-0 peer-checked:scale-100 transition-all"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -183,7 +183,7 @@ export function ProductFilters({
               </svg>
             </div>
           </div>
-          <span className="text-sm text-foreground group-hover:text-ink dark:group-hover:text-signal transition-colors">
+          <span className="text-sm text-foreground group-hover:text-foreground transition-colors">
             {t("products.inStockOnly")}
           </span>
         </label>

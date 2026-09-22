@@ -107,7 +107,7 @@ function StarDisplay({ rating, countLabel }: { rating: number; countLabel: strin
             key={i}
             className={
               i < Math.round(rating)
-                ? "h-4 w-4 fill-signal-deep text-signal-deep"
+                ? "h-4 w-4 fill-warning text-warning"
                 : "h-4 w-4 fill-muted text-muted-foreground/30"
             }
           />
@@ -276,7 +276,7 @@ export default async function ProductPage({
             {/* Title */}
             <div>
               {isSale && (
-                <span className="label-sign mb-3 inline-flex items-center gap-1.5 rounded-[2px] bg-stop px-3 py-1.5 text-white">
+                <span className="label-sign mb-3 inline-flex items-center gap-1.5 rounded-md bg-stop px-3 py-1.5 text-white">
                   <BadgePercent className="h-3.5 w-3.5" />
                   {t("product.save", { percent: discount })}
                 </span>
@@ -300,12 +300,12 @@ export default async function ProductPage({
               <p className="text-sm text-muted-foreground">{t("products.noReviews")}</p>
             )}
 
-            <div className="rounded-[4px] border border-border bg-card p-5">
+            <div className="rounded-xl border border-border bg-card p-5">
               <div className="flex flex-wrap items-end justify-between gap-4">
                 <div>
                   <p className="label-sign text-muted-foreground">{t("product.price")}</p>
                   <div className="mt-1 flex items-baseline gap-3 tnum">
-                    <span className="font-board text-4xl font-bold text-foreground">
+                    <span className="tnum text-4xl font-bold text-foreground">
                       {formatPrice(product.sellingPrice)}
                     </span>
                     {isSale && product.compareAtPrice && (
@@ -316,21 +316,21 @@ export default async function ProductPage({
                   </div>
                 </div>
                 {savings > 0 && (
-                  <span className="label-sign rounded-[2px] bg-stop/10 px-3 py-1.5 text-stop tnum">
+                  <span className="label-sign rounded-md bg-stop/10 px-3 py-1.5 text-stop tnum">
                     {t("product.youSave", { amount: formatPrice(savings) })}
                   </span>
                 )}
               </div>
               <div className="mt-4 grid gap-2 sm:grid-cols-3">
-                <span className="inline-flex items-center gap-2 rounded-[3px] bg-signal/15 px-3 py-2 text-xs font-bold text-ink dark:text-signal">
+                <span className="inline-flex items-center gap-2 rounded-lg bg-secondary px-3 py-2 text-xs font-bold text-foreground">
                   <Truck className="h-3.5 w-3.5" />
                   {t("home.trustShipping", { amount: freeShipAmount })}
                 </span>
-                <span className="inline-flex items-center gap-2 rounded-[3px] bg-muted px-3 py-2 text-xs font-bold text-foreground">
+                <span className="inline-flex items-center gap-2 rounded-lg bg-muted px-3 py-2 text-xs font-bold text-foreground">
                   <CreditCard className="h-3.5 w-3.5" />
                   {t("home.trustSecure")}
                 </span>
-                <span className="inline-flex items-center gap-2 rounded-[3px] bg-signal/15 px-3 py-2 text-xs font-bold text-ink dark:text-signal">
+                <span className="inline-flex items-center gap-2 rounded-lg bg-secondary px-3 py-2 text-xs font-bold text-foreground">
                   <Sparkles className="h-3.5 w-3.5" />
                   {shipsFromEu ? t("product.euWarehouse") : t("product.cnWarehouse")}
                 </span>
@@ -346,7 +346,7 @@ export default async function ProductPage({
             {/* Quantity + Add to Cart */}
             <AddToCartSection product={product} primaryImage={primaryImage} initialWishlisted={!!wishlistItem} />
 
-            <div className="rounded-[4px] border border-signal/25 bg-signal/10 p-5">
+            <div className="rounded-xl border border-hairline bg-canvas-soft p-5">
               <p className="text-sm font-bold text-foreground">{t("product.finePrint")}</p>
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 {[
@@ -359,8 +359,8 @@ export default async function ProductPage({
                   { icon: ShieldCheck, label: t("product.finePrintPayment"), text: t("product.finePrintPaymentText") },
                   { icon: HeartHandshake, label: t("product.finePrintSupport"), text: t("product.finePrintSupportText") },
                 ].map(({ icon: Icon, label, text }) => (
-                  <div key={label} className="flex gap-3 rounded-[3px] bg-card/80 p-3">
-                    <Icon className="mt-0.5 h-4 w-4 flex-shrink-0 text-ink dark:text-signal" />
+                  <div key={label} className="flex gap-3 rounded-lg bg-card/80 p-3">
+                    <Icon className="mt-0.5 h-4 w-4 flex-shrink-0 text-foreground" />
                     <div>
                       <p className="text-xs font-bold text-foreground">{label}</p>
                       <p className="mt-0.5 text-xs text-muted-foreground">{text}</p>
@@ -379,9 +379,9 @@ export default async function ProductPage({
               ].map(({ icon: Icon, label }) => (
                 <div
                   key={label}
-                  className="flex flex-col items-center gap-1.5 rounded-[3px] border border-border bg-background px-2 py-3 text-center"
+                  className="flex flex-col items-center gap-1.5 rounded-lg border border-border bg-background px-2 py-3 text-center"
                 >
-                  <Icon className="h-4 w-4 text-ink dark:text-signal" />
+                  <Icon className="h-4 w-4 text-foreground" />
                   <span className="text-[11px] font-medium leading-tight text-muted-foreground">
                     {label}
                   </span>
@@ -398,12 +398,12 @@ export default async function ProductPage({
         {relatedProducts.length > 0 && (
           <section className="mt-20">
             <div className="flex items-end justify-between mb-6">
-              <h2 className="font-board text-2xl font-bold uppercase tracking-tight">
+              <h2 className="text-2xl font-bold tracking-tight">
                 {t("product.related")}
               </h2>
               <Link
                 href={`/products?category=${product.category.slug}`}
-                className="text-sm font-semibold text-ink dark:text-signal hover:underline flex items-center gap-1"
+                className="text-sm font-semibold text-foreground hover:underline flex items-center gap-1"
               >
                 {t("common.viewAll")}
                 <ChevronRight className="h-3.5 w-3.5" />

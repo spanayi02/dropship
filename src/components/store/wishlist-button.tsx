@@ -59,7 +59,7 @@ export function WishlistButton({
       aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
       aria-pressed={wishlisted}
       className={cn(
-        "flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-[3px] border border-border transition-all duration-200 disabled:opacity-60",
+        "flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg border border-border transition-all duration-200 disabled:opacity-60",
         wishlisted
           ? "bg-rose-50 border-rose-200 text-rose-500 dark:bg-rose-950/30 dark:border-rose-800 dark:text-rose-400 scale-105"
           : "bg-background text-muted-foreground hover:text-rose-500 hover:border-rose-200 hover:bg-rose-50 dark:hover:bg-rose-950/20",

@@ -51,14 +51,14 @@ export function Pagination({ currentPage, totalPages, currentParams }: Paginatio
       {prevHref ? (
         <Link
           href={prevHref}
-          className="flex items-center gap-1.5 rounded-[3px] border border-border bg-background px-4 py-2 text-sm font-medium hover:bg-muted transition-colors"
+          className="flex items-center gap-1.5 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium hover:bg-muted transition-colors"
           aria-label="Previous page"
         >
           <ChevronLeft className="h-4 w-4" />
           {t("products.prev")}
         </Link>
       ) : (
-        <span className="flex items-center gap-1.5 rounded-[3px] border border-border bg-background px-4 py-2 text-sm font-medium opacity-40 cursor-not-allowed">
+        <span className="flex items-center gap-1.5 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium opacity-40 cursor-not-allowed">
           <ChevronLeft className="h-4 w-4" />
           {t("products.prev")}
         </span>
@@ -80,9 +80,9 @@ export function Pagination({ currentPage, totalPages, currentParams }: Paginatio
             aria-label={`${t("products.page")} ${page}`}
             aria-current={page === currentPage ? "page" : undefined}
             className={cn(
-              "flex h-9 w-9 items-center justify-center rounded-[3px] border text-sm font-medium transition-colors",
+              "flex h-9 w-9 items-center justify-center rounded-lg border text-sm font-medium transition-colors",
               page === currentPage
-                ? "bg-signal border-signal text-signal-foreground"
+                ? "bg-primary border-primary text-primary-foreground"
                 : "border-border bg-background hover:bg-muted"
             )}
           >
@@ -95,14 +95,14 @@ export function Pagination({ currentPage, totalPages, currentParams }: Paginatio
       {nextHref ? (
         <Link
           href={nextHref}
-          className="flex items-center gap-1.5 rounded-[3px] border border-border bg-background px-4 py-2 text-sm font-medium hover:bg-muted transition-colors"
+          className="flex items-center gap-1.5 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium hover:bg-muted transition-colors"
           aria-label="Next page"
         >
           {t("products.next")}
           <ChevronRight className="h-4 w-4" />
         </Link>
       ) : (
-        <span className="flex items-center gap-1.5 rounded-[3px] border border-border bg-background px-4 py-2 text-sm font-medium opacity-40 cursor-not-allowed">
+        <span className="flex items-center gap-1.5 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium opacity-40 cursor-not-allowed">
           {t("products.next")}
           <ChevronRight className="h-4 w-4" />
         </span>

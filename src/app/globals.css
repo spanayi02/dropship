@@ -5,10 +5,18 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ──────────────────────────────────────────────────────────────────────────
-   WishlistAZ — "Departure board" world
-   Signal-yellow signage, black split-flap boards, white thermal tags.
-   Faces: Fira Sans (Meta lineage — the Deutsche Bundespost brief) for UI,
-   Fira Sans Condensed / Extra Condensed for boards and display.
+   WishlistAZ — storefront design system
+
+   Grounded in conventional retail commerce practice rather than a bespoke
+   theme: a neutral canvas so product photography carries the colour, a
+   near-black primary for actions, and chroma reserved for status only
+   (sale red, in-stock green, pending amber). Neutrals follow the zinc
+   family; the hairline and soft canvas values are taken from the Shopify
+   and Stripe systems, which is also where the Inter body / tabular-figure
+   money convention comes from.
+
+   Faces: Manrope for headings (has Greek), Inter for UI and body (has Greek,
+   holds up at the small sizes prices and tables need).
    ────────────────────────────────────────────────────────────────────────── */
 
 @theme inline {
@@ -16,7 +24,6 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-ui);
   --font-heading: var(--font-display);
-  --font-board: var(--font-board);
   --font-mono: ui-monospace, "SFMono-Regular", Menlo, monospace;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -47,151 +54,214 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  /* World tokens */
+
+  /* Store tokens */
+  --color-canvas-soft: var(--canvas-soft);
+  --color-hairline: var(--hairline);
+  --color-border-strong: var(--border-strong);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-brand-soft: var(--brand-soft);
+  --color-sale: var(--sale);
+  --color-sale-soft: var(--sale-soft);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-ink-2: var(--ink-2);
+
+  /* Compat aliases: the previous theme's names, remapped onto the new
+     system so every call site keeps working while components are migrated. */
+  --color-ink: var(--ink);
+  --color-ink-foreground: var(--ink-foreground);
   --color-signal: var(--signal);
   --color-signal-foreground: var(--signal-foreground);
   --color-signal-deep: var(--signal-deep);
-  --color-ink: var(--ink);
-  --color-ink-foreground: var(--ink-foreground);
   --color-board: var(--board);
   --color-board-cell: var(--board-cell);
   --color-board-line: var(--board-line);
   --color-board-text: var(--board-text);
   --color-board-dim: var(--board-dim);
   --color-led: var(--led);
-  --color-go: var(--go);
-  --color-stop: var(--stop);
+  --color-go: var(--success);
+  --color-stop: var(--sale);
   --color-field: var(--field);
-  --color-line: var(--line);
-  --radius-sm: 2px;
-  --radius-md: 3px;
-  --radius-lg: 4px;
-  --radius-xl: 6px;
-  --radius-2xl: 8px;
-  --radius-3xl: 12px;
-  --radius-4xl: 16px;
+  --color-line: var(--hairline);
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-3xl: 20px;
+  --radius-4xl: 24px;
 }
 
 :root {
-  --font-ui: "Fira Sans", "Helvetica Neue", Arial, sans-serif;
-  --font-display: "Fira Sans Condensed", "Arial Narrow", "Fira Sans", sans-serif;
-  --font-board: "Fira Sans Extra Condensed", "Fira Sans Condensed", "Arial Narrow", sans-serif;
+  --font-ui: "Inter Variable", Inter, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  --font-display: "Manrope Variable", Manrope, "Inter Variable", system-ui, sans-serif;
 
-  /* Paper: cool white, never cream */
-  --background: oklch(0.99 0.002 250);
-  --foreground: oklch(0.17 0.012 262);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.17 0.012 262);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.17 0.012 262);
-  --primary: oklch(0.17 0.012 262);
-  --primary-foreground: oklch(0.99 0.002 250);
-  --secondary: oklch(0.955 0.004 250);
-  --secondary-foreground: oklch(0.17 0.012 262);
-  --muted: oklch(0.955 0.004 250);
-  --muted-foreground: oklch(0.45 0.014 262);
-  --accent: oklch(0.93 0.09 96);
-  --accent-foreground: oklch(0.17 0.012 262);
-  --destructive: oklch(0.56 0.21 27);
-  --border: oklch(0.87 0.006 250);
-  --input: oklch(0.87 0.006 250);
-  --ring: oklch(0.17 0.012 262);
+  /* Canvas and ink */
+  --background: #ffffff;
+  --foreground: #18181b;
+  --canvas-soft: #f7f8fa;
+  --card: #ffffff;
+  --card-foreground: #18181b;
+  --popover: #ffffff;
+  --popover-foreground: #18181b;
+  --ink: #18181b;
+  --ink-foreground: #ffffff;
+  --ink-2: #3f3f46;
 
-  /* Signage yellow — one hue, committed */
-  --signal: oklch(0.9 0.185 96);
-  --signal-foreground: oklch(0.15 0.012 262);
-  --signal-deep: oklch(0.78 0.17 88);
-  /* Ink / board */
-  --ink: oklch(0.17 0.012 262);
-  --ink-foreground: oklch(0.99 0.002 250);
-  --board: oklch(0.14 0.01 262);
-  --board-cell: oklch(0.2 0.012 262);
-  --board-line: oklch(0.28 0.012 262);
-  --board-text: oklch(0.97 0.004 250);
-  --board-dim: oklch(0.66 0.012 262);
-  --led: oklch(0.85 0.17 84);
-  /* Status LEDs */
-  --go: oklch(0.72 0.18 148);
-  --stop: oklch(0.62 0.22 27);
-  /* Fields */
-  --field: oklch(0.955 0.004 250);
-  --line: oklch(0.87 0.006 250);
+  /* Actions: near-black primary, the retail convention */
+  --primary: #18181b;
+  --primary-foreground: #ffffff;
+  --secondary: #f4f4f5;
+  --secondary-foreground: #18181b;
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
 
-  --chart-1: oklch(0.85 0.17 90);
-  --chart-2: oklch(0.17 0.012 262);
-  --chart-3: oklch(0.6 0.012 262);
-  --chart-4: oklch(0.72 0.18 148);
-  --chart-5: oklch(0.62 0.22 27);
-  --radius: 0.2rem;
+  /* shadcn's --accent is the neutral hover wash, not a brand colour */
+  --accent: #f4f4f5;
+  --accent-foreground: #18181b;
 
-  --sidebar: oklch(0.99 0.002 250);
-  --sidebar-foreground: oklch(0.17 0.012 262);
-  --sidebar-primary: oklch(0.17 0.012 262);
-  --sidebar-primary-foreground: oklch(0.99 0.002 250);
-  --sidebar-accent: oklch(0.955 0.004 250);
-  --sidebar-accent-foreground: oklch(0.17 0.012 262);
-  --sidebar-border: oklch(0.87 0.006 250);
-  --sidebar-ring: oklch(0.17 0.012 262);
+  /* The one chromatic accent: links, focus, selected state */
+  --brand: #1d4ed8;
+  --brand-foreground: #ffffff;
+  --brand-soft: #eff4ff;
 
-  --selection-bg: oklch(0.9 0.185 96);
-  --selection-fg: oklch(0.15 0.012 262);
+  /* Status only */
+  --sale: #c81e1e;
+  --sale-soft: #fdf0f0;
+  --success: #15803d;
+  --success-soft: #f0f9f3;
+  --warning: #b45309;
+  --warning-soft: #fdf6ec;
+  --destructive: #c81e1e;
+
+  /* Lines and fields */
+  --hairline: #e4e4e7;
+  --border-strong: #d4d4d8;
+  --border: #e4e4e7;
+  --input: #d4d4d8;
+  --field: #f4f4f5;
+  --ring: #1d4ed8;
+
+  /* Compat aliases from the previous theme */
+  --signal: #fbeecd;
+  --signal-foreground: #7c4a09;
+  --signal-deep: #b45309;
+  --led: #d97706;
+  --board: #18181b;
+  --board-cell: #27272a;
+  --board-line: rgb(255 255 255 / 0.12);
+  --board-text: #fafafa;
+  --board-dim: #a1a1aa;
+
+  --chart-1: #1d4ed8;
+  --chart-2: #18181b;
+  --chart-3: #a1a1aa;
+  --chart-4: #15803d;
+  --chart-5: #c81e1e;
+
+  --radius: 0.5rem;
+
+  --shadow-xs: 0 1px 2px 0 rgb(24 24 27 / 0.04);
+  --shadow-sm: 0 1px 3px 0 rgb(24 24 27 / 0.06), 0 1px 2px -1px rgb(24 24 27 / 0.06);
+  --shadow-md: 0 4px 12px -2px rgb(24 24 27 / 0.08), 0 2px 4px -2px rgb(24 24 27 / 0.05);
+  --shadow-lg: 0 12px 28px -6px rgb(24 24 27 / 0.12), 0 4px 10px -4px rgb(24 24 27 / 0.06);
+
+  --sidebar: #ffffff;
+  --sidebar-foreground: #18181b;
+  --sidebar-primary: #18181b;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f4f4f5;
+  --sidebar-accent-foreground: #18181b;
+  --sidebar-border: #e4e4e7;
+  --sidebar-ring: #1d4ed8;
+
+  --selection-bg: #dbe6ff;
+  --selection-fg: #18181b;
 }
 
 .dark {
-  --background: oklch(0.15 0.01 262);
-  --foreground: oklch(0.96 0.004 250);
-  --card: oklch(0.19 0.012 262);
-  --card-foreground: oklch(0.96 0.004 250);
-  --popover: oklch(0.19 0.012 262);
-  --popover-foreground: oklch(0.96 0.004 250);
-  --primary: oklch(0.96 0.004 250);
-  --primary-foreground: oklch(0.15 0.01 262);
-  --secondary: oklch(0.24 0.012 262);
-  --secondary-foreground: oklch(0.96 0.004 250);
-  --muted: oklch(0.23 0.012 262);
-  --muted-foreground: oklch(0.7 0.012 262);
-  --accent: oklch(0.3 0.06 92);
-  --accent-foreground: oklch(0.96 0.004 250);
-  --destructive: oklch(0.68 0.19 25);
-  --border: oklch(0.96 0.004 250 / 12%);
-  --input: oklch(0.96 0.004 250 / 14%);
-  --ring: oklch(0.9 0.185 96);
+  --background: #0f0f11;
+  --foreground: #fafafa;
+  --canvas-soft: #151518;
+  --card: #18181b;
+  --card-foreground: #fafafa;
+  --popover: #18181b;
+  --popover-foreground: #fafafa;
+  --ink: #fafafa;
+  --ink-foreground: #18181b;
+  --ink-2: #d4d4d8;
 
-  --signal: oklch(0.9 0.185 96);
-  --signal-foreground: oklch(0.15 0.012 262);
-  --signal-deep: oklch(0.78 0.17 88);
-  --ink: oklch(0.96 0.004 250);
-  --ink-foreground: oklch(0.15 0.01 262);
-  --board: oklch(0.11 0.008 262);
-  --board-cell: oklch(0.17 0.01 262);
-  --board-line: oklch(0.26 0.012 262);
-  --board-text: oklch(0.97 0.004 250);
-  --board-dim: oklch(0.62 0.012 262);
-  --led: oklch(0.85 0.17 84);
-  --go: oklch(0.76 0.18 148);
-  --stop: oklch(0.68 0.2 25);
-  --field: oklch(0.21 0.012 262);
-  --line: oklch(0.96 0.004 250 / 12%);
+  --primary: #fafafa;
+  --primary-foreground: #18181b;
+  --secondary: #27272a;
+  --secondary-foreground: #fafafa;
+  --muted: #232327;
+  --muted-foreground: #a1a1aa;
 
-  --chart-1: oklch(0.85 0.17 90);
-  --chart-2: oklch(0.96 0.004 250);
-  --chart-3: oklch(0.6 0.012 262);
-  --chart-4: oklch(0.76 0.18 148);
-  --chart-5: oklch(0.68 0.2 25);
+  --accent: #27272a;
+  --accent-foreground: #fafafa;
 
-  --sidebar: oklch(0.19 0.012 262);
-  --sidebar-foreground: oklch(0.96 0.004 250);
-  --sidebar-primary: oklch(0.9 0.185 96);
-  --sidebar-primary-foreground: oklch(0.15 0.01 262);
-  --sidebar-accent: oklch(0.24 0.012 262);
-  --sidebar-accent-foreground: oklch(0.96 0.004 250);
-  --sidebar-border: oklch(0.96 0.004 250 / 12%);
-  --sidebar-ring: oklch(0.9 0.185 96);
+  --brand: #7ba3ff;
+  --brand-foreground: #10131a;
+  --brand-soft: rgb(123 163 255 / 0.14);
+
+  --sale: #f87171;
+  --sale-soft: rgb(248 113 113 / 0.12);
+  --success: #4ade80;
+  --success-soft: rgb(74 222 128 / 0.12);
+  --warning: #fbbf24;
+  --warning-soft: rgb(251 191 36 / 0.12);
+  --destructive: #f87171;
+
+  --hairline: rgb(255 255 255 / 0.10);
+  --border-strong: rgb(255 255 255 / 0.18);
+  --border: rgb(255 255 255 / 0.10);
+  --input: rgb(255 255 255 / 0.18);
+  --field: #1c1c20;
+  --ring: #7ba3ff;
+
+  --signal: rgb(251 191 36 / 0.16);
+  --signal-foreground: #fbbf24;
+  --signal-deep: #fbbf24;
+  --led: #fbbf24;
+  --board: #09090b;
+  --board-cell: #18181b;
+  --board-line: rgb(255 255 255 / 0.10);
+  --board-text: #fafafa;
+  --board-dim: #a1a1aa;
+
+  --chart-1: #7ba3ff;
+  --chart-2: #fafafa;
+  --chart-3: #71717a;
+  --chart-4: #4ade80;
+  --chart-5: #f87171;
+
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.4);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.45);
+  --shadow-md: 0 4px 12px -2px rgb(0 0 0 / 0.5);
+  --shadow-lg: 0 12px 28px -6px rgb(0 0 0 / 0.55);
+
+  --sidebar: #18181b;
+  --sidebar-foreground: #fafafa;
+  --sidebar-primary: #fafafa;
+  --sidebar-primary-foreground: #18181b;
+  --sidebar-accent: #27272a;
+  --sidebar-accent-foreground: #fafafa;
+  --sidebar-border: rgb(255 255 255 / 0.10);
+  --sidebar-ring: #7ba3ff;
+
+  --selection-bg: #1e3a8a;
+  --selection-fg: #fafafa;
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
   html {
     scroll-behavior: smooth;
@@ -200,29 +270,38 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-family: var(--font-ui);
-    font-feature-settings: "tnum" 1, "kern" 1;
+    font-synthesis-weight: none;
   }
   h1, h2, h3, h4 {
     font-family: var(--font-display);
-    letter-spacing: -0.01em;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
     text-wrap: balance;
   }
+  h1 { letter-spacing: -0.03em; }
   p {
     text-wrap: pretty;
+  }
+  /* Money and quantities line up in tables and totals */
+  .tabular, td, th {
+    font-variant-numeric: tabular-nums;
   }
   ::selection {
     background: var(--selection-bg);
     color: var(--selection-fg);
   }
-  input, textarea {
-    caret-color: var(--signal-deep);
-  }
   :focus-visible {
-    outline: 2px solid var(--signal-deep);
+    outline: 2px solid var(--brand);
     outline-offset: 2px;
+    border-radius: 2px;
   }
   a, button {
     -webkit-tap-highlight-color: transparent;
+  }
+  /* Inputs: Stripe's hairline field convention */
+  input, textarea, select {
+    font-family: var(--font-ui);
   }
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
@@ -234,14 +313,18 @@
   }
 }
 
-/* Scrollbar tinted to the world */
-::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: oklch(0.75 0.008 250); border-radius: 4px; border: 2px solid var(--background); }
-::-webkit-scrollbar-thumb:hover { background: oklch(0.55 0.012 262); }
-.dark ::-webkit-scrollbar-thumb { background: oklch(0.35 0.012 262); }
+::-webkit-scrollbar-thumb {
+  background: #d4d4d8;
+  border-radius: 8px;
+  border: 3px solid var(--background);
+}
+::-webkit-scrollbar-thumb:hover { background: #a1a1aa; }
+.dark ::-webkit-scrollbar-thumb { background: #3f3f46; }
 
 /* ── Utilities ─────────────────────────────────────────────────────────── */
+
 @utility scrollbar-none {
   scrollbar-width: none;
   &::-webkit-scrollbar { display: none; }
@@ -250,124 +333,123 @@
 @utility font-display {
   font-family: var(--font-display);
 }
-@utility font-board {
-  font-family: var(--font-board);
-}
+
 @utility tnum {
   font-variant-numeric: tabular-nums;
 }
 
-/* Signage label: uppercase, tracked, condensed. Used inside tags/boards as data,
-   never as an eyebrow above a heading. */
-@utility label-sign {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 0.72rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  line-height: 1;
+/* Page container: one max width, one gutter, everywhere */
+@utility container-store {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: 1rem;
+  @media (min-width: 640px) { padding-inline: 1.5rem; }
+  @media (min-width: 1024px) { padding-inline: 2rem; }
 }
 
-/* Split-flap board surface: horizontal hairlines like the mechanical rows */
+/* Small caps label for eyebrows, table headers and meta rows.
+   Replaces the previous condensed signage treatment. */
+@utility label-sign {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1.3;
+}
+
+/* Prices, quantities, order numbers */
+@utility font-board {
+  font-family: var(--font-ui);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* Compat: previous surface treatments, reduced to plain surfaces */
 @utility board-surface {
   background-color: var(--board);
-  background-image: repeating-linear-gradient(
-    to bottom,
-    transparent 0px,
-    transparent 47px,
-    var(--board-line) 47px,
-    var(--board-line) 48px
-  );
   color: var(--board-text);
 }
 
-/* A single flap cell: the horizontal hinge line through the middle */
 @utility flap {
-  position: relative;
   background: var(--board-cell);
-  border-radius: 3px;
-  &::after {
-    content: "";
-    position: absolute;
-    left: 0; right: 0; top: 50%;
-    height: 1px;
-    background: oklch(0 0 0 / 0.55);
-    pointer-events: none;
-  }
+  border-radius: var(--radius-md);
 }
 
-/* Luggage tag: white card with a punched eyelet */
 @utility tag-punch {
   position: relative;
-  &::before {
-    content: "";
-    position: absolute;
-    top: 10px; left: 50%;
-    width: 10px; height: 10px;
-    margin-left: -5px;
-    border-radius: 50%;
-    background: var(--background);
-    box-shadow: inset 0 0 0 1.5px var(--line);
-  }
 }
 
-/* Barcode stripe (pure CSS) */
 @utility barcode {
-  background-image: repeating-linear-gradient(
-    to right,
-    currentColor 0 2px, transparent 2px 4px,
-    currentColor 4px 5px, transparent 5px 8px,
-    currentColor 8px 11px, transparent 11px 12px,
-    currentColor 12px 13px, transparent 13px 16px,
-    currentColor 16px 18px, transparent 18px 21px
-  );
+  background-image: none;
 }
 
-/* Yellow/black chevron hazard stripe — used sparingly as a divider */
 @utility chevron-stripe {
-  background-image: repeating-linear-gradient(
-    -45deg,
-    var(--signal) 0 14px,
-    var(--ink) 14px 28px
-  );
+  background-color: var(--muted);
 }
 
-/* ── Keyframes ─────────────────────────────────────────────────────────── */
-@keyframes flap-in {
-  0%   { transform: rotateX(-90deg); opacity: 0; }
-  60%  { transform: rotateX(12deg); opacity: 1; }
-  100% { transform: rotateX(0deg); opacity: 1; }
+/* Product imagery: consistent framing and a calm hover */
+@utility media-frame {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--canvas-soft);
+  border-radius: var(--radius-lg);
 }
-@keyframes led-blink {
+
+/* Card that only lifts when it is interactive */
+@utility card-surface {
+  background-color: var(--card);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-xl);
+}
+
+@utility shadow-card {
+  box-shadow: var(--shadow-sm);
+}
+
+@utility shadow-card-hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* ── Motion ────────────────────────────────────────────────────────────── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes pulse-soft {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.35; }
-}
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-@keyframes tag-drop {
-  0%   { transform: translateY(-6px) rotate(-2deg); opacity: 0; }
-  100% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  50%      { opacity: 0.55; }
 }
 
+@utility animate-fade-up {
+  animation: fade-up 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@utility animate-fade-in {
+  animation: fade-in 0.3s ease-out both;
+}
+
+/* Compat: previous animation names, now calm equivalents */
 @utility animate-flap-in {
-  animation: flap-in 0.55s cubic-bezier(0.2, 0.9, 0.25, 1) both;
-  transform-origin: 50% 0%;
-  backface-visibility: hidden;
-}
-@utility animate-led {
-  animation: led-blink 1.6s ease-in-out infinite;
-}
-@utility animate-marquee {
-  animation: marquee 40s linear infinite;
+  animation: fade-up 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 @utility animate-tag-drop {
-  animation: tag-drop 0.35s cubic-bezier(0.2, 0.9, 0.25, 1) both;
+  animation: fade-up 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@utility animate-led {
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+@utility animate-marquee {
+  animation: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-flap-in, .animate-led, .animate-marquee, .animate-tag-drop {
+  .animate-fade-up, .animate-fade-in, .animate-flap-in,
+  .animate-tag-drop, .animate-led {
     animation: none !important;
     transform: none !important;
     opacity: 1 !important;

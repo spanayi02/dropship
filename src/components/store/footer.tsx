@@ -108,16 +108,14 @@ interface FooterColumnProps {
 function FooterColumn({ title, links }: FooterColumnProps) {
   return (
     <div>
-      <h3 className="font-board text-xs font-bold uppercase tracking-[0.08em] text-foreground mb-4">
-        {title}
-      </h3>
+      <h3 className="mb-4 text-sm font-semibold text-foreground">{title}</h3>
       <ul className="space-y-2.5">
         {links.map((link) => (
           <li key={link.href}>
             <Link
               href={link.href}
               prefetch={link.prefetch}
-              className="text-sm text-muted-foreground hover:text-foreground hover:translate-x-0.5 transition-all duration-200 inline-block"
+              className="inline-block text-sm text-muted-foreground transition-colors duration-150 hover:text-foreground"
             >
               {link.label}
             </Link>
@@ -134,15 +132,15 @@ export async function StoreFooter() {
   const columns = buildColumns(t);
 
   return (
-    <footer className="border-t border-border bg-muted/30 mt-auto">
+    <footer className="mt-auto border-t border-hairline bg-canvas-soft">
       {/* Main footer content */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
+      <div className="container-store py-14">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-10 lg:gap-8">
           {/* Brand column */}
           <div className="lg:col-span-2">
             <Logo className="mb-4" />
-            <p className="text-sm font-semibold text-foreground">{t("footer.tagline")}</p>
-            <p className="text-sm text-muted-foreground leading-relaxed max-w-xs mt-2">
+            <p className="text-sm font-medium text-foreground">{t("footer.tagline")}</p>
+            <p className="mt-2 max-w-xs text-sm leading-relaxed text-muted-foreground">
               {t("footer.about")}
             </p>
 
@@ -155,7 +153,7 @@ export async function StoreFooter() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.label}
-                  className="flex h-9 w-9 items-center justify-center rounded-[3px] border border-border text-muted-foreground hover:border-ink hover:text-ink dark:hover:border-signal dark:hover:text-signal transition-all duration-200"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-hairline text-muted-foreground transition-colors duration-150 hover:border-border-strong hover:text-foreground"
                 >
                   {social.svg}
                 </a>
@@ -171,8 +169,8 @@ export async function StoreFooter() {
       </div>
 
       {/* Bottom bar */}
-      <div className="border-t border-border">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-5">
+      <div className="border-t border-hairline">
+        <div className="container-store py-5">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex flex-col items-center sm:items-start gap-0.5">
               <p className="text-xs text-muted-foreground">
@@ -189,7 +187,7 @@ export async function StoreFooter() {
               {PAYMENT_METHODS.map((method) => (
                 <span
                   key={method}
-                  className="inline-flex items-center rounded-[3px] border border-border bg-background px-2.5 py-1 text-[11px] font-medium tabular-nums text-muted-foreground"
+                  className="inline-flex items-center rounded-md border border-hairline bg-background px-2.5 py-1 text-[11px] font-medium text-muted-foreground"
                 >
                   {method}
                 </span>

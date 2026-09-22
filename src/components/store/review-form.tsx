@@ -36,7 +36,7 @@ export function ReviewForm({
   // Not logged in
   if (status === "unauthenticated" || (!session && status !== "loading")) {
     return (
-      <div className="rounded-[4px] border border-dashed border-border bg-muted/30 px-6 py-8 text-center">
+      <div className="rounded-xl border border-dashed border-border bg-muted/30 px-6 py-8 text-center">
         <p className="text-sm text-muted-foreground">
           Please{" "}
           <a
@@ -54,7 +54,7 @@ export function ReviewForm({
   // Already reviewed
   if (existingReview) {
     return (
-      <div className="rounded-[4px] border border-go/40 bg-go/10 px-6 py-5 flex items-start gap-3">
+      <div className="rounded-xl border border-go/40 bg-go/10 px-6 py-5 flex items-start gap-3">
         <CheckCircle2 className="h-5 w-5 text-go shrink-0 mt-0.5" />
         <div>
           <p className="text-sm font-medium">You&apos;ve already reviewed this product</p>
@@ -69,7 +69,7 @@ export function ReviewForm({
   // Success state
   if (submitted) {
     return (
-      <div className="rounded-[4px] border border-go/40 bg-go/10 px-6 py-5 flex items-start gap-3">
+      <div className="rounded-xl border border-go/40 bg-go/10 px-6 py-5 flex items-start gap-3">
         <CheckCircle2 className="h-5 w-5 text-go shrink-0 mt-0.5" />
         <div>
           <p className="text-sm font-medium">Review submitted!</p>
@@ -108,7 +108,7 @@ export function ReviewForm({
   const displayStar = hoveredStar > 0 ? hoveredStar : selectedStar;
 
   return (
-    <div className="rounded-[4px] border border-border bg-muted/20 p-6 space-y-5">
+    <div className="rounded-xl border border-border bg-muted/20 p-6 space-y-5">
       <h3 className="text-base font-semibold">Write a Review</h3>
 
       <form onSubmit={handleSubmit} className="space-y-4">

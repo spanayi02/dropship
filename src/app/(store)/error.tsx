@@ -25,7 +25,7 @@ export default function ErrorBoundary({ error, reset }: ErrorBoundaryProps) {
 
       {process.env.NODE_ENV === "development" && error.message && (
         <div className="w-full max-w-lg rounded-lg border border-rose-200 bg-rose-50 p-4 text-left dark:border-rose-800 dark:bg-rose-900/10">
-          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-rose-600 dark:text-rose-400">
+          <p className="mb-1 text-xs font-semibold tracking-wide text-rose-600 dark:text-rose-400">
             Error details
           </p>
           <code className="block whitespace-pre-wrap break-all text-xs text-rose-700 dark:text-rose-300">

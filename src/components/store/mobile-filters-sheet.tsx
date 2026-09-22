@@ -40,13 +40,13 @@ export function MobileFiltersSheet({
       {/* Trigger */}
       <button
         onClick={() => setOpen(true)}
-        className="lg:hidden inline-flex items-center gap-2 rounded-[3px] border border-border bg-background px-4 py-2.5 text-sm font-medium hover:bg-muted transition-colors flex-shrink-0"
+        className="lg:hidden inline-flex items-center gap-2 rounded-lg border border-border bg-background px-4 py-2.5 text-sm font-medium hover:bg-muted transition-colors flex-shrink-0"
         aria-label={t("products.filters")}
       >
         <SlidersHorizontal className="h-4 w-4" />
         {t("products.filters")}
         {activeCount > 0 && (
-          <span className="flex h-5 w-5 items-center justify-center rounded-[2px] bg-signal text-[10px] font-bold text-signal-foreground">
+          <span className="flex h-5 w-5 items-center justify-center rounded-md bg-ink text-[10px] font-bold text-primary-foreground">
             {activeCount}
           </span>
         )}
@@ -78,12 +78,12 @@ export function MobileFiltersSheet({
         </div>
 
         <div className="flex items-center justify-between px-5 py-3 border-b border-border">
-          <h3 className="font-board text-base font-bold uppercase">
+          <h3 className="text-base font-bold">
             {t("products.filters")}
           </h3>
           <button
             onClick={() => setOpen(false)}
-            className="flex h-8 w-8 items-center justify-center rounded-[3px] text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
             aria-label={t("common.close")}
           >
             <X className="h-4 w-4" />

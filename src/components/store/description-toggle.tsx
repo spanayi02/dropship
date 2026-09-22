@@ -34,7 +34,7 @@ export function DescriptionToggle({ text, clampLines = 3 }: DescriptionTogglePro
         <button
           type="button"
           onClick={() => setExpanded((v) => !v)}
-          className="mt-1.5 text-sm font-semibold text-ink dark:text-signal hover:underline transition-colors"
+          className="mt-1.5 text-sm font-semibold text-foreground hover:underline transition-colors"
         >
           {expanded ? t("product.readLess") : t("product.readMore")}
         </button>

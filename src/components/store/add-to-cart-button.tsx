@@ -55,12 +55,12 @@ export function AddToCartButton({
         state === "success" ? t("product.addedToCart") : t("product.addToCart")
       }
       className={cn(
-        "flex flex-1 items-center justify-center gap-2 rounded-[3px] px-6 h-11 text-sm font-bold transition-all duration-300",
+        "flex flex-1 items-center justify-center gap-2 rounded-lg px-6 h-11 text-sm font-bold transition-all duration-300",
         state === "success"
           ? "bg-go text-white scale-[1.02]"
           : state === "loading"
-          ? "bg-signal/70 text-signal-foreground cursor-wait"
-          : "bg-signal text-signal-foreground hover:bg-signal-deep",
+          ? "bg-primary/70 text-primary-foreground cursor-wait"
+          : "bg-primary text-primary-foreground hover:bg-primary/90",
         className
       )}
     >

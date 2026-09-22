@@ -23,7 +23,7 @@ export function LocaleSwitcher({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "inline-flex items-center rounded-[3px] border border-border bg-field p-0.5 text-xs font-semibold",
+        "inline-flex items-center rounded-lg border border-border bg-field p-0.5 text-xs font-semibold",
         className
       )}
       role="group"
@@ -36,7 +36,7 @@ export function LocaleSwitcher({ className }: { className?: string }) {
           onClick={() => switchTo(code)}
           aria-pressed={locale === code}
           className={cn(
-            "rounded-[2px] px-2 py-1 uppercase tracking-wide transition-colors",
+            "rounded-md px-2 py-1 uppercase tracking-wide transition-colors",
             locale === code
               ? "bg-ink text-ink-foreground"
               : "text-muted-foreground hover:text-foreground"

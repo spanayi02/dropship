@@ -29,7 +29,7 @@ export function SubscribeForm() {
 
   if (submitted) {
     return (
-      <div className="inline-flex items-center gap-2 rounded-[3px] border border-go/30 bg-go/10 px-5 py-3 text-sm font-medium text-go">
+      <div className="inline-flex items-center gap-2 rounded-lg border border-go/30 bg-go/10 px-5 py-3 text-sm font-medium text-go">
         <CheckCircle2 className="h-4 w-4" />
         You&apos;re subscribed — thanks!
       </div>
@@ -47,13 +47,13 @@ export function SubscribeForm() {
         onChange={(e) => setEmail(e.target.value)}
         placeholder="your@email.com"
         required
-        className="flex-1 w-full rounded-[3px] border border-board-line bg-board-cell px-4 py-3 text-sm text-board-text outline-none placeholder:text-board-dim focus:border-signal focus:ring-2 focus:ring-signal/30 transition-all"
+        className="flex-1 w-full rounded-lg border border-board-line bg-board-cell px-4 py-3 text-sm text-board-text outline-none placeholder:text-board-dim focus:border-brand focus:ring-2 focus:ring-brand/25 transition-all"
         aria-label="Email address"
       />
       <button
         type="submit"
         disabled={loading}
-        className="inline-flex items-center gap-2 rounded-[3px] bg-signal px-6 py-3 text-sm font-bold text-signal-foreground hover:bg-signal-deep transition-colors disabled:opacity-60 whitespace-nowrap"
+        className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-60 whitespace-nowrap"
       >
         {loading ? "Subscribing…" : "Subscribe"}
         {!loading && <ArrowRight className="h-4 w-4" />}

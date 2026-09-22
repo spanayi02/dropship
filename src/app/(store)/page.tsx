@@ -31,7 +31,7 @@ const CATEGORY_FALLBACK_IMAGE = "/demo/categories/electronics.jpg";
 const PRODUCT_FALLBACK_IMAGE = "/demo/products/mechanical-keyboard-rgb-backlit-tkl-1.jpg";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Section Wrapper — a small signal tab + board-face heading
+// Section header: rule, title, and an optional "view all" link
 // ─────────────────────────────────────────────────────────────────────────────
 function SectionHeader({
   title,
@@ -47,15 +47,15 @@ function SectionHeader({
   return (
     <div className="flex items-end justify-between mb-8 gap-4">
       <div>
-        <span className="mb-2 inline-flex h-1.5 w-8 rounded-[1px] bg-signal" aria-hidden="true" />
-        <h2 className="font-board text-2xl sm:text-3xl font-bold uppercase tracking-tight text-foreground">
+        <span className="mb-2 inline-flex h-1 w-10 rounded-full bg-primary" aria-hidden="true" />
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
           {title}
         </h2>
         {subtitle && <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>}
       </div>
       <Link
         href={viewAllHref}
-        className="flex flex-shrink-0 items-center gap-1 text-sm font-semibold text-ink dark:text-signal hover:underline transition-colors"
+        className="flex flex-shrink-0 items-center gap-1 text-sm font-semibold text-foreground hover:underline transition-colors"
       >
         {viewAllLabel}
         <ArrowRight className="h-3.5 w-3.5" />
@@ -92,7 +92,7 @@ async function CategoriesGrid() {
           <StaggerItem key={cat.id}>
             <Link
               href={`/products?category=${cat.slug}`}
-              className="group relative flex flex-col items-center overflow-hidden rounded-[4px] border border-border bg-card transition-all duration-300 hover:-translate-y-1 hover:border-ink/40 dark:hover:border-signal/40"
+              className="group relative flex flex-col items-center overflow-hidden rounded-xl border border-border bg-card transition-all duration-300 hover:-translate-y-1 hover:border-ink/40 hover:border-border-strong"
             >
               <div className="relative w-full aspect-square overflow-hidden bg-muted">
                 <Image
@@ -103,13 +103,13 @@ async function CategoriesGrid() {
                   className="object-cover transition-transform duration-500 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent" />
-                <span className="label-sign absolute left-2 top-2 rounded-[2px] bg-signal px-1.5 py-0.5 text-signal-foreground">
+                <span className="label-sign absolute left-2 top-2 rounded-md bg-ink px-1.5 py-0.5 text-ink-foreground">
                   {String(index + 1).padStart(2, "0")}
                 </span>
               </div>
               <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
                 <p className="text-sm font-bold leading-tight">{cat.name}</p>
-                <span className="tnum inline-block mt-1 rounded-[2px] bg-white/15 backdrop-blur-sm px-2 py-0.5 text-[10px] font-medium text-white/90">
+                <span className="tnum inline-block mt-1 rounded-md bg-white/15 backdrop-blur-sm px-2 py-0.5 text-[10px] font-medium text-white/90">
                   {cat._count.products} {t("common.items")}
                 </span>
               </div>
@@ -155,7 +155,7 @@ async function FeaturedDeal() {
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-      <div className="grid overflow-hidden rounded-[4px] border border-border bg-card lg:grid-cols-[0.92fr_1.08fr]">
+      <div className="grid overflow-hidden rounded-xl border border-border bg-card lg:grid-cols-[0.92fr_1.08fr]">
         <Link href={`/products/${product.slug}`} className="group relative min-h-[360px] overflow-hidden bg-muted">
           <Image
             src={image}
@@ -170,18 +170,18 @@ async function FeaturedDeal() {
               <p className="label-sign text-white/80">{t("home.featuredDeal")}</p>
               <p className="mt-1 max-w-sm text-2xl font-extrabold leading-tight">{product.title}</p>
             </div>
-            <span className="label-sign rounded-[2px] bg-stop px-3 py-1.5 text-white shadow-lg">
+            <span className="label-sign rounded-md bg-stop px-3 py-1.5 text-white shadow-lg">
               {t("product.save", { percent: discount })}
             </span>
           </div>
         </Link>
 
         <div className="relative p-7 sm:p-10">
-          <span className="mb-5 inline-flex items-center gap-2 rounded-[2px] bg-muted px-3 py-1 label-sign text-muted-foreground">
+          <span className="mb-5 inline-flex items-center gap-2 rounded-md bg-muted px-3 py-1 label-sign text-muted-foreground">
             <Gift className="h-3.5 w-3.5" />
             {t("home.featuredDeal")}
           </span>
-          <h2 className="font-board max-w-xl text-3xl font-bold uppercase tracking-tight text-foreground sm:text-4xl">
+          <h2 className="max-w-xl text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
             {t("home.featuredDealTitle")}
           </h2>
           <p className="mt-4 max-w-xl text-sm leading-7 text-muted-foreground sm:text-base">
@@ -189,18 +189,18 @@ async function FeaturedDeal() {
           </p>
 
           <div className="mt-7 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-[3px] bg-signal/15 p-4">
-              <PackageCheck className="mb-3 h-5 w-5 text-ink dark:text-signal" />
+            <div className="rounded-lg bg-secondary p-4">
+              <PackageCheck className="mb-3 h-5 w-5 text-foreground" />
               <p className="label-sign text-muted-foreground">{t("home.priceNow")}</p>
               <p className="mt-1 text-xl font-extrabold tnum text-foreground">{formatPrice(product.sellingPrice)}</p>
             </div>
-            <div className="rounded-[3px] bg-muted p-4">
+            <div className="rounded-lg bg-muted p-4">
               <BadgePercent className="mb-3 h-5 w-5 text-muted-foreground" />
               <p className="label-sign text-muted-foreground">{t("home.priceWas")}</p>
               <p className="mt-1 text-xl font-extrabold tnum text-foreground">{formatPrice(product.compareAtPrice)}</p>
             </div>
-            <div className="rounded-[3px] bg-muted p-4">
-              <Star className="mb-3 h-5 w-5 fill-signal-deep text-signal-deep" />
+            <div className="rounded-lg bg-muted p-4">
+              <Star className="mb-3 h-5 w-5 fill-warning text-warning" />
               <p className="label-sign text-muted-foreground">{t("home.rating")}</p>
               <p className="mt-1 text-xl font-extrabold tnum text-foreground">{rating.toFixed(1)} / 5</p>
             </div>
@@ -208,7 +208,7 @@ async function FeaturedDeal() {
 
           <Link
             href={`/products/${product.slug}`}
-            className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-[3px] bg-ink px-7 py-3.5 text-sm font-bold text-ink-foreground transition-all hover:-translate-y-0.5 dark:bg-signal dark:text-signal-foreground sm:w-auto"
+            className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-ink px-7 py-3.5 text-sm font-bold text-ink-foreground transition-all hover:-translate-y-0.5 dark:bg-primary dark:text-primary-foreground sm:w-auto"
           >
             {t("home.grabDeal")}
             <ShoppingBag className="h-4 w-4" />
@@ -361,8 +361,8 @@ async function TrustBadges() {
               key={badge.title}
               className="flex flex-col sm:flex-row items-center sm:items-start gap-3 text-center sm:text-left"
             >
-              <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-[3px] bg-signal/20">
-                <badge.icon className="h-5 w-5 text-ink dark:text-signal" />
+              <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg bg-secondary">
+                <badge.icon className="h-5 w-5 text-foreground" />
               </div>
               <div>
                 <p className="text-sm font-semibold text-foreground">{badge.title}</p>
@@ -394,12 +394,12 @@ async function ConversionStrip() {
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-      <div className="grid overflow-hidden rounded-[4px] border border-ink/10 bg-ink text-ink-foreground dark:border-border">
+      <div className="grid overflow-hidden rounded-xl border border-ink/10 bg-ink text-ink-foreground dark:border-border">
         <div className="p-8 sm:p-10 pb-0 sm:pb-0">
-          <span className="label-sign mb-4 inline-flex items-center gap-2 rounded-[2px] bg-signal px-3 py-1 text-signal-foreground">
+          <span className="label-sign mb-4 inline-flex items-center gap-2 rounded-md bg-secondary px-3 py-1 text-foreground">
             {t("home.boardTitle")}
           </span>
-          <h2 className="font-board max-w-xl text-3xl font-bold uppercase tracking-tight sm:text-4xl">
+          <h2 className="max-w-xl text-3xl font-bold tracking-tight sm:text-4xl">
             {t("home.howTitle")}
           </h2>
         </div>
@@ -407,10 +407,10 @@ async function ConversionStrip() {
           {steps.map((stepItem, i) => (
             <div key={stepItem.title} className="bg-ink p-6">
               <div className="mb-5 flex items-center gap-2">
-                <span className="label-sign flex h-6 w-6 items-center justify-center rounded-[2px] bg-signal text-signal-foreground tnum">
+                <span className="label-sign flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground tnum">
                   {i + 1}
                 </span>
-                <stepItem.icon className="h-5 w-5 text-signal" />
+                <stepItem.icon className="h-5 w-5 text-board-text" />
               </div>
               <h3 className="text-sm font-bold">{stepItem.title}</h3>
               <p className="mt-2 text-sm leading-6 text-ink-foreground/70">{stepItem.text}</p>
@@ -426,7 +426,7 @@ async function Newsletter() {
   const { t } = await getT();
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
-      <div className="board-surface relative overflow-hidden rounded-[4px] px-6 py-14 text-center shadow-xl sm:px-14">
+      <div className="board-surface relative overflow-hidden rounded-xl px-6 py-14 text-center shadow-xl sm:px-14">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 z-0 opacity-40"
@@ -435,11 +435,11 @@ async function Newsletter() {
           }}
         />
         <div className="relative z-10">
-          <span className="label-sign inline-flex items-center gap-1.5 rounded-[2px] bg-signal px-3 py-1 text-signal-foreground mb-5">
+          <span className="label-sign inline-flex items-center gap-1.5 rounded-md bg-secondary px-3 py-1 text-foreground mb-5">
             <span className="h-1.5 w-1.5 rounded-full bg-ink animate-led" aria-hidden="true" />
             {t("home.boardTitle")}
           </span>
-          <h2 className="font-board text-2xl sm:text-3xl font-bold uppercase mb-3 text-board-text">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-3 text-board-text">
             {t("home.newsletterTitle")}
           </h2>
           <p className="mb-8 max-w-md mx-auto text-sm text-board-dim sm:text-base">
@@ -484,7 +484,7 @@ function TestimonialsSkeleton() {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {Array.from({ length: 3 }).map((_, i) => (
-        <div key={i} className="rounded-[4px] border border-border bg-card p-5 space-y-3">
+        <div key={i} className="rounded-xl border border-border bg-card p-5 space-y-3">
           <div className="h-4 w-24 rounded bg-muted animate-pulse" />
           <div className="h-4 w-full rounded bg-muted animate-pulse" />
           <div className="h-4 w-3/4 rounded bg-muted animate-pulse" />
@@ -498,7 +498,7 @@ function CategorySkeleton() {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
       {Array.from({ length: 5 }).map((_, i) => (
-        <div key={i} className="rounded-[4px] aspect-square bg-muted animate-pulse" />
+        <div key={i} className="rounded-xl aspect-square bg-muted animate-pulse" />
       ))}
     </div>
   );

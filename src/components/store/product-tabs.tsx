@@ -43,7 +43,7 @@ function StarRow({ rating }: { rating: number }) {
           className={cn(
             "h-3.5 w-3.5",
             i < rating
-              ? "fill-signal-deep text-signal-deep"
+              ? "fill-warning text-warning"
               : "fill-muted text-muted-foreground/30"
           )}
         />
@@ -70,7 +70,7 @@ function ReviewCard({ review }: { review: Review }) {
   return (
     <div className="flex gap-4 py-5 border-b border-border last:border-0">
       {/* Avatar */}
-      <div className="flex-none h-10 w-10 rounded-[3px] bg-signal/20 flex items-center justify-center text-xs font-bold text-ink dark:text-signal">
+      <div className="flex-none h-10 w-10 rounded-lg bg-secondary flex items-center justify-center text-xs font-bold text-foreground">
         {initials}
       </div>
 
@@ -78,7 +78,7 @@ function ReviewCard({ review }: { review: Review }) {
         <div className="flex flex-wrap items-center gap-2 mb-1">
           <span className="text-sm font-semibold">{review.user.name ?? "Anonymous"}</span>
           {review.isVerified && (
-            <span className="label-sign inline-flex items-center gap-1 rounded-[2px] bg-go/15 px-1.5 py-0.5 text-go">
+            <span className="label-sign inline-flex items-center gap-1 rounded-md bg-go/15 px-1.5 py-0.5 text-go">
               <BadgeCheck className="h-3 w-3" />
               {t("home.verified")}
             </span>
@@ -111,10 +111,10 @@ function RatingSummary({ reviews }: { reviews: Review[] }) {
   }));
 
   return (
-    <div className="flex flex-col sm:flex-row gap-6 sm:gap-10 p-6 rounded-[4px] bg-muted/50 border border-border mb-6">
+    <div className="flex flex-col sm:flex-row gap-6 sm:gap-10 p-6 rounded-xl bg-muted/50 border border-border mb-6">
       {/* Overall */}
       <div className="flex flex-col items-center justify-center gap-1 min-w-[80px]">
-        <span className="font-board text-5xl font-bold text-foreground">
+        <span className="tnum text-5xl font-bold text-foreground">
           {avg.toFixed(1)}
         </span>
         <StarRow rating={Math.round(avg)} />
@@ -130,10 +130,10 @@ function RatingSummary({ reviews }: { reviews: Review[] }) {
           return (
             <div key={star} className="flex items-center gap-2.5 text-xs tnum">
               <span className="w-3 text-right text-muted-foreground">{star}</span>
-              <Star className="h-3 w-3 fill-signal-deep text-signal-deep flex-none" />
-              <div className="flex-1 h-1.5 rounded-[1px] bg-border overflow-hidden">
+              <Star className="h-3 w-3 fill-warning text-warning flex-none" />
+              <div className="flex-1 h-1.5 rounded-sm bg-border overflow-hidden">
                 <div
-                  className="h-full rounded-[1px] bg-signal-deep transition-all duration-500"
+                  className="h-full rounded-sm bg-warning transition-all duration-500"
                   style={{ width: `${pct}%` }}
                 />
               </div>
@@ -162,7 +162,7 @@ export function ProductTabs({ product, existingReview }: ProductTabsProps) {
   const [active, setActive] = useState<TabId>("description");
 
   return (
-    <div className="rounded-[4px] border border-border overflow-hidden">
+    <div className="rounded-xl border border-border overflow-hidden">
       {/* Tab bar */}
       <div className="flex border-b border-border bg-muted/30">
         {tabs.map((tab) => (
@@ -180,12 +180,12 @@ export function ProductTabs({ product, existingReview }: ProductTabsProps) {
           >
             {tab.label}
             {tab.id === "reviews" && product.reviews.length > 0 && (
-              <span className="ml-1.5 inline-flex h-5 w-5 items-center justify-center rounded-[2px] bg-signal/25 text-[10px] font-bold text-ink dark:text-signal">
+              <span className="ml-1.5 inline-flex h-5 w-5 items-center justify-center rounded-md bg-secondary text-[10px] font-bold text-foreground">
                 {product.reviews.length > 99 ? "99+" : product.reviews.length}
               </span>
             )}
             {active === tab.id && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-signal" />
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
             )}
           </button>
         ))}

@@ -28,7 +28,7 @@ export function QuantitySelector({
 
   return (
     <div
-      className="flex items-center rounded-[3px] border border-border overflow-hidden"
+      className="flex items-center rounded-lg border border-border overflow-hidden"
       role="group"
       aria-label={t("product.quantity")}
     >

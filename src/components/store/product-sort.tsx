@@ -40,7 +40,7 @@ export function ProductSort({ currentSort, currentParams }: ProductSortProps) {
         value={currentSort ?? ""}
         onChange={(e) => handleChange(e.target.value)}
         aria-label={t("products.sort")}
-        className="appearance-none rounded-[3px] border border-border bg-background pr-8 pl-4 py-2.5 text-sm font-medium outline-none focus:border-ink focus:ring-1 focus:ring-ink/15 dark:focus:border-signal dark:focus:ring-signal/20 transition-all cursor-pointer hover:bg-muted"
+        className="appearance-none rounded-lg border border-border bg-background pr-8 pl-4 py-2.5 text-sm font-medium outline-none focus:border-ink focus:ring-1 focus:ring-ink/15 dark:focus:border-brand dark:focus:ring-brand/25 transition-all cursor-pointer hover:bg-muted"
       >
         {SORT_OPTIONS.map((opt) => (
           <option key={opt.value} value={opt.value}>

@@ -1,9 +1,9 @@
 /**
  * Generates the demo catalog imagery used by prisma/seed.ts.
  *
- * These are deliberately NOT fake product photos. They are signage-style
- * pictogram plates in the store's own visual world, so a demo store looks
- * designed instead of broken, and nobody mistakes them for supplier photos.
+ * These are deliberately NOT fake product photos. They are neutral studio
+ * pictogram plates, so a demo store looks designed instead of broken, and
+ * nobody mistakes them for supplier photography.
  * Replace them by importing real products (admin → Import) — imported products
  * carry the supplier's photography.
  *
@@ -66,12 +66,14 @@ const PRODUCTS = {
   "vitamin-c-serum-with-hyaluronic-acid": ["test-tube", "drop", 1, "SKINCARE"],
 };
 
+// Neutral tonal fields; the page overlays the category name itself, so the
+// plate carries no text of its own.
 const CATEGORIES = {
-  electronics: ["plug", "#FFD500"],
-  "fashion-apparel": ["t-shirt", "#131418"],
-  "home-living": ["house", "#FFD500"],
-  "sports-outdoors": ["sneaker", "#131418"],
-  "beauty-health": ["sparkle", "#FFD500"],
+  electronics: ["plug", "#E8EBEF", "#2B2F36"],
+  "fashion-apparel": ["t-shirt", "#E2E5EA", "#2B2F36"],
+  "home-living": ["house", "#EDEFF2", "#2B2F36"],
+  "sports-outdoors": ["sneaker", "#E5E8ED", "#2B2F36"],
+  "beauty-health": ["sparkle", "#EAECF0", "#2B2F36"],
 };
 
 function productSvg({ icon, field, label, sku, variant }) {
@@ -95,42 +97,30 @@ function productSvg({ icon, field, label, sku, variant }) {
   <g transform="translate(600 600) rotate(${rot}) scale(${scale * 1.6}) translate(-128 -128)">
     <path d="${d}" fill="#131418"/>
   </g>
-  <!-- thermal label chip -->
-  <g transform="translate(64 1040)">
-    <rect width="470" height="96" rx="4" fill="#ffffff" stroke="#c9ccd2"/>
-    <text x="22" y="40" font-family="Arial Narrow, Arial, sans-serif" font-size="26" font-weight="700" letter-spacing="3" fill="#131418">${label}</text>
-    <text x="22" y="74" font-family="Arial, sans-serif" font-size="20" fill="#5b606a">DEMO IMAGE · ${sku}</text>
-    <g transform="translate(340 22)" fill="#131418">
-      ${barcode(110, 52)}
-    </g>
-  </g>
+  <!-- discreet demo mark: honest about what this is, quiet enough to ignore -->
+  <text x="1140" y="1152" text-anchor="end" font-family="Inter, Arial, sans-serif"
+        font-size="20" letter-spacing="2" fill="#8b9098">DEMO · ${sku}</text>
 </svg>`;
 }
 
-function barcode(w, h) {
-  // deterministic pseudo-random bar pattern
-  let out = "", x = 0, seed = 7;
-  while (x < w) {
-    seed = (seed * 1103515245 + 12345) & 0x7fffffff;
-    const bw = 1 + (seed % 3);
-    const gap = 1 + ((seed >> 3) % 3);
-    out += `<rect x="${x}" y="0" width="${bw}" height="${h}"/>`;
-    x += bw + gap;
-  }
-  return out;
-}
-
-function categorySvg({ icon, bg, name }) {
+function categorySvg({ icon, bg, ink }) {
   const d = iconPath(icon);
-  const ink = bg === "#FFD500" ? "#131418" : "#FFD500";
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+  <defs>
+    <linearGradient id="field" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.75"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="floor" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#000" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
   <rect width="1200" height="900" fill="${bg}"/>
-  <g transform="translate(600 430) scale(2.4) translate(-128 -128)">
+  <rect width="1200" height="900" fill="url(#field)"/>
+  <ellipse cx="600" cy="690" rx="260" ry="40" fill="url(#floor)"/>
+  <g transform="translate(600 440) scale(2.1) translate(-128 -128)">
     <path d="${d}" fill="${ink}"/>
-  </g>
-  <g transform="translate(56 760)">
-    <rect width="12" height="72" fill="${ink}"/>
-    <text x="36" y="56" font-family="Arial Narrow, Arial, sans-serif" font-size="56" font-weight="700" letter-spacing="4" fill="${ink}">${name.toUpperCase()}</text>
   </g>
 </svg>`;
 }
@@ -154,9 +144,8 @@ for (const [slug, [icon, icon2, fieldIdx, label]] of Object.entries(PRODUCTS)) {
   await render(browser, productSvg({ icon: icon2, field: FIELDS[(fieldIdx + 3) % FIELDS.length], label, sku, variant: 1 }), path.join(outDir, "products", `${slug}-2.jpg`), 1200, 1200);
   n++;
 }
-for (const [slug, [icon, bg]] of Object.entries(CATEGORIES)) {
-  const name = slug.replace(/-/g, " & ").replace("fashion & apparel", "fashion").replace("home & living", "home").replace("sports & outdoors", "sports").replace("beauty & health", "beauty");
-  await render(browser, categorySvg({ icon, bg, name }), path.join(outDir, "categories", `${slug}.jpg`), 1200, 900);
+for (const [slug, [icon, bg, ink]] of Object.entries(CATEGORIES)) {
+  await render(browser, categorySvg({ icon, bg, ink }), path.join(outDir, "categories", `${slug}.jpg`), 1200, 900);
 }
 await browser.close();
 

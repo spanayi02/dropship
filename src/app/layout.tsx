@@ -1,14 +1,8 @@
 import type { Metadata, Viewport } from "next";
-import "@fontsource/fira-sans/400.css";
-import "@fontsource/fira-sans/500.css";
-import "@fontsource/fira-sans/600.css";
-import "@fontsource/fira-sans/700.css";
-import "@fontsource/fira-sans-condensed/500.css";
-import "@fontsource/fira-sans-condensed/600.css";
-import "@fontsource/fira-sans-condensed/700.css";
-import "@fontsource/fira-sans-condensed/800.css";
-import "@fontsource/fira-sans-extra-condensed/600.css";
-import "@fontsource/fira-sans-extra-condensed/700.css";
+// Inter for UI and body, Manrope for headings. Both ship Greek subsets,
+// which the bilingual EN/EL storefront needs.
+import "@fontsource-variable/inter";
+import "@fontsource-variable/manrope";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";

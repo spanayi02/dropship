@@ -72,19 +72,19 @@ export function CartDrawer() {
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border px-6 py-4">
           <div className="flex items-center gap-2">
-            <ShoppingBag className="h-5 w-5 text-ink dark:text-signal" />
-            <h2 className="font-board text-lg font-bold uppercase">
+            <ShoppingBag className="h-5 w-5 text-foreground" />
+            <h2 className="text-lg font-bold">
               {t("cart.title")}
             </h2>
             {hasItems && (
-              <span className="flex h-5 w-5 items-center justify-center rounded-[2px] bg-signal text-[10px] font-bold text-signal-foreground tnum">
+              <span className="flex h-5 w-5 items-center justify-center rounded-md bg-ink text-[10px] font-bold text-primary-foreground tnum">
                 {itemCount}
               </span>
             )}
           </div>
           <button
             onClick={closeCart}
-            className="flex h-8 w-8 items-center justify-center rounded-[3px] text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
             aria-label={t("common.close")}
           >
             <X className="h-4 w-4" />
@@ -96,20 +96,20 @@ export function CartDrawer() {
           {!hasItems ? (
             /* Empty state */
             <div className="flex flex-col items-center justify-center h-full gap-4 px-6 py-16 text-center">
-              <div className="flex h-20 w-20 items-center justify-center rounded-[4px] bg-muted">
+              <div className="flex h-20 w-20 items-center justify-center rounded-xl bg-muted">
                 <ShoppingCart className="h-10 w-10 text-muted-foreground" />
               </div>
               <div>
-                <p className="font-board text-lg font-bold uppercase">{t("cart.empty")}</p>
+                <p className="text-lg font-bold">{t("cart.empty")}</p>
                 <p className="mt-1 text-sm text-muted-foreground">{t("cart.emptyText")}</p>
               </div>
               <Link
                 href="/products"
                 onClick={closeCart}
                 className={cn(
-                  "mt-2 inline-flex items-center gap-2 rounded-[3px] px-6 py-2.5",
-                  "bg-signal text-signal-foreground font-bold text-sm",
-                  "hover:bg-signal-deep transition-colors"
+                  "mt-2 inline-flex items-center gap-2 rounded-lg px-6 py-2.5",
+                  "bg-primary text-primary-foreground font-medium text-sm",
+                  "hover:bg-primary/90 transition-colors"
                 )}
               >
                 {t("cart.startShopping")}
@@ -131,7 +131,7 @@ export function CartDrawer() {
                     className="flex gap-4 overflow-hidden px-6 py-4"
                   >
                     {/* Image */}
-                    <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-[3px] bg-muted">
+                    <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-muted">
                       {item.image ? (
                         <Image
                           src={item.image}
@@ -153,14 +153,14 @@ export function CartDrawer() {
                         <Link
                           href={`/products/${item.slug}`}
                           onClick={closeCart}
-                          className="text-sm font-medium leading-tight hover:text-ink dark:hover:text-signal transition-colors line-clamp-2"
+                          className="text-sm font-medium leading-tight hover:text-foreground transition-colors line-clamp-2"
                         >
                           {item.title}
                         </Link>
                         <motion.button
                           whileTap={{ scale: 0.9 }}
                           onClick={() => removeItem(item.productId)}
-                          className="flex-shrink-0 flex h-6 w-6 items-center justify-center rounded-[2px] text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                          className="flex-shrink-0 flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
                           aria-label={t("cart.remove", { title: item.title })}
                         >
                           <X className="h-3.5 w-3.5" />
@@ -169,7 +169,7 @@ export function CartDrawer() {
 
                       <div className="flex items-center justify-between">
                         {/* Quantity controls */}
-                        <div className="flex items-center rounded-[3px] border border-border overflow-hidden">
+                        <div className="flex items-center rounded-lg border border-border overflow-hidden">
                           <motion.button
                             whileTap={{ scale: 0.9 }}
                             onClick={() =>
@@ -199,7 +199,7 @@ export function CartDrawer() {
                         <AnimatedPrice
                           cents={item.price * item.quantity}
                           locale={intl}
-                          className="text-sm font-semibold text-ink dark:text-signal tnum"
+                          className="text-sm font-semibold text-foreground tnum"
                         />
                       </div>
                     </div>
@@ -230,9 +230,9 @@ export function CartDrawer() {
                 href="/checkout"
                 onClick={closeCart}
                 className={cn(
-                  "flex w-full items-center justify-center gap-2 rounded-[3px] px-6 py-3",
-                  "bg-signal text-signal-foreground font-bold text-sm",
-                  "hover:bg-signal-deep transition-colors"
+                  "flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3",
+                  "bg-primary text-primary-foreground font-medium text-sm",
+                  "hover:bg-primary/90 transition-colors"
                 )}
               >
                 {t("cart.checkout")}
@@ -241,7 +241,7 @@ export function CartDrawer() {
               <button
                 onClick={closeCart}
                 className={cn(
-                  "flex w-full items-center justify-center rounded-[3px] px-6 py-2.5",
+                  "flex w-full items-center justify-center rounded-lg px-6 py-2.5",
                   "border border-border text-sm font-medium",
                   "hover:bg-muted transition-colors"
                 )}

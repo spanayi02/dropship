@@ -178,7 +178,7 @@ function SearchBar({
           name="search"
           defaultValue={currentSearch ?? ""}
           placeholder={t("common.searchPlaceholder")}
-          className="w-full rounded-[3px] border border-border bg-background pl-10 pr-4 py-2.5 text-sm outline-none placeholder:text-muted-foreground focus:border-ink focus:ring-1 focus:ring-ink/15 dark:focus:border-signal dark:focus:ring-signal/20 transition-all"
+          className="w-full rounded-lg border border-border bg-background pl-10 pr-4 py-2.5 text-sm outline-none placeholder:text-muted-foreground focus:border-ink focus:ring-1 focus:ring-ink/15 dark:focus:border-brand dark:focus:ring-brand/25 transition-all"
         />
       </div>
     </form>
@@ -191,16 +191,16 @@ function SearchBar({
 function EmptyState({ t }: { t: TFunction }) {
   return (
     <div className="flex flex-col items-center justify-center py-24 text-center gap-4">
-      <div className="h-16 w-16 rounded-[4px] bg-muted flex items-center justify-center">
+      <div className="h-16 w-16 rounded-xl bg-muted flex items-center justify-center">
         <Search className="h-7 w-7 text-muted-foreground" />
       </div>
       <div>
-        <p className="font-board text-lg font-bold uppercase">{t("products.noResults")}</p>
+        <p className="text-lg font-bold">{t("products.noResults")}</p>
         <p className="mt-1 text-sm text-muted-foreground max-w-xs">{t("products.noResultsText")}</p>
       </div>
       <Link
         href="/products"
-        className="mt-2 inline-flex items-center gap-2 rounded-[3px] bg-signal px-5 py-2.5 text-sm font-bold text-signal-foreground hover:bg-signal-deep transition-colors"
+        className="mt-2 inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
       >
         {t("products.clearFilters")}
       </Link>
@@ -220,14 +220,14 @@ function CatalogHero({
   const featured = categories.slice(0, 5);
 
   return (
-    <section className="mb-10 overflow-hidden rounded-[4px] border border-ink/10 bg-ink text-ink-foreground">
+    <section className="mb-10 overflow-hidden rounded-xl border border-ink/10 bg-ink text-ink-foreground">
       <div className="grid lg:grid-cols-[1fr_0.72fr]">
         <div className="relative p-7 sm:p-10">
-          <span className="label-sign mb-5 inline-flex items-center gap-2 rounded-[2px] bg-signal px-3 py-1 text-signal-foreground">
+          <span className="label-sign mb-5 inline-flex items-center gap-2 rounded-md bg-secondary px-3 py-1 text-foreground">
             <Sparkles className="h-3.5 w-3.5" />
             {t("home.boardTitle")}
           </span>
-          <h1 className="font-board max-w-2xl text-3xl font-bold uppercase tracking-tight sm:text-5xl">
+          <h1 className="max-w-2xl text-3xl font-bold tracking-tight sm:text-5xl">
             {t("products.title")}
           </h1>
           <p className="mt-4 max-w-2xl text-sm leading-7 text-ink-foreground/70 sm:text-base">
@@ -236,19 +236,19 @@ function CatalogHero({
           <div className="mt-6 flex flex-wrap gap-2">
             <Link
               href="/products?sort=best_selling"
-              className="label-sign inline-flex items-center gap-2 rounded-[2px] bg-signal px-4 py-2 text-signal-foreground transition-transform hover:-translate-y-0.5"
+              className="label-sign inline-flex items-center gap-2 rounded-md bg-secondary px-4 py-2 text-foreground transition-transform hover:-translate-y-0.5"
             >
               {t("products.sortBestSelling")}
             </Link>
             <Link
               href="/products?sort=newest"
-              className="label-sign inline-flex items-center gap-2 rounded-[2px] bg-ink-foreground/10 px-4 py-2 text-ink-foreground ring-1 ring-ink-foreground/15 transition-transform hover:-translate-y-0.5"
+              className="label-sign inline-flex items-center gap-2 rounded-md bg-ink-foreground/10 px-4 py-2 text-ink-foreground ring-1 ring-ink-foreground/15 transition-transform hover:-translate-y-0.5"
             >
               {t("products.sortNewest")}
             </Link>
             <Link
               href="/products?sort=price_asc"
-              className="label-sign inline-flex items-center gap-2 rounded-[2px] bg-ink-foreground/10 px-4 py-2 text-ink-foreground ring-1 ring-ink-foreground/15 transition-transform hover:-translate-y-0.5"
+              className="label-sign inline-flex items-center gap-2 rounded-md bg-ink-foreground/10 px-4 py-2 text-ink-foreground ring-1 ring-ink-foreground/15 transition-transform hover:-translate-y-0.5"
             >
               {t("products.sortPriceAsc")}
             </Link>
@@ -263,7 +263,7 @@ function CatalogHero({
             { icon: BadgePercent, label: t("home.featuredDeal"), text: t("checkout.vatNote") },
           ].map(({ icon: Icon, label, text }) => (
             <div key={label} className="bg-ink p-5">
-              <Icon className="mb-4 h-5 w-5 text-signal" />
+              <Icon className="mb-4 h-5 w-5 text-board-text" />
               <p className="text-sm font-bold text-ink-foreground">{label}</p>
               <p className="mt-1 text-xs text-ink-foreground/60">{text}</p>
             </div>
@@ -277,10 +277,10 @@ function CatalogHero({
             <Link
               key={category.id}
               href={`/products?category=${category.slug}`}
-              className="inline-flex flex-none items-center gap-2 rounded-[3px] border border-ink-foreground/15 bg-ink-foreground/5 px-4 py-2 text-sm font-bold text-ink-foreground transition-colors hover:border-signal/50 hover:bg-signal/15 hover:text-signal"
+              className="inline-flex flex-none items-center gap-2 rounded-lg border border-ink-foreground/15 bg-ink-foreground/5 px-4 py-2 text-sm font-bold text-ink-foreground transition-colors hover:border-border-strong hover:bg-secondary hover:text-board-text"
             >
               {category.name}
-              <span className="tnum rounded-[2px] bg-ink-foreground/10 px-2 py-0.5 text-[11px] text-ink-foreground/70">
+              <span className="tnum rounded-md bg-ink-foreground/10 px-2 py-0.5 text-[11px] text-ink-foreground/70">
                 {category._count.products}
               </span>
             </Link>
@@ -327,7 +327,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
 
       <div className="mb-8 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="font-board text-2xl font-bold uppercase tracking-tight sm:text-3xl">
+          <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
             {params.search ? t("products.titleSearch", { query: params.search }) : t("products.title")}
           </h2>
           {params.category && (
@@ -341,7 +341,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
       <div className="flex gap-8">
         {/* ── Desktop sidebar ───────────────────────────────────────────── */}
         <aside className="hidden lg:block w-60 flex-shrink-0">
-          <Suspense fallback={<div className="h-96 rounded-[4px] bg-muted animate-pulse" />}>
+          <Suspense fallback={<div className="h-96 rounded-xl bg-muted animate-pulse" />}>
             <ProductFilters
               categories={categories}
               currentCategory={params.category}

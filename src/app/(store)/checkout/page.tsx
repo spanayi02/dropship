@@ -39,11 +39,11 @@ function StepIndicator({ current, labels }: { current: Step; labels: string[] })
               <div className="flex flex-col items-center flex-1">
                 <div
                   className={[
-                    "flex h-8 w-8 items-center justify-center rounded-[3px] border-2 text-xs font-bold tnum transition-colors",
+                    "flex h-8 w-8 items-center justify-center rounded-lg border-2 text-xs font-bold tnum transition-colors",
                     isDone
-                      ? "border-signal bg-signal text-signal-foreground"
+                      ? "border-primary bg-primary text-primary-foreground"
                       : isActive
-                      ? "border-ink bg-ink/5 text-ink dark:border-signal dark:text-signal"
+                      ? "border-primary bg-secondary text-foreground"
                       : "border-border bg-muted text-muted-foreground",
                   ].join(" ")}
                   aria-current={isActive ? "step" : undefined}
@@ -69,7 +69,7 @@ function StepIndicator({ current, labels }: { current: Step; labels: string[] })
                 <div
                   className={[
                     "h-px flex-1 mx-2 transition-colors",
-                    isDone ? "bg-signal" : "bg-border",
+                    isDone ? "bg-primary" : "bg-border",
                   ].join(" ")}
                 />
               )}
@@ -103,7 +103,7 @@ function Field({ id, label, error, required, children }: FieldProps) {
 }
 
 const inputCls =
-  "w-full rounded-[3px] border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent disabled:opacity-50";
+  "w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent disabled:opacity-50";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -189,8 +189,8 @@ export default function CheckoutPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center gap-3">
-        <ShoppingBag className="h-6 w-6 text-ink dark:text-signal" />
-        <h1 className="font-board text-2xl font-bold uppercase tracking-tight">{t("checkout.title")}</h1>
+        <ShoppingBag className="h-6 w-6 text-foreground" />
+        <h1 className="text-2xl font-bold tracking-tight">{t("checkout.title")}</h1>
       </div>
 
       <StepIndicator current={step} labels={stepLabels} />
@@ -199,7 +199,7 @@ export default function CheckoutPage() {
       {step === 1 && (
         <div className="space-y-6">
           {/* Contact */}
-          <section className="rounded-[4px] border border-border bg-card p-6">
+          <section className="rounded-xl border border-border bg-card p-6">
             <h2 className="mb-4 text-base font-bold">{t("checkout.contact")}</h2>
             <Field
               id="email"
@@ -219,7 +219,7 @@ export default function CheckoutPage() {
           </section>
 
           {/* Shipping */}
-          <section className="rounded-[4px] border border-border bg-card p-6">
+          <section className="rounded-xl border border-border bg-card p-6">
             <h2 className="mb-4 text-base font-bold">{t("checkout.shippingAddress")}</h2>
             <div className="grid gap-4 sm:grid-cols-2">
               <Field
@@ -358,7 +358,7 @@ export default function CheckoutPage() {
           <p className="text-xs text-muted-foreground">{t("checkout.vatNote")}</p>
 
           <div className="flex justify-end">
-            <Button onClick={onStep1Next} className="gap-2 h-10 px-6 rounded-[3px] bg-signal text-signal-foreground hover:bg-signal-deep">
+            <Button onClick={onStep1Next} className="gap-2 h-10 px-6 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90">
               Continue to review
               <ChevronRight className="h-4 w-4" />
             </Button>
@@ -369,14 +369,14 @@ export default function CheckoutPage() {
       {/* Step 2: Review */}
       {step === 2 && (
         <div className="space-y-6">
-          <section className="rounded-[4px] border border-border bg-card divide-y divide-border overflow-hidden">
+          <section className="rounded-xl border border-border bg-card divide-y divide-border overflow-hidden">
             <div className="px-6 py-4">
               <h2 className="text-base font-bold">{t("checkout.summary")}</h2>
             </div>
 
             {items.map((item) => (
               <div key={item.id} className="flex items-center gap-4 px-6 py-4">
-                <div className="relative h-16 w-16 flex-none overflow-hidden rounded-[3px] border border-border bg-muted">
+                <div className="relative h-16 w-16 flex-none overflow-hidden rounded-lg border border-border bg-muted">
                   {item.image ? (
                     <Image
                       src={item.image}
@@ -424,7 +424,7 @@ export default function CheckoutPage() {
           </section>
 
           {/* Shipping address summary */}
-          <section className="rounded-[4px] border border-border bg-card p-6">
+          <section className="rounded-xl border border-border bg-card p-6">
             <h2 className="mb-3 text-base font-bold">{t("order.shippingTo")}</h2>
             <div className="text-sm text-muted-foreground space-y-0.5">
               {(() => {
@@ -443,11 +443,11 @@ export default function CheckoutPage() {
           </section>
 
           <div className="flex items-center justify-between">
-            <Button variant="ghost" onClick={() => setStep(1)} className="gap-2 rounded-[3px]">
+            <Button variant="ghost" onClick={() => setStep(1)} className="gap-2 rounded-lg">
               <ChevronLeft className="h-4 w-4" />
               {t("common.back")}
             </Button>
-            <Button onClick={() => setStep(3)} className="gap-2 h-10 px-6 rounded-[3px] bg-signal text-signal-foreground hover:bg-signal-deep">
+            <Button onClick={() => setStep(3)} className="gap-2 h-10 px-6 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90">
               Proceed to payment
               <ChevronRight className="h-4 w-4" />
             </Button>
@@ -458,13 +458,13 @@ export default function CheckoutPage() {
       {/* Step 3: Payment */}
       {step === 3 && (
         <div className="space-y-6">
-          <section className="rounded-[4px] border border-border bg-card p-6">
+          <section className="rounded-xl border border-border bg-card p-6">
             <h2 className="mb-2 text-base font-bold">Secure payment</h2>
             <p className="text-sm text-muted-foreground mb-6">{t("checkout.secure")}</p>
 
-            <div className="rounded-[3px] bg-muted/50 border border-border p-4 flex items-start gap-3">
-              <div className="mt-0.5 flex-none rounded-[2px] bg-signal/20 p-1.5">
-                <Lock className="h-4 w-4 text-ink dark:text-signal" />
+            <div className="rounded-lg bg-muted/50 border border-border p-4 flex items-start gap-3">
+              <div className="mt-0.5 flex-none rounded-md bg-secondary p-1.5">
+                <Lock className="h-4 w-4 text-foreground" />
               </div>
               <div>
                 <p className="text-sm font-medium">256-bit SSL encryption</p>
@@ -481,13 +481,13 @@ export default function CheckoutPage() {
           </section>
 
           <div className="flex items-center justify-between">
-            <Button variant="ghost" onClick={() => setStep(2)} className="gap-2 rounded-[3px]" disabled={isRedirecting}>
+            <Button variant="ghost" onClick={() => setStep(2)} className="gap-2 rounded-lg" disabled={isRedirecting}>
               <ChevronLeft className="h-4 w-4" />
               {t("common.back")}
             </Button>
             <Button
               onClick={handlePayment}
-              className="gap-2 h-10 px-8 rounded-[3px] bg-signal text-signal-foreground hover:bg-signal-deep"
+              className="gap-2 h-10 px-8 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90"
               disabled={isRedirecting}
             >
               {isRedirecting ? (
