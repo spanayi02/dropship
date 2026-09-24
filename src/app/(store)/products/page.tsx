@@ -29,6 +29,7 @@ interface PageProps {
     minPrice?: string;
     maxPrice?: string;
     inStock?: string;
+    sale?: string;
     sort?: string;
     search?: string;
     page?: string;
@@ -67,6 +68,10 @@ async function fetchProducts(params: Awaited<PageProps["searchParams"]>) {
     isActive: true,
     ...(categoryId ? { categoryId } : {}),
     ...(params.inStock === "true" ? { suppliers: { some: { inStock: true } } } : {}),
+    // A markdown only counts when the old price is actually higher
+    ...(params.sale === "true"
+      ? { compareAtPrice: { gt: db.product.fields.sellingPrice } }
+      : {}),
     ...(params.search
       ? {
           title: {

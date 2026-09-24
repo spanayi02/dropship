@@ -4,8 +4,11 @@ import { useState } from "react";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { subscribeNewsletter } from "@/app/actions/newsletter";
+import { useI18n } from "@/lib/i18n/client";
 
+/** Newsletter sign-up, styled for the dark band on the homepage. */
 export function SubscribeForm() {
+  const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -23,39 +26,37 @@ export function SubscribeForm() {
       setSubmitted(true);
       toast.success(result.success);
     } else {
-      toast.error(result.error ?? "Failed to subscribe. Please try again.");
+      toast.error(result.error ?? t("landing.subscribeFailed"));
     }
   }
 
   if (submitted) {
     return (
-      <div className="inline-flex items-center gap-2 rounded-lg border border-go/30 bg-go/10 px-5 py-3 text-sm font-medium text-go">
+      <p className="inline-flex items-center gap-2 rounded-full bg-tint-ink-foreground/10 px-5 py-3 text-sm font-medium">
         <CheckCircle2 className="h-4 w-4" />
-        You&apos;re subscribed — thanks!
-      </div>
+        {t("landing.subscribed")}
+      </p>
     );
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex flex-col sm:flex-row items-center gap-3 max-w-md mx-auto"
-    >
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:flex-row">
       <input
         type="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        placeholder="your@email.com"
+        placeholder={t("home.newsletterPlaceholder")}
         required
-        className="flex-1 w-full rounded-lg border border-board-line bg-board-cell px-4 py-3 text-sm text-board-text outline-none placeholder:text-board-dim focus:border-brand focus:ring-2 focus:ring-brand/25 transition-all"
-        aria-label="Email address"
+        autoComplete="email"
+        aria-label={t("auth.email")}
+        className="h-12 w-full flex-1 rounded-full border border-tint-ink-foreground/20 bg-tint-ink-foreground/10 px-5 text-sm text-tint-ink-foreground outline-none transition-colors placeholder:text-tint-ink-foreground/50 focus:border-tint-ink-foreground/60"
       />
       <button
         type="submit"
         disabled={loading}
-        className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-60 whitespace-nowrap"
+        className="inline-flex h-12 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-tint-ink-foreground px-7 text-sm font-semibold text-tint-ink transition-opacity hover:opacity-90 disabled:opacity-60"
       >
-        {loading ? "Subscribing…" : "Subscribe"}
+        {loading ? t("landing.subscribing") : t("home.newsletterCta")}
         {!loading && <ArrowRight className="h-4 w-4" />}
       </button>
     </form>
